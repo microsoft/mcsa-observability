@@ -4,7 +4,7 @@ This repository contains reference architecture, code sample and dashboard templ
 
 ## Architecture
 
-The following diagram gives a high-level view of Observability solution.
+The following diagram gives a high-level view of Observability solution. [Raw Visio File](Docs/architecture-raw.vsdx)
 
 
 ![Solution Architecture](Docs/architecture.png)
@@ -38,6 +38,7 @@ Azure Monitor Metrics is a feature of Azure Monitor that collects numeric data f
 | Keyvault      	| [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftkeyvaultvaults)                    	|
 
 ## Visualization
+This section demonstrates how the main Grafana dashboard visualizes the availability metrics over a timespan for each resource type that is being queried. 
 
 ![Solution Visualization](Docs/visualization.png)
 

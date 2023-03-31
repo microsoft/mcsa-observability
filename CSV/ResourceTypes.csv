@@ -1,0 +1,7 @@
+﻿name,type,resultTableName
+cosmosdb,microsoft.documentdb/databaseaccounts,Cosmosdb_Availability
+aksservernode,microsoft.containerservice/managedclusters,Aksservernode_Availability
+keyvault,microsoft.keyvault/vaults,Keyvault_Availability
+loadbalancer,microsoft.network/loadbalancers,Loadbalancer_Availability
+storage,microsoft.storage/storageaccounts,Storage_Availability
+firewall,microsoft.network/azurefirewalls,Firewall_Availability

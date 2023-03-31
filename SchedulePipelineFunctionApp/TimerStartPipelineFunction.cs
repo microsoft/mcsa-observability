@@ -63,8 +63,6 @@ namespace Observability.SchedulePipelineFunctionApp
                 var fromDate = reader.GetDateTime(1);
                 var toDate = DateTime.UtcNow;
 
-                await adx.IngestSubscriptionDateAsync(subscriptionId.ToString(), toDate);
-
                 var subscriptionNameQuery = $"Subscription_Names | where subscriptionId == '{subscriptionId}'";
 
                 var subscriptionNameResponse = kustoClient.ExecuteQuery(subscriptionNameQuery);
@@ -153,7 +151,7 @@ namespace Observability.SchedulePipelineFunctionApp
                     resources.Clear();
                     messageBatch.Dispose();
                 }
-
+                await adx.IngestSubscriptionDateAsync(subscriptionId.ToString(), toDate);
                 resourceTypes.Close();
             }
             reader.Close();
