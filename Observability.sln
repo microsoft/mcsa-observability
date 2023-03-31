@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdxIngestFunctionApp", "AdxIngestFunctionApp\AdxIngestFunctionApp.csproj", "{B7ABEAF5-D880-423B-A858-DA1C6CEE268B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulePipelineFunctionApp", "SchedulePipelineFunctionApp\SchedulePipelineFunctionApp.csproj", "{84878825-0C54-466F-84F7-AC6404132E2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj", "{34829A36-B3C3-4377-B527-F35A73F38BCC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{802C0668-47D7-4E60-BA2F-9A8126AA0116}"
+	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.MD = CHANGELOG.MD
+		LICENSE.MD = LICENSE.MD
+		README.MD = README.MD
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B7ABEAF5-D880-423B-A858-DA1C6CEE268B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7ABEAF5-D880-423B-A858-DA1C6CEE268B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7ABEAF5-D880-423B-A858-DA1C6CEE268B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7ABEAF5-D880-423B-A858-DA1C6CEE268B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84878825-0C54-466F-84F7-AC6404132E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84878825-0C54-466F-84F7-AC6404132E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84878825-0C54-466F-84F7-AC6404132E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84878825-0C54-466F-84F7-AC6404132E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34829A36-B3C3-4377-B527-F35A73F38BCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34829A36-B3C3-4377-B527-F35A73F38BCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34829A36-B3C3-4377-B527-F35A73F38BCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34829A36-B3C3-4377-B527-F35A73F38BCC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {803B7ABC-EBC4-45D7-8FFD-5B85138EE35F}
+	EndGlobalSection
+EndGlobal

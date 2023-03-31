@@ -1,0 +1,1580 @@
+{
+  "message": "Availability Metrics",
+  "overwrite": true,
+  "dashboard": {
+
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 25,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "panels": [],
+        "title": "Resource inventory in selected period",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 0,
+          "y": 1
+        },
+        "id": 17,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.3.8",
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Storage_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Storage_Availability\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions)\n| summarize dcount(id)",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Total # of Storage",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 3,
+          "y": 1
+        },
+        "id": 30,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.3.8",
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Aksservernode_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Aksservernode_Availability\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions)\n| summarize dcount(id)",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Total # of Aksservernodes",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 6,
+          "y": 1
+        },
+        "id": 20,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.3.8",
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Loadbalancer_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Loadbalancer_Availability\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions)\n| summarize dcount(id)",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Total # of LoadBalancers",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 9,
+          "y": 1
+        },
+        "id": 16,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.3.8",
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Firewall_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Firewall_Availability\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions)\n| summarize dcount(id)",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Total # of Firewalls",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 12,
+          "y": 1
+        },
+        "id": 4,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.3.8",
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Cosmosdb_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Cosmosdb_Availability\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions)\n| summarize dcount(id)",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Total # of Cosmos DBs",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 15,
+          "y": 1
+        },
+        "id": 18,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.3.8",
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Keyvault_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Keyvault_Availability\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions)\n| summarize dcount(id)",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Total # of Keyvaults",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 6,
+          "x": 18,
+          "y": 1
+        },
+        "id": 21,
+        "options": {
+          "code": {
+            "language": "plaintext",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "Avg availability of services shown here includes data from all events (platform caused and user errors)",
+          "mode": "markdown"
+        },
+        "pluginVersion": "9.3.8",
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "vm_availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "loadbalancer_availability\n| where $__timeFilter(['date'])// and region  in ($Region)\n| summarize dcount(id)",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Note",
+        "type": "text"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 4
+        },
+        "id": 6,
+        "panels": [],
+        "title": "Compute",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": true,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 3,
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "aksservernode drill down details",
+                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/OD9S0za4z/aksservernode?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              }
+            ],
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 10,
+          "x": 0,
+          "y": 5
+        },
+        "id": 23,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Aksservernode_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Subscriptions\n|join Aksservernode_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId,tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady + nodeUnknown))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize aksservernode = (avg(availability)) by ['date']",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "AKS Server Node Avg [(readynode/(readynode+notready+unknown))*100]",
+        "type": "timeseries"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 12
+        },
+        "id": 8,
+        "panels": [],
+        "title": "Storage",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftstoragestorageaccounts",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 6,
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "storage drill down details",
+                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/2WcGAz-Vk/storage?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              }
+            ],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
+                },
+                {
+                  "color": "dark-green",
+                  "value": 100
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 10,
+          "x": 0,
+          "y": 13
+        },
+        "id": 25,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Storage_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Subscriptions\n|join Storage_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize storage = (avg(availability)) by ['date']",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Storage Avg [Successful Tx / All Tx]",
+        "type": "timeseries"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 20
+        },
+        "id": 10,
+        "panels": [],
+        "title": "Networking",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkazurefirewalls",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 3,
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "loadbalancer drill down details",
+                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/RdR4Az-Vz/loadbalancer?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              }
+            ],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 10,
+          "x": 0,
+          "y": 21
+        },
+        "id": 31,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Loadbalancer_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Subscriptions\n|join Loadbalancer_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize loadbalancer = (avg(availability)) by ['date']",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Load Balancer Avg [Successful Tx / All Tx]",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "description": "Availability metric -https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkazurefirewalls",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "firewall drill down details",
+                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/yNzqokaVk/firewalls?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              }
+            ],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 10,
+          "x": 10,
+          "y": 21
+        },
+        "id": 26,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Firewall_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Subscriptions\n|join Firewall_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize firewall = (avg(availability)) by ['date']",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Firewall Avg [Successful Tx / All Tx]",
+        "type": "timeseries"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 28
+        },
+        "id": 12,
+        "panels": [],
+        "title": "Databases",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "description": "availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "cosmosdb drill down details",
+                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/pov1vCbVk/cosmosdb-details?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Solution:queryparam}"
+              }
+            ],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 10,
+          "x": 0,
+          "y": 29
+        },
+        "id": 28,
+        "links": [],
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Cosmosdb_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Subscriptions\n|join Cosmosdb_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize cosmosdb = (avg(availability)) by ['date']",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Cosmos DB Avg [Successful Tx / All Tx]",
+        "type": "timeseries"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 36
+        },
+        "id": 14,
+        "panels": [],
+        "title": "Identity + Security",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "d0ldePxVk"
+        },
+        "description": "availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "keyvault drill down details",
+                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/FE2WAk-4k/keyvault?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              }
+            ],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 10,
+          "x": 0,
+          "y": 37
+        },
+        "id": 27,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "database": "Epic-Database",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "d0ldePxVk"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Keyvault_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.2.0",
+            "query": "Subscriptions\n|join Keyvault_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize keyvault = (avg(availability)) by ['date']",
+            "querySource": "raw",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Key Vault Avg [Successful Tx / All Tx]",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 37,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "Solution 7",
+              "Solution 3",
+              "Solution 6",
+              "Solution 1",
+              "Solution 4",
+              "Solution 5",
+              "Solution 2",
+              "Solution 8"
+            ],
+            "value": [
+              "Solution 7",
+              "Solution 3",
+              "Solution 6",
+              "Solution 1",
+              "Solution 4",
+              "Solution 5",
+              "Solution 2",
+              "Solution 8"
+            ]
+          },
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "d0ldePxVk"
+          },
+          "definition": "Subscriptions\n| distinct solution",
+          "hide": 0,
+          "includeAll": false,
+          "multi": true,
+          "name": "Solution",
+          "options": [],
+          "query": "Subscriptions\n| distinct solution",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "subscription001",
+              "subscription002",
+              "subscription003",
+              "subscription004",
+              "subscription005",
+              "subscription006",
+              "subscription007",
+              "subscription008"
+            ],
+            "value": []
+          },
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "d0ldePxVk"
+          },
+          "definition": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
+          "hide": 0,
+          "includeAll": false,
+          "multi": true,
+          "name": "Subscriptions",
+          "options": [],
+          "query": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
+          "refresh": 1,
+          "regex": "(?<value>.*)\\|(?<text>.*)",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "eastus2",
+              "westus",
+              "northcentralus",
+              "westus2",
+              "centralus",
+              "eastus",
+              "eastus2euap",
+              "centraluseuap",
+              "centralindia"
+            ],
+            "value": [
+              "eastus2",
+              "westus",
+              "northcentralus",
+              "westus2",
+              "centralus",
+              "eastus",
+              "eastus2euap",
+              "centraluseuap",
+              "centralindia"
+            ]
+          },
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "d0ldePxVk"
+          },
+          "definition": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6 | distinct *",
+          "hide": 0,
+          "includeAll": false,
+          "multi": true,
+          "name": "Region",
+          "options": [],
+          "query": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6 | distinct *",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "utc",
+    "title": "Azure Resource Observability",
+    "uid": "VVUlnjx4z",
+    "version": 98,
+    "weekStart": ""
+  }
+}

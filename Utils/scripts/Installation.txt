@@ -1,0 +1,74 @@
+## Pre-requisites:
+Azure Role Permissions: User should have access to create ManagedIdentity/Service Principal on the subscriptionId
+
+## Environment:
+Linux - Ubuntu 20.04
+
+## Install pre-requisite libraries
+sudo apt-get update -y
+sudo apt-get install -y git
+wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb
+sudo apt-get update -y
+sudo apt-get install -y dotnet-sdk-6.0
+sudo apt-get install -y zip
+sudo apt-get install -y jq
+
+## Install az cli
+# 1.Get packages needed for the install process:
+sudo apt-get update
+sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
+
+# 2.Download and install the Microsoft signing key:
+sudo mkdir -p /etc/apt/keyrings
+curl -sLS https://packages.microsoft.com/keys/microsoft.asc | \
+    gpg --dearmor | \
+    sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null
+sudo chmod go+r /etc/apt/keyrings/microsoft.gpg
+
+# 3.Add the Azure CLI software repository:
+AZ_REPO=$(lsb_release -cs)
+echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | \
+    sudo tee /etc/apt/sources.list.d/azure-cli.list
+
+# 4.Update repository information and install the azure-cli package:
+sudo apt-get update -y
+sudo apt-get install -y azure-cli
+
+## EXECUTION STEPS:
+
+## Clone git repo into the folder
+## TODO: Update github repo link variable
+
+repolink=""
+codePath=$"./observability"
+git clone $repolink $codePath
+
+## Please set the following required parameters:
+## prefix - prefix string to identify the resources created with this deployment. eg: test
+## subscriptionId - subscriptionId where the solution will be deployed to
+## location - location where the azure resources will be created. eg: eastus
+## currentDir - setup full current directory path to where code is cloned
+
+# set currentDir to 
+cd $codePath
+currentDir=$(pwd)
+
+# change directory to where scripts are located.
+cd $currentDir/Utils/scripts
+
+# command to run
+/bin/bash ./deploy.sh "$prefix" "$subscriptionId" "$location" "$currentDir"
+
+eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/code"
+
+## Post Installation Steps:
+1) Update resource providers to be monitored to the Resource_Providers table  
+2) Update subscriptions to be monitored to the Subscriptions table
+3) Add reader role for the managedIdentity created by script to the subscriptions to monitored
+
+## Grafana access
+
+## Storage access 
+sas token - expires in a year need to update it 
