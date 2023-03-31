@@ -96,7 +96,7 @@
         "pluginVersion": "9.3.8",
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -184,7 +184,7 @@
         "pluginVersion": "9.3.8",
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -272,7 +272,7 @@
         "pluginVersion": "9.3.8",
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -360,7 +360,7 @@
         "pluginVersion": "9.3.8",
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -448,7 +448,7 @@
         "pluginVersion": "9.3.8",
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -536,7 +536,7 @@
         "pluginVersion": "9.3.8",
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -597,7 +597,7 @@
         "pluginVersion": "9.3.8",
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -696,7 +696,7 @@
               {
                 "targetBlank": true,
                 "title": "aksservernode drill down details",
-                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/OD9S0za4z/aksservernode?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+                "url": "https://observability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/OD9S0za4z/aksservernode?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
               }
             ],
             "mappings": [],
@@ -738,7 +738,7 @@
         },
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -834,7 +834,7 @@
               {
                 "targetBlank": true,
                 "title": "storage drill down details",
-                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/2WcGAz-Vk/storage?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+                "url": "https://observability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/2WcGAz-Vk/storage?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
               }
             ],
             "mappings": [],
@@ -875,7 +875,7 @@
         },
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -971,7 +971,7 @@
               {
                 "targetBlank": true,
                 "title": "loadbalancer drill down details",
-                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/RdR4Az-Vz/loadbalancer?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+                "url": "https://observability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/RdR4Az-Vz/loadbalancer?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
               }
             ],
             "mappings": [],
@@ -1011,7 +1011,7 @@
         },
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -1093,7 +1093,7 @@
               {
                 "targetBlank": true,
                 "title": "firewall drill down details",
-                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/yNzqokaVk/firewalls?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+                "url": "https://observability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/yNzqokaVk/firewalls?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
               }
             ],
             "mappings": [],
@@ -1133,7 +1133,7 @@
         },
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -1228,7 +1228,7 @@
               {
                 "targetBlank": true,
                 "title": "cosmosdb drill down details",
-                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/pov1vCbVk/cosmosdb-details?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Solution:queryparam}"
+                "url": "https://observability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/pov1vCbVk/cosmosdb-details?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Solution:queryparam}"
               }
             ],
             "mappings": [],
@@ -1269,7 +1269,7 @@
         },
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
@@ -1364,7 +1364,7 @@
               {
                 "targetBlank": true,
                 "title": "keyvault drill down details",
-                "url": "https://epicobservability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/FE2WAk-4k/keyvault?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+                "url": "https://observability-ggb4htdkfvd8e8ck.eus.grafana.azure.com/d/FE2WAk-4k/keyvault?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
               }
             ],
             "mappings": [],
@@ -1404,7 +1404,7 @@
         },
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"

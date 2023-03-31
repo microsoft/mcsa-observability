@@ -98,7 +98,7 @@
         "pluginVersion": "9.3.8",
         "targets": [
           {
-            "database": "Epic-Database",
+            "database": "Database",
             "datasource": {
               "type": "grafana-azure-data-explorer-datasource",
               "uid": "d0ldePxVk"
