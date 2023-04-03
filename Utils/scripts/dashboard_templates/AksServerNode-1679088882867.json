@@ -112,7 +112,7 @@
               }
             },
             "pluginVersion": "4.2.0",
-            "query": "Subscriptions\n|join Aksservernode_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId,tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady + nodeUnknown))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
+            "query": "Subscriptions\n|join Aksservernode_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId,tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
             "querySource": "raw",
             "rawMode": true,
             "refId": "A",

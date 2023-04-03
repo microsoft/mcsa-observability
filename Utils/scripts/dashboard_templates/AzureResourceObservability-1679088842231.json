@@ -765,14 +765,14 @@
               }
             },
             "pluginVersion": "4.2.0",
-            "query": "Subscriptions\n|join Aksservernode_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId,tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady + nodeUnknown))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize aksservernode = (avg(availability)) by ['date']",
+            "query": "Subscriptions\n|join Aksservernode_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId,tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize aksservernode = (avg(availability)) by ['date']",
             "querySource": "raw",
             "rawMode": true,
             "refId": "A",
             "resultFormat": "table"
           }
         ],
-        "title": "AKS Server Node Avg [(readynode/(readynode+notready+unknown))*100]",
+        "title": "AKS Server Node Avg [(readynode/(readynode+notready))*100]",
         "type": "timeseries"
       },
       {
