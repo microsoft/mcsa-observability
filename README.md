@@ -4,10 +4,10 @@ This repository contains reference architecture, code sample and dashboard templ
 
 ## Architecture
 
-The following diagram gives a high-level view of Observability solution. [Raw Visio File](Docs/architecture-raw.vsdx)
+The following diagram gives a high-level view of Observability solution. [Raw Visio File](Images/architecture-raw.vsdx)
 
 
-![Solution Architecture](Docs/architecture.png)
+![Solution Architecture](Images/architecture.png)
 
 1. Timer fires and gets a list of subscriptions and resource types 
 2. For each subscription, and resource type, get a list of resource ids
@@ -40,7 +40,7 @@ Azure Monitor Metrics is a feature of Azure Monitor that collects numeric data f
 ## Visualization
 This section demonstrates how the main Grafana dashboard visualizes the availability metrics over a timespan for each resource type that is being queried. 
 
-![Solution Visualization](Docs/visualization.png)
+![Solution Visualization](Images/visualization.png)
 
 ## Getting Started
 
@@ -121,16 +121,16 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 ### Post Installation
 #### Post Installation Steps:
 i. Update resource providers to be monitored to the Resource_Providers table
-1. Download the file - [ResourceTypes.csv](CSV/ResourceTypes.csv)
+1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv)
 
-![githubfiledownload](./Docs/githubfiledownload-1.png)
+![githubfiledownload](Images/githubfiledownload-1.png)
  > Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
 
 2. Data ingestion
- - [click here](Markdowns/dataingestion.md) for details
+ - [Click here](DATAINGESTION.md) for details
 
 ii. Update subscriptions to be monitored to the Subscriptions table
-1.	Download the file - [subscriptions.csv](CSV/subscriptions.csv) to local
+1.	Download the file - [subscriptions.csv](Utils/scripts/csv_import/subscriptions.csv) to local
 2.	Modify the csv to include details of the subscriptions whose resource health needs to be tracked.
 3.	Follow the data ingestion steps as detailed for ResourceType.csv above.
 

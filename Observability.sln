@@ -9,16 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulePipelineFunctionApp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj", "{34829A36-B3C3-4377-B527-F35A73F38BCC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSV", "CSV", "{796BE5CD-1182-4148-A957-A9263E45679E}"
-	ProjectSection(SolutionItems) = preProject
-		CSV\ResourceTypes.csv = CSV\ResourceTypes.csv
-		CSV\subscriptions.csv = CSV\subscriptions.csv
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Markdowns", "Markdowns", "{36C96AA5-9ACA-4A5B-A0B1-AA0C39EF5DC8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{36C96AA5-9ACA-4A5B-A0B1-AA0C39EF5DC8}"
 	ProjectSection(SolutionItems) = preProject
 		CHANGELOG.MD = CHANGELOG.MD
-		Markdowns\dataingestion.md = Markdowns\dataingestion.md
+		DATAINGESTION.md = DATAINGESTION.md
 		LICENSE.MD = LICENSE.MD
 		README.MD = README.MD
 	EndProjectSection
