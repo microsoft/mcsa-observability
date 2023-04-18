@@ -119,31 +119,24 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 ```
 
 ### Post Installation
-```
-## Post Installation Steps:
-1) Update resource providers to be monitored to the Resource_Providers table in adx from portal 
+#### Post Installation Steps:
+i. Update resource providers to be monitored to the Resource_Providers table
+1. Download the file - [ResourceTypes.csv](CSV/ResourceTypes.csv)
 
-//ingest resource providers
-.ingest inline into table Resource_Providers <| 
-cosmosdb,microsoft.documentdb/databaseaccounts,Cosmosdb_Availability
-aksservernode,microsoft.containerservice/managedclusters,Aksservernode_Availability
-keyvault,microsoft.keyvault/vaults,Keyvault_Availability
-loadbalancer,microsoft.network/loadbalancers,Loadbalancer_Availability
-storage,microsoft.storage/storageaccounts,Storage_Availability
-firewall,microsoft.network/azurefirewalls,Firewall_Availability
+![githubfiledownload](Docs/githubfiledownload-1.png =700x)
+ > Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
 
-2) Update subscriptions to be monitored to the Subscriptions table
+2. Data ingestion
+ - [click here](Markdowns/dataingestion.md) for details
 
-eg: .ingest inline into table Subscriptions <| "Solution 1","multi", "Solution 1 - Comp 1","subscriptionId","2023-03-16"
+ii. Update subscriptions to be monitored to the Subscriptions table
+1.	Download the file - [subscriptions.csv](CSV/subscriptions.csv) to local
+2.	Modify the csv to include details of the subscriptions whose resource health needs to be tracked.
+3.	Follow the data ingestion steps as detailed for ResourceType.csv above.
 
-3) Add reader role for the managedIdentity created by script to the subscriptions to monitored
+iii. Add reader role for the managedIdentity created by script to the subscriptions to monitored
 
-## Grafana access
-1) TODO: Confirm new user creation 
-2) For user to access Grafana, add Grafana Admin/ Grafana Editor/ Grafana Viewer role on the Azure portal.
-
-## Storage access 
-sas token is required for the application to access the storage account created in teh script. 
-The current token expires in a year from the day the solution is deployed. Renew and update the Configuration Settings for the function on the 
-azure portal.
-```
+#### Grafana access
+To add other users to view/edit the Grafana dashboard, follow [adding role assignment to managed grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/how-to-share-grafana-workspace?tabs=azure-portal)
+#### Storage access 
+sas token - expires in a year need to update it
