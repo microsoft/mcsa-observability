@@ -139,7 +139,7 @@ The solution relies on the following data to be present in the "Resource Provide
 2. Modify the CSV to include details of the subscriptions for which you want to track resource health.
 3. Follow the data ingestion steps as outlined in the previous instructions for ResourceType.csv file.
 
-Finally, add reader role for the managedIdentity created by script to the subscriptions that you want to monitor
+Finally, add reader role for the Managed Identity created by script to the subscriptions that you want to monitor
 
 #### Grafana access
 
