@@ -121,12 +121,12 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 ### Post Installation
 #### Post Installation Steps:
 1. Update resource providers to be monitored to the Resource_Providers table
-  - load the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv)
+   - load the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv)
 
 ![githubfiledownload](Images/githubfiledownload-1.png)
  > Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
 2. Data ingestion
-  - [Click here](DATAINGESTION.md) for details
+   - [Click here](DATAINGESTION.md) for details
 
 3. Update subscriptions to be monitored to the Subscriptions table
    - Download the file - [subscriptions.csv](Utils/scripts/csv_import/subscriptions.csv) to local
