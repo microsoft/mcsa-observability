@@ -123,7 +123,7 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 i. Update resource providers to be monitored to the Resource_Providers table
 1. Download the file - [ResourceTypes.csv](CSV/ResourceTypes.csv)
 
-![githubfiledownload](./Docs/githubfiledownload-1.png =700x)
+![githubfiledownload](./Docs/githubfiledownload-1.png)
  > Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
 
 2. Data ingestion
