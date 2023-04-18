@@ -121,20 +121,19 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 ### Post Installation
 #### Post Installation Steps:
 1. Update resource providers to be monitored to the Resource_Providers table
-   - load the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv)
+  - load the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv)
 
 ![githubfiledownload](Images/githubfiledownload-1.png)
  > Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
+2. Data ingestion
+  - [Click here](DATAINGESTION.md) for details
 
-    - Data ingestion
-    - [Click here](DATAINGESTION.md) for details
-
-2. Update subscriptions to be monitored to the Subscriptions table
+3. Update subscriptions to be monitored to the Subscriptions table
    - Download the file - [subscriptions.csv](Utils/scripts/csv_import/subscriptions.csv) to local
    - Modify the csv to include details of the subscriptions whose resource health needs to be tracked.
    - Follow the data ingestion steps as detailed for ResourceType.csv above.
 
-3. Add reader role for the managedIdentity created by script to the subscriptions to monitored
+4. Add reader role for the managedIdentity created by script to the subscriptions to monitored
 
 #### Grafana access
 To add other users to view/edit the Grafana dashboard, follow [adding role assignment to managed grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/how-to-share-grafana-workspace?tabs=azure-portal)
