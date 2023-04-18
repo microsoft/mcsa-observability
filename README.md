@@ -126,8 +126,8 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 ![githubfiledownload](Images/githubfiledownload-1.png)
  > Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
 
-   - Data ingestion
-   - [Click here](DATAINGESTION.md) for details
+    - Data ingestion
+    - [Click here](DATAINGESTION.md) for details
 
 2. Update subscriptions to be monitored to the Subscriptions table
    - Download the file - [subscriptions.csv](Utils/scripts/csv_import/subscriptions.csv) to local
