@@ -1,11 +1,10 @@
 # Solution Approach to Observability
 
-This repository contains reference architecture, code sample and dashboard template for tracking Azure resources availablity (uptime/downtime) trends.
+This repository contains reference architecture, code sample and dashboard template for tracking Azure resources availability (uptime/downtime) trends.
 
 ## Architecture
 
-The following diagram gives a high-level view of Observability solution. [Raw Visio File](Images/architecture-raw.vsdx)
-
+The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
 
 ![Solution Architecture](Images/architecture.png)
 
@@ -13,43 +12,44 @@ The following diagram gives a high-level view of Observability solution. [Raw Vi
 2. For each subscription, and resource type, get a list of resource ids
 3. And create batches of size N from this list
 4. Send each batch of resource ids as a message to Service Bus
-5. Function executes for each SB message 
-6. And calls Azure Monitor with the batch of resource ids and timeframe to get metrics 
+5. Function executes for each SB message
+6. And calls Azure Monitor with the batch of resource ids and timeframe to get metrics
 7. And saves metrics json returned in an Azure Blob file
 8. And ingests json with the metrics for that resource type into ADX table
 9. Dashboard in Grafana
 
-Unlike Azure Monitor which provides the average availability of one resource at a time, this solution provides the average availability of all resources of the same resource type in your subscriptions. For example, instead of providing the availability of one Key Vault, this solution will provide the average availability of all Key Vaults in your subscriptions.
-
-
- 
+Unlike Azure Monitor, which provides the average availability of one resource at a time, this solution provides the average availability of all resources of the same resource type in your subscriptions. For example, instead of providing the availability of one Key Vault, this solution will provide the average availability of all Key Vaults in your subscriptions.
 
 ## Availability Metrics
 
-Azure Monitor Metrics is a feature of Azure Monitor that collects numeric data from monitored resources into a time-series database. The solution code extract the aggregated metric data from the time-series database and ingest into ADX for dashboarding.
+The following availability metrics are supported by Azure Monitor. This version of the solution queries only these metrics
 
-| ResourceType  	| MetricsDetails(AzureMonitor)                                                                                                                 	|
-|---------------	|----------------------------------------------------------------------------------------------------------------------------------------------	|
-| AksServerNode 	| [kube_node_status_condition](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters)   	|
-| LoadBalancer  	| [VipAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkloadbalancers)           	|
-| Firewall      	| [FirewallHealth](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkazurefirewalls)           	|
-| Storage       	| [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftclassicstoragestorageaccounts)     	|
-| Cosmosdb      	| [ServiceAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts) 	|
-| Keyvault      	| [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftkeyvaultvaults)                    	|
+| Resource Type   | Metric Name(Azure Monitor)                                                                                                                  |
+|--------------- |---------------------------------------------------------------------------------------------------------------------------------------------- |
+| AKS Server Node  | [kube_node_status_condition](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters)    |
+| Load Balancer   | [VipAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkloadbalancers)            |
+| Firewall       | [FirewallHealth](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkazurefirewalls)            |
+| Storage        | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftclassicstoragestorageaccounts)      |
+| Cosmos DB       | [ServiceAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts)  |
+| Key Vault       | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftkeyvaultvaults)                     |
 
 ## Visualization
-This section demonstrates how the main Grafana dashboard visualizes the availability metrics over a timespan for each resource type that is being queried. 
+
+In this section, you will see how the Grafana dashboard displays availability metrics over a given timeframe for each queried resource type.
 
 ![Solution Visualization](Images/visualization.png)
 
 ## Getting Started
 
+The following section describes the Prerequisites and Installation steps to deploy the solution.
 
 ### Prerequisites
-Azure Role Permissions: User should have access to create ManagedIdentity/Service Principal on the subscriptionId
 
-#### Environment:
-The script can be executed in a Linux - Ubuntu 20.04/ Azure cloud shell.
+> Note: Azure Role Permissions: User should have access to create ManagedIdentity/Service Principal on the subscription
+
+#### Environment
+
+The script can be executed in Linux - Ubuntu 20.04 (VM, WSL) or Azure cloud shell.
 
 #### Install pre-requisite libraries
 
@@ -86,6 +86,7 @@ sudo apt-get install -y azure-cli
 ```
 
 ### Installation
+
 ```
 ## Clone git repo into the folder
 ## TODO: Update github repo link variable
@@ -120,22 +121,30 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 
 ### Post Installation
 #### Post Installation Steps:
-1. Update resource providers to be monitored to the Resource_Providers table
-   - load the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv)
+
+The solution relies on the following data to be present in the "Resource Provider and Subscriptions table" before it can be used to visualize the data. Follow the steps below to complete the post installation steps.
+
+#### Updating Resource Types
+
+1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
 
 ![githubfiledownload](Images/githubfiledownload-1.png)
- > Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
-2. Data ingestion
-   - [Click here](DATAINGESTION.md) for details
+> Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
 
-3. Update subscriptions to be monitored to the Subscriptions table
-   - Download the file - [subscriptions.csv](Utils/scripts/csv_import/subscriptions.csv) to local
-   - Modify the csv to include details of the subscriptions whose resource health needs to be tracked.
-   - Follow the data ingestion steps as detailed for ResourceType.csv above.
+2. Data ingestion: follow the steps described in the [link](DATAINGESTION.md)  to complete the data ingestion
 
-4. Add reader role for the managedIdentity created by script to the subscriptions to monitored
+#### Updating Subscriptions
+
+1. Download the file - [subscriptions.csv](Utils/scripts/csv_import/subscriptions.csv)  to local
+2. Modify the CSV to include details of the subscriptions for which you want to track resource health.
+3. Follow the data ingestion steps as outlined in the previous instructions for ResourceType.csv file.
+
+Finally, add reader role for the managedIdentity created by script to the subscriptions that you want to monitor
 
 #### Grafana access
+
 To add other users to view/edit the Grafana dashboard, follow [adding role assignment to managed grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/how-to-share-grafana-workspace?tabs=azure-portal)
+
 #### Storage access 
+
 sas token - expires in a year need to update it
