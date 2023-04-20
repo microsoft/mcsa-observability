@@ -1,0 +1,212 @@
+//create raw tables
+.create table Aksservernode_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create table Cosmosdb_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create table Firewall_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create table Keyvault_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create table Loadbalancer_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create table Storage_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+// Create ingestion mapping
+.create table Aksservernode_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create table Cosmosdb_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create table Firewall_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create table Keyvault_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create table Loadbalancer_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create table Storage_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+//create adx tables
+.create table Resource_Providers (name: string, ['type']: string, resultTableName: string)
+
+.create table Subscription_Names (subscriptionId: guid, name: string)
+
+.create table Subscriptions (solution: string, tenancy: string, component: string, subscriptionId: guid, createdAt: datetime)
+
+.create table Subscriptions_Processed (subscriptionId: guid, dateProcessed: datetime)
+
+.create table Aksservernode_Availability (['date']: datetime, ['id']: string, nodeReady: decimal, nodeNotReady: decimal, nodeUnknown: decimal, location: string, subscriptionId: guid, name: string) 
+
+.create table Cosmosdb_Availability (['date']: datetime, name: string, availability: decimal, subscriptionId: guid, location: string, ['id']: string)
+
+.create table Firewall_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+
+.create table Keyvault_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+
+.create table Loadbalancer_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+
+.create table Storage_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+
+
+//create functions
+.create-or-alter function  Parse_Aksservernode_Availability() {
+    let ready = Aksservernode_Availability_Raw 
+    | extend id = tostring(metrics.resourceid) 
+    | extend subscriptionId = split(id, '/')[2] 
+    | extend name = split(id, '/')[-1] 
+    | extend region = tostring(metrics.resourceregion) 
+    | mv-expand value = metrics.value 
+    | where tostring(value.name.value) == 'kube_node_status_condition' 
+    | mv-expand timeseries = value.timeseries 
+    | mv-expand metadatavalues = timeseries.metadatavalues 
+    | where tostring(metadatavalues.name.value) == 'status2' and tostring(metadatavalues.value) == 'Ready' 
+    | mv-expand data = timeseries.data 
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), nodeReady = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name); 
+    let notReady = Aksservernode_Availability_Raw 
+    | extend id = tostring(metrics.resourceid) 
+    | extend subscriptionId = split(id, '/')[2] 
+    | extend name = split(id, '/')[-1] 
+    | extend region = tostring(metrics.resourceregion) 
+    | mv-expand value = metrics.value 
+    | where tostring(value.name.value) == 'kube_node_status_condition' 
+    | mv-expand timeseries = value.timeseries 
+    | mv-expand metadatavalues = timeseries.metadatavalues 
+    | where tostring(metadatavalues.name.value) == 'status2' and tostring(metadatavalues.value) == 'NotReady' 
+    | mv-expand data = timeseries.data 
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), nodeNotReady = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name); 
+    let unknown = Aksservernode_Availability_Raw 
+    | extend id = tostring(metrics.resourceid) 
+    | extend subscriptionId = split(id, '/')[2] 
+    | extend name = split(id, '/')[-1] 
+    | extend region = tostring(metrics.resourceregion) 
+    | mv-expand value = metrics.value 
+    | where tostring(value.name.value) == 'kube_node_status_condition' 
+    | mv-expand timeseries = value.timeseries 
+    | mv-expand metadatavalues = timeseries.metadatavalues 
+    | where tostring(metadatavalues.name.value) == 'status2' and tostring(metadatavalues.value) == 'unknown' 
+    | mv-expand data = timeseries.data 
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), nodeUnknown = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name); 
+    (ready | join kind=leftouter notReady on $left.timestamp == $right.timestamp and $left.id == $right.id) 
+    | join kind=leftouter unknown on $left.timestamp == $right.timestamp and $left.id == $right.id 
+    | project timestamp, id, nodeReady, nodeNotReady, nodeUnknown, location, subscriptionId, name
+}
+
+.create-or-alter function  Parse_Cosmosdb_Availability() {
+    Cosmosdb_Availability_Raw
+    | extend id = tostring(metrics.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(metrics.resourceregion)
+    | mv-expand value = metrics.value
+    | where tostring(value.name.value) == 'ServiceAvailability'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | project
+        timestamp = todatetime(data.timeStamp),
+        name = tostring(name),
+        availability = todecimal(data.average),
+        subscriptionId = toguid(subscriptionId),
+        location = tostring(region),
+        id = tostring(id)
+}
+
+.create-or-alter function  Parse_Firewall_Availability() {
+    Firewall_Availability_Raw
+    | extend id = tostring(metrics.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(metrics.resourceregion)
+    | mv-expand value = metrics.value
+    | where tostring(value.name.value) == 'FirewallHealth'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | project
+        timestamp = todatetime(data.timeStamp),
+        id = tostring(id),
+        availability = todecimal(data.average),
+        subscriptionId = toguid(subscriptionId),
+        location = tostring(region),
+        name = tostring(name)     
+}
+
+.create-or-alter function  Parse_Keyvault_Availability() {
+    Keyvault_Availability_Raw
+    | extend id = tostring(metrics.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(metrics.resourceregion)
+    | mv-expand value = metrics.value
+    | where tostring(value.name.value) == 'Availability'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | project
+        timestamp = todatetime(data.timeStamp),
+        id = tostring(id),
+        availability = todecimal(data.average),
+        subscriptionId = toguid(subscriptionId),
+        location = tostring(region),
+        name = tostring(name)     
+}
+
+.create-or-alter function  Parse_Loadbalancer_Availability() {
+    Loadbalancer_Availability_Raw
+    | extend id = tostring(metrics.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(metrics.resourceregion)
+    | mv-expand value = metrics.value
+    | where tostring(value.name.value) == 'VipAvailability'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | project
+        timestamp = todatetime(data.timeStamp),
+        id = tostring(id),
+        availability = todecimal(data.average),
+        subscriptionId = toguid(subscriptionId),
+        location = tostring(region),
+        name = tostring(name)     
+}
+
+.create-or-alter function  Parse_Storage_Availability() {
+    Storage_Availability_Raw
+    | extend id = tostring(metrics.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(metrics.resourceregion)
+    | mv-expand value = metrics.value
+    | where tostring(value.name.value) == 'Availability'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | project
+        timestamp = todatetime(data.timeStamp),
+        id = tostring(id),
+        availability = todecimal(data.average),
+        subscriptionId = toguid(subscriptionId),
+        location = tostring(region),
+        name = tostring(name)     
+}
+
+// Update results table policies
+.alter table Aksservernode_Availability policy update @'[{"Source": "Aksservernode_Availability_Raw", "Query": "Parse_Aksservernode_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Cosmosdb_Availability policy update @'[{"Source": "Cosmosdb_Availability_Raw", "Query": "Parse_Cosmosdb_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Firewall_Availability policy update @'[{"Source": "Firewall_Availability_Raw", "Query": "Parse_Firewall_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Keyvault_Availability policy update @'[{"Source": "Keyvault_Availability_Raw", "Query": "Parse_Keyvault_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Loadbalancer_Availability policy update @'[{"Source": "Loadbalancer_Availability_Raw", "Query": "Parse_Loadbalancer_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Storage_Availability policy update @'[{"Source": "Storage_Availability_Raw", "Query": "Parse_Storage_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+
+// Adding zero retention policies on Raw tables
+.alter-merge table Aksservernode_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Cosmosdb_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Firewall_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Keyvault_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Loadbalancer_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Storage_Availability_Raw policy retention softdelete = 0s
