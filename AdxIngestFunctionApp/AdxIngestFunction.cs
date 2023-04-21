@@ -78,7 +78,7 @@ namespace Observability.AdxIngestFunctionApp
   
             using var response = await _httpClient.SendAsync(httpRequest);
 
-            // Throw for anything higher than 400.
+            //TODO: Logging and not throwing. Confirm that this is correct approach
             if (response is { StatusCode: >= HttpStatusCode.BadRequest })
             {
                 log.LogInformation("Something went wrong with the Monitor API call");

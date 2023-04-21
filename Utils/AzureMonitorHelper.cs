@@ -4,7 +4,7 @@ using Azure.Monitor.Query;
 using Azure.Monitor.Query.Models;
 using Observability.Utils.Data;
 using System.Diagnostics;
-//TODO: Is sppsettings.json file in this project needed still?
+//TODO: Is apppsettings.json file in this project needed still?
 namespace Observability.Utils
 {
     public class AzureMonitorHelper
@@ -15,7 +15,7 @@ namespace Observability.Utils
             metricsClient = new MetricsQueryClient(new DefaultAzureCredential());
         }
 
-        public async Task RunBatchQuery(Message message)
+        public async Task RunBatchQueryAsync(Message message)
         {
             string resourceId = message.Resources[0].ID;
 

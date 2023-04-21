@@ -75,7 +75,7 @@ namespace Observability.SchedulePipelineFunctionApp
                 }
                 else
                 {
-                    subscriptionName = resourceClient.GetSubscriptionName(subscriptionId.ToString());
+                    subscriptionName = resourceClient.GetSubscriptionName(subscriptionId.ToString()); //TODO: make asynchronous
                     await adx.IngestSubscriptionNameAsync(subscriptionId.ToString(), subscriptionName);
                 }
 

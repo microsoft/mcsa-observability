@@ -50,7 +50,6 @@ namespace Observability.Utils
             var queryContent = new ResourceQueryContent(query);
 
             var response = tenant.GetResources(queryContent);
-            Thread.Sleep(1000); //TODO: why sleeping?
             var result = response.Value.Data;
 
             var stringSub = Encoding.ASCII.GetString(result);
