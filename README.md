@@ -124,7 +124,7 @@ The solution relies on the following data to be present in the "Resource Provide
 
 #### Updating Resource Types
 
-1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
+1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_Import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
 
 ![githubfiledownload](Images/githubfiledownload-1.png)
 > Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
@@ -133,7 +133,7 @@ The solution relies on the following data to be present in the "Resource Provide
 
 #### Updating Subscriptions
 
-1. Download the file - [subscriptions.csv](Utils/scripts/csv_import/subscriptions.csv)  to local
+1. Download the file - [subscriptions.csv](Utils/scripts/csv_Import/subscriptions.csv)  to local
 2. Modify the CSV to include details of the subscriptions for which you want to track resource health.
 3. Follow the data ingestion steps as outlined in the previous instructions for ResourceType.csv file.
 
