@@ -166,10 +166,14 @@ functionsVersion="4"
 az functionapp create --name TimerStartPipelineFunction-$prefix --storage-account $stor --consumption-plan-location $location  --resource-group $rg --functions-version $functionsVersion
 ## az functionapp deployment source config --branch $branch --manual-integration --name TimerStartPipelineFunction --repo-url $gitrepo --resource-group $rg
 az functionapp deployment source config-zip -g $rg -n TimerStartPipelineFunction-$prefix --src $currentDir/SchedulePipelineFunctionApp.zip
+az resource update --resource-group $rg --name scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/TimerStartPipelineFunction-$prefix --set properties.allow=false
+az resource update --resource-group $rg --name ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/TimerStartPipelineFunction-$prefix --set properties.allow=false
 
 az functionapp create --name AdxIngestFunction-$prefix --storage-account $stor --consumption-plan-location $location --resource-group $rg --functions-version $functionsVersion
 ## az functionapp deployment source config --branch $branch --manual-integration --name AdxIngestFunction --repo-url $gitrepo --resource-group $rg
 az functionapp deployment source config-zip -g $rg -n AdxIngestFunction-$prefix --src $currentDir/AdxIngestFunctionApp.zip
+az resource update --resource-group $rg --name scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/AdxIngestFunction-$prefix --set properties.allow=false
+az resource update --resource-group $rg --name ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/AdxIngestFunction-$prefix --set properties.allow=false
 
 az functionapp identity assign -g $rg -n TimerStartPipelineFunction-$prefix --identities $msi
 az functionapp identity assign -g $rg -n AdxIngestFunction-$prefix --identities $msi
@@ -207,40 +211,43 @@ az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix 
 az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "storageAccountName=$stor"
 az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "msiclientId=$msiclientId"
 az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "storagesas=$sas"
-az functionapp config appsettings set --name AdxIngestFunction-$prefix --resource-group $rg --settings "blobConnectionString=$blobConnectionString"
+az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "blobConnectionString=$blobConnectionString"
 
 
 ## tenantId=$(az account show -o tsv --query "homeTenantId")
 ## Check if we have to add scopes?  
-echo "Create SP" for grafana
+METRICS_FOLDER_PATH=$scriptsPath/dashboard_templates
+
+echo "Create SP for grafana"
 aadSP=$(az ad sp create-for-rbac -n $prefix-sp --role contributor --scopes /subscriptions/$subscriptionId/resourceGroups/$rg) 
+sleep 30
+
+echo $aadSP
+
 tenantId=$(echo "$aadSP" | jq -r .tenant)
 clientId=$(echo "$aadSP" | jq -r .appId)
 clientSecret=$(echo "$aadSP" | jq -r .password)
 
-echo "Add write permissions to dashboard templates"
-METRICS_FOLDER_PATH=$scriptsPath/dashboard_templates
+echo "Add permissions for grafana to access adx and db"
+az kusto cluster-principal-assignment create --cluster-name "$prefix-adx" --principal-id "$clientId" \
+ --principal-type "App" --role "AllDatabasesAdmin" --tenant-id "$tenantId" \
+ --principal-assignment-name "$prefix-kusto-sp" --resource-group "$rg"
 
-# Add permissions for grafana to access adx and db
-az kusto cluster-principal-assignment create --cluster-name $prefix-adx --principal-id $clientId \
- --principal-type "App" --role "AllDatabasesAdmin" --tenant-id $tenantId \
- --principal-assignment-name $prefix-kusto-sp --resource-group $rg
+az kusto database-principal-assignment create --cluster-name "$prefix-adx" \
+ --database-name "$metricsdbName" --principal-id "$clientId" --principal-type "App" \
+ --role "Admin" --tenant-id "$tenantId" --principal-assignment-name "$prefix-kusto-sp" --resource-group "$rg"
 
-az kusto database-principal-assignment create --cluster-name $prefix-adx \
- --database-name $metricsdbName --principal-id $clientId --principal-type "App" \
- --role "Admin" --tenant-id $tenantId --principal-assignment-name $prefix-kusto-sp --resource-group $rg
+az kusto cluster-principal-assignment  create --cluster-name "$prefix-adx" --principal-id "$msiprincipalId" \
+ --principal-type "App" --role "AllDatabasesAdmin" --tenant-id "$tenantId" \
+ --principal-assignment-name "$prefix-kusto-msi" --resource-group "$rg"
 
-az kusto cluster-principal-assignment  create --cluster-name $prefix-adx --principal-id $msiprincipalId \
- --principal-type "App" --role "AllDatabasesAdmin" --tenant-id $tenantId \
- --principal-assignment-name $prefix-kusto-msi --resource-group $rg
-
-az kusto database-principal-assignment create --cluster-name $prefix-adx --database-name $metricsdbName \
- --principal-id $msiprincipalId --principal-type "App" --role "Admin" --tenant-id $tenantId \
- --principal-assignment-name $prefix-db-msi --resource-group $rg
+az kusto database-principal-assignment create --cluster-name "$prefix-adx" --database-name "$metricsdbName" \
+ --principal-id "$msiprincipalId" --principal-type "App" --role "Admin" --tenant-id "$tenantId" \
+ --principal-assignment-name "$prefix-db-msi" --resource-group "$rg"
 
 sleep 5
 
-## Create azure managed grafana instance
-## Configure dashboard
+echo "Create azure managed grafana instance"
+echo "Configure dashboard"
 cd $scriptsPath
 /bin/bash ./setup-grafana.sh "$prefix" "$location" "$tenantId" "$subscriptionId" "$clientId" "$clientSecret" "$adxConnectionString" "$metricsdbName" "$METRICS_FOLDER_PATH"
