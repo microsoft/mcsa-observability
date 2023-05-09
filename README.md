@@ -154,11 +154,16 @@ currentDir=$(pwd)
 # change directory to where Terraform main.tf is located
 cd $currentDir/Utils/scripts/Terraform
 
+#log in to the tenant where the subscription to host the resources is present
+az login 
+
 #initialize terraform providers
-terraform init
+terraform init -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>"
+eg: terraform init -var="test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus"
 
 # run a plan on the root file
-terraform plan
+terraform plan -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>"
+eg: terraform plan -var="test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus"
 
 # Terraform apply
 terraform apply -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>"
