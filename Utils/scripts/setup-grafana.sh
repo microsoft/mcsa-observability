@@ -2,27 +2,53 @@
 
 prefix=$1
 location=$2
-
-tenant_Id=$3
-subscriptionId=$4
-client_Id=$5
-client_Secret=$6
-
-cluster_Url=$7
-dbName=$8
-
-METRICS_FOLDER_PATH=$9 ## json template path
-
+subscriptionId=$3
+cluster_Url=$4
+dbName=$5
+METRICS_FOLDER_PATH=$6 ## json template path
+rg=$7
+msiprincipalId=$8
 ## az login ## --identity
 ## az account set -s $subscriptionId
 
 echo $subscriptionId
 echo $prefix
 
+
+## tenantId=$(az account show -o tsv --query "homeTenantId")
+## Check if we have to add scopes?  
+echo "Create SP" for grafana
+aadSP=$(az ad sp create-for-rbac -n $prefix-sp --role contributor --scopes /subscriptions/$subscriptionId/resourceGroups/$rg) 
+tenantId=$(echo "$aadSP" | jq -r .tenant)
+clientId=$(echo "$aadSP" | jq -r .appId)
+clientSecret=$(echo "$aadSP" | jq -r .password)
+
+echo "Add write permissions to dashboard templates"
+#METRICS_FOLDER_PATH=$scriptsPath/dashboard_templates
+
+# Add permissions for grafana to access adx and db
+az kusto cluster-principal-assignment create --cluster-name $prefix"adx" --principal-id "$clientId" \
+ --principal-type "App" --role "AllDatabasesAdmin" --tenant-id "$tenantId" \
+ --principal-assignment-name "$prefix-kusto-sp" --resource-group "$rg"
+
+az kusto database-principal-assignment create --cluster-name $prefix"adx" \
+ --database-name "$dbName" --principal-id "$clientId" --principal-type "App" \
+ --role "Admin" --tenant-id "$tenantId" --principal-assignment-name "$prefix-kusto-sp" --resource-group "$rg"
+
+az kusto cluster-principal-assignment  create --cluster-name $prefix"adx" --principal-id "$msiprincipalId" \
+ --principal-type "App" --role "AllDatabasesAdmin" --tenant-id "$tenantId" \
+ --principal-assignment-name "$prefix-kusto-msi" --resource-group "$rg"
+
+az kusto database-principal-assignment create --cluster-name $prefix"adx" --database-name "$dbName" \
+ --principal-id "$msiprincipalId" --principal-type "App" --role "Admin" --tenant-id "$tenantId" \
+ --principal-assignment-name "$prefix-db-msi" --resource-group "$rg"
+
+sleep 5
+
 az config set extension.use_dynamic_install=yes_without_prompt
 
-echo "clientID: $client_Id"
-echo "tenantID: $tenant_Id"
+echo "clientID: $clientId"
+echo "tenantID: $tenantId"
 
 az grafana create --name $prefix-grafana --resource-group $prefix-RG --location $location --skip-role-assignments false --skip-system-assigned-identity false
 sleep 5
@@ -52,15 +78,15 @@ az grafana data-source create -n $prefix-grafana --definition '{
   "basicAuth": false,
   "isDefault": false,
   "jsonData": {
-    "clientId": "'"$client_Id"'",
+    "clientId": "'"$clientId"'",
     "clusterUrl": "'"$cluster_Url"'",
     "dataConsistency": "strongconsistency",
     "defaultDatabase": "'"$dbName"'",
     "defaultEditorMode": "visual",
     "schemaMappings": [],
-    "tenantId": "'"$tenant_Id"'"
+    "tenantId": "'"$tenantId"'"
     },
-  "secureJsonData": {"clientSecret": "'"$client_Secret"'"},
+  "secureJsonData": {"clientSecret": "'"$clientSecret"'"},
   "readOnly": false
 }'
 
