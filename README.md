@@ -1,5 +1,7 @@
 # Solution Approach to Observability
 
+This repository contains reference architecture, code sample and dashboard template for tracking Azure resources availability (uptime/downtime) trends.
+
 ## Architecture
 
 The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
@@ -81,10 +83,20 @@ echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsof
 # 4.Update repository information and install the azure-cli package:
 sudo apt-get update -y
 sudo apt-get install -y azure-cli
+
+#5. Install Terraform
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+wget -O- https://apt.releases.hashicorp.com/gpg | \
+gpg --dearmor | \
+sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+gpg --no-default-keyring \
+--keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+--fingerprint
+sudo apt update
+sudo apt-get install terraform
 ```
 
-### Installation
-
+### Installation using shell script
 ```
 ## Clone git repo into the folder
 ## TODO: Update github repo link variable
@@ -117,6 +129,41 @@ cd $currentDir/Utils/scripts
 eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/code"
 ```
 
+### Install using Terraform
+
+```
+## Clone git repo into the folder
+repolink=""
+codePath=$"./observability"
+git clone $repolink $codePath
+
+## Please setup the following required parameters for the script to run:
+## prefix - prefix string to identify the resources created with this deployment. eg: test
+## subscriptionId - subscriptionId where the solution will be deployed to
+## location - location where the azure resources will be created. eg: eastus
+
+# change directory to where the repo is cloned
+cd $codePath
+
+# set variables
+prefix=""
+subscriptionId=""
+location=""
+currentDir=$(pwd)
+
+# change directory to where Terraform main.tf is located
+cd $currentDir/Utils/scripts/Terraform
+
+#initialize terraform providers
+terraform init
+
+# run a plan on the root file
+terraform plan
+
+# Terraform apply
+terraform apply -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>"
+eg: terraform apply -var="test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus"
+```
 ### Post Installation
 #### Post Installation Steps:
 
