@@ -104,6 +104,11 @@ resource "time_sleep" "wait_storage_container_creation" {
   create_duration = "5s"
 }
 
+locals{
+    today=formatdate("YYYY-MM-DD", timestamp())
+    next_year=formatdate("YYYY-MM-DD", timeadd(timestamp(), "8640h"))
+}
+
 #create sas tokens for azure blob
 data "azurerm_storage_account_blob_container_sas" "this" {
   connection_string = azurerm_storage_account.this.primary_connection_string
@@ -111,8 +116,8 @@ data "azurerm_storage_account_blob_container_sas" "this" {
   https_only        = true
   depends_on = [time_sleep.wait_storage_container_creation]
 
-  start  = "2023-04-19"
-  expiry = "2023-05-23"
+  start  = local.today
+  expiry = local.next_year
 
   permissions {
     read   = true
