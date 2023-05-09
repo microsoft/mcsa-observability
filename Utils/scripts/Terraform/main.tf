@@ -606,3 +606,19 @@ resource "azurerm_role_assignment" "msi_storage_role" {
   principal_id         = azurerm_user_assigned_identity.terraform.principal_id
   depends_on = [time_sleep.wait_setup_grafana]
 }
+
+#add reader to the timerstartpipelineapp
+resource "azurerm_role_assignment" "msi_timerstartpipelineapp_role" {
+  scope                = azurerm_windows_function_app.timerstartpipelineapp.id#data.azurerm_subscription.primary.id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_user_assigned_identity.terraform.principal_id
+  depends_on = [time_sleep.wait_setup_grafana]
+}
+
+#add reader to the adxingestapp
+resource "azurerm_role_assignment" "msi_adxingestionapp_role" {
+  scope                = azurerm_windows_function_app.adxingestionapp.id#data.azurerm_subscription.primary.id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_user_assigned_identity.terraform.principal_id
+  depends_on = [time_sleep.wait_setup_grafana]
+}
