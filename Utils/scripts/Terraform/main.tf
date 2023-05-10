@@ -564,7 +564,7 @@ resource "null_resource" "set_exec_permissions" {
 resource "time_sleep" "wait_set_exec_permissions" {
   depends_on = [null_resource.function_app_publish_adxingest]
 
-  create_duration = "3s"
+  create_duration = "30s"
 }
 
 resource "null_resource" "setup_grafana" {
