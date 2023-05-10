@@ -624,7 +624,6 @@ resource "azurerm_role_assignment" "msi_adxingestionapp_role" {
 }
 
 # add monitoring reader access to msi
-Monitoring Reader
 resource "azurerm_role_assignment" "msi_monitoringreader_role" {
   scope                = data.azurerm_subscription.primary.id
   role_definition_name = "Monitoring Reader"
