@@ -143,7 +143,7 @@ namespace Observability.Utils
                 {
                     DeleteSourceOnSuccess = false
                 };
-
+                log.LogInformation($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName}{storageSasToken}",storageAccountName, containerName, fileName, storageSasToken);
                 await client.IngestFromStorageAsync($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName}{storageSasToken}", ingestionProperties: kustoIngestionProperties, sourceOptions);
             }
         }
