@@ -622,3 +622,12 @@ resource "azurerm_role_assignment" "msi_adxingestionapp_role" {
   principal_id         = azurerm_user_assigned_identity.terraform.principal_id
   depends_on = [time_sleep.wait_setup_grafana]
 }
+
+# add monitoring reader access to msi
+Monitoring Reader
+resource "azurerm_role_assignment" "msi_monitoringreader_role" {
+  scope                = data.azurerm_subscription.primary.id
+  role_definition_name = "Monitoring Reader"
+  principal_id         = azurerm_user_assigned_identity.terraform.principal_id
+  depends_on = [time_sleep.wait_setup_grafana]
+}
