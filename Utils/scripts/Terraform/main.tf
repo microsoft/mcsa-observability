@@ -40,6 +40,7 @@ output "object_id" {
   value = "${data.azurerm_client_config.current.object_id}"
 }
 
+#create resource group to house resources
 resource "azurerm_resource_group" "rg" {
   name     = "${var.prefix}-RG"
   location = "${var.location}"
@@ -58,7 +59,6 @@ output "terraform_identity_object_id" {
 
 resource "time_sleep" "wait_managed_identity_creation" {
   depends_on = [azurerm_user_assigned_identity.terraform]
-
   create_duration = "60s"
 }
 
@@ -69,6 +69,7 @@ resource "azurerm_storage_account" "this" {
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  shared_access_key_enabled = true
   depends_on = [time_sleep.wait_managed_identity_creation]
 
   tags = {
@@ -79,7 +80,7 @@ resource "azurerm_storage_account" "this" {
 resource "time_sleep" "wait_storage_account_creation" {
   depends_on = [azurerm_user_assigned_identity.terraform]
 
-  create_duration = "180s"
+  create_duration = "60s"
 }
 
 #create storage containers
@@ -105,10 +106,52 @@ resource "time_sleep" "wait_storage_container_creation" {
 }
 
 locals{
-    today=formatdate("YYYY-MM-DD", timestamp())
-    next_year=formatdate("YYYY-MM-DD", timeadd(timestamp(), "8640h"))
+    startdate_formatted=formatdate("YYYY-MM-DD", timeadd(timestamp(), "-72h"))
+    expirydate_formatted=formatdate("YYYY-MM-DD", timeadd(timestamp(), "8568h"))
+    startdate=timeadd(timestamp(), "-72h")
+    expirydate=timeadd(timestamp(), "8568h")
 }
 
+#create sas tokens for storage account
+data "azurerm_storage_account_sas" "this" {
+  connection_string = azurerm_storage_account.this.primary_connection_string
+  https_only        = true
+  #signed_version    = "2017-07-29"
+  depends_on = [time_sleep.wait_storage_container_creation]
+
+  resource_types {
+    service   = true
+    container = true
+    object    = true
+  }
+
+  services {
+    blob  = true
+    queue = true
+    table = true
+    file  = true
+  }
+  start  = local.startdate
+  expiry = local.expirydate
+
+  permissions {
+    read   = true
+    add    = true
+    create = true
+    write  = true
+    delete = true
+    list   = true
+    update  = false
+    process = false
+    tag     = false
+    filter  = false
+  }
+}
+
+output "sas_url_query_string" {
+  value = data.azurerm_storage_account_sas.this.sas
+sensitive = true
+}
 #create sas tokens for azure blob
 data "azurerm_storage_account_blob_container_sas" "this" {
   connection_string = azurerm_storage_account.this.primary_connection_string
@@ -116,8 +159,8 @@ data "azurerm_storage_account_blob_container_sas" "this" {
   https_only        = true
   depends_on = [time_sleep.wait_storage_container_creation]
 
-  start  = local.today
-  expiry = local.next_year
+  start  = local.startdate_formatted
+  expiry = local.expirydate_formatted
 
   permissions {
     read   = true
@@ -157,8 +200,8 @@ resource "azurerm_kusto_cluster" "this" {
   resource_group_name = azurerm_resource_group.rg.name
 
   sku {
-    name     = "Standard_D13_v2"
-    capacity = 2
+    name     = "Dev(No SLA)_Standard_E2a_v4"
+    capacity = 1
   }
 
   identity {
@@ -200,7 +243,7 @@ resource "azurerm_kusto_script" "table" {
   name                               = "metricsdbtables"
   database_id                        = azurerm_kusto_database.database.id
   url                                = azurerm_storage_blob.this.id
-  sas_token                          = data.azurerm_storage_account_blob_container_sas.this.sas
+  sas_token                          = data.azurerm_storage_account_sas.this.sas
   continue_on_errors_enabled         = true
   force_an_update_when_value_changed = "first"
   depends_on = [time_sleep.wait_kusto_database_creation]
@@ -228,13 +271,12 @@ resource "azurerm_servicebus_namespace" "this" {
 resource "azurerm_servicebus_queue" "this" {
   name         = "${var.prefix}-sbq"
   namespace_id = azurerm_servicebus_namespace.this.id
-
+  depends_on = [azurerm_servicebus_namespace.this]
   enable_partitioning = true
 }
 
 resource "time_sleep" "wait_servicebus_creation" {
   depends_on = [azurerm_servicebus_queue.this]
-
   create_duration = "10s"
 }
 
@@ -260,7 +302,7 @@ resource "azurerm_application_insights" "timerstartpipelineapp" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
-  depends_on = [time_sleep.wait_servicebus_creation]
+  depends_on = [azurerm_service_plan.timerstartpipelineapp]
 }
 
 resource "azurerm_windows_function_app" "timerstartpipelineapp" {
@@ -271,7 +313,7 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
   storage_account_name       = azurerm_storage_account.this.name
   storage_account_access_key = azurerm_storage_account.this.primary_access_key
   service_plan_id            = azurerm_service_plan.timerstartpipelineapp.id
-  depends_on = [time_sleep.wait_servicebus_creation]
+  depends_on = [azurerm_application_insights.timerstartpipelineapp]
 
   identity {
     type = "UserAssigned"
@@ -290,7 +332,7 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     rawDataContainerName=azurerm_storage_container.data.name
     storageAccountName=local.storage_account_name
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
-    storagesas=data.azurerm_storage_account_blob_container_sas.this.sas
+    storagesas=data.azurerm_storage_account_sas.this.sas
     blobConnectionString=azurerm_storage_account.this.primary_connection_string
 	}
 }
@@ -298,6 +340,10 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
 locals {
     dotnet_build_timerpipelineapp         = "dotnet build ${path.cwd}/../../../SchedulePipelineFunctionApp/SchedulePipelineFunctionApp.csproj -c Release"
     dotnet_publish_timerpipelineapp       = "dotnet publish ${path.cwd}/../../../SchedulePipelineFunctionApp/SchedulePipelineFunctionApp.csproj -o ${path.cwd}/../../../SchedulePipelineFunctionApp/bin/publish"
+    source_zip_path_app1                  = "${path.cwd}/../../../SchedulePipelineFunctionApp/SchedulePipelineFunctionApp.zip"
+    generate_access_token_app1                 = "$(az account get-access-token --query \"accessToken\" --output tsv)"
+    destination_zip_path_app1             = "https://TimerStartPipelineFunction-${var.prefix}.scm.azurewebsites.net/api/zipdeploy"
+    curl_zip_deploy_app1                       = "curl -X POST --data-binary @\"${local.source_zip_path_app1}\" -H \"Authorization: Bearer ${local.generate_access_token_app1}\" \"${local.destination_zip_path_app1}\""
     disable_basic_auth_timerpipelineapp_scm   = "az resource update --resource-group ${azurerm_resource_group.rg.name} --name scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/TimerStartPipelineFunction-${var.prefix} --set properties.allow=false"
     disable_basic_auth_timerpipelineapp_ftp   = "az resource update --resource-group ${azurerm_resource_group.rg.name} --name ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/TimerStartPipelineFunction-${var.prefix} --set properties.allow=false"
 }
@@ -341,28 +387,24 @@ data "archive_file" "file_function_app_timerpipeline" {
 output "full-file_path" {
 value = data.archive_file.file_function_app_timerpipeline.output_path
 }
-locals {
-    publish_code_command_timerpipeline = "az functionapp deployment source config-zip -g ${var.prefix}-RG -n TimerStartPipelineFunction-${var.prefix} --src ${path.cwd}/../../../SchedulePipelineFunctionApp/SchedulePipelineFunctionApp.zip"
-}
 
-resource "time_sleep" "wait_timerpipeline_publish" {
+resource "time_sleep" "wait_file_function_app_timerpipeline" {
   depends_on = [data.archive_file.file_function_app_timerpipeline]
-
-  create_duration = "60s"
+  create_duration = "10s"
 }
 
-resource "null_resource" "function_app_publish_timerpipeline" {
+resource "null_resource" "deploy_zip_app1" {
   provisioner "local-exec" {
-    command = local.publish_code_command_timerpipeline
+    command = local.curl_zip_deploy_app1
   }
-  depends_on = [time_sleep.wait_timerpipeline_publish]
+  depends_on = [time_sleep.wait_file_function_app_timerpipeline]
   triggers = {
-    publish_code_command = local.publish_code_command_timerpipeline
+    generate_azaccess_token = local.curl_zip_deploy_app1
   }
 }
 
 resource "time_sleep" "wait_function_app_publish_timerpipeline" {
-  depends_on = [null_resource.function_app_publish_timerpipeline]
+  depends_on = [null_resource.deploy_zip_app1]
 
   create_duration = "60s"
 }
@@ -387,7 +429,6 @@ resource "null_resource" "disable_basic_auth_timerpipelineapp_ftp" {
     disable_basic_auth_timerpipelineapp_ftp_command = local.disable_basic_auth_timerpipelineapp_ftp
   }
 }
-
 resource "azurerm_service_plan" "adxingestionapp" {
   name                = "adxingestionapp-service-plan"
   resource_group_name = azurerm_resource_group.rg.name
@@ -402,7 +443,7 @@ resource "azurerm_application_insights" "adxingestionapp" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
-  depends_on = [time_sleep.wait_servicebus_creation]
+  depends_on = [azurerm_service_plan.adxingestionapp]
 }
 
 resource "azurerm_windows_function_app" "adxingestionapp" {
@@ -413,16 +454,14 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
   storage_account_name       = azurerm_storage_account.this.name
   storage_account_access_key = azurerm_storage_account.this.primary_access_key
   service_plan_id            = azurerm_service_plan.adxingestionapp.id
-  depends_on = [time_sleep.wait_servicebus_creation]
+  depends_on = [azurerm_application_insights.adxingestionapp]
 
   identity {
     type = "UserAssigned"
     identity_ids = ["/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.prefix}-RG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${var.prefix}-msi"]
   }
 
-  site_config {
-    ftps_state = "Disabled"
-  }
+  site_config {}
   
   app_settings = {
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.adxingestionapp.instrumentation_key
@@ -434,7 +473,7 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     rawDataContainerName=azurerm_storage_container.data.name
     storageAccountName=local.storage_account_name
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
-    storagesas=data.azurerm_storage_account_blob_container_sas.this.sas
+    storagesas=data.azurerm_storage_account_sas.this.sas
     blobConnectionString=azurerm_storage_account.this.primary_connection_string
 	}
 
@@ -443,6 +482,10 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
 locals {
     dotnet_build_adxingestapp         = "dotnet build ${path.cwd}/../../../AdxIngestFunctionApp/AdxIngestFunctionApp.csproj -c Release"
     dotnet_publish_adxingestapp       = "dotnet publish ${path.cwd}/../../../AdxIngestFunctionApp/AdxIngestFunctionApp.csproj -o ${path.cwd}/../../../AdxIngestFunctionApp/bin/publish"
+    source_zip_path_app2                  = "${path.cwd}/../../../AdxIngestFunctionApp/AdxIngestFunctionApp.zip"
+    generate_access_token_app2                 = "$(az account get-access-token --query \"accessToken\" --output tsv)"
+    destination_zip_path_app2             = "https://AdxIngestFunction-${var.prefix}.scm.azurewebsites.net/api/zipdeploy"
+    curl_zip_deploy_app2                       = "curl -X POST --data-binary @\"${local.source_zip_path_app2}\" -H \"Authorization: Bearer ${local.generate_access_token_app2}\" \"${local.destination_zip_path_app2}\""
     disable_basic_auth_adxingestapp_scm   = "az resource update --resource-group ${azurerm_resource_group.rg.name} --name scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/AdxIngestFunction-${var.prefix} --set properties.allow=false"
     disable_basic_auth_adxingestapp_ftp   = "az resource update --resource-group ${azurerm_resource_group.rg.name} --name ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/AdxIngestFunction-${var.prefix} --set properties.allow=false"
 }
@@ -466,7 +509,7 @@ resource "null_resource" "dotnet_publish_adxingestapp" {
   provisioner "local-exec" {
     command = local.dotnet_publish_adxingestapp
   }
-  depends_on = [time_sleep.wait_adxingestionapp_creation]
+  depends_on = [null_resource.dotnet_build_adxingestapp]
   triggers = {
     dotnet_build_command = local.dotnet_publish_adxingestapp
   }
@@ -487,30 +530,26 @@ data "archive_file" "file_function_app_adxingest" {
 output "full-file_path_adxingestapp" {
 value = data.archive_file.file_function_app_adxingest.output_path
 }
-locals {
-    publish_code_command_adxingest = "az functionapp deployment source config-zip -g ${var.prefix}-RG -n AdxIngestFunction-${var.prefix} --src ${path.cwd}/../../../AdxIngestFunctionApp/AdxIngestFunctionApp.zip"
-}
 
-resource "time_sleep" "wait_adxingest_publish" {
+resource "time_sleep" "wait_file_function_app_adxingest" {
   depends_on = [data.archive_file.file_function_app_adxingest]
-
-  create_duration = "60s"
+  create_duration = "10s"
 }
 
-resource "null_resource" "function_app_publish_adxingest" {
+resource "null_resource" "deploy_zip_app2" {
   provisioner "local-exec" {
-    command = local.publish_code_command_adxingest
+    command = local.curl_zip_deploy_app2
   }
-  depends_on = [time_sleep.wait_adxingest_publish]
+  depends_on = [time_sleep.wait_file_function_app_adxingest]
   triggers = {
-    publish_code_command = local.publish_code_command_adxingest
+    generate_azaccess_token = local.curl_zip_deploy_app2
   }
 }
 
 resource "time_sleep" "wait_function_app_publish_adxingest" {
-  depends_on = [null_resource.function_app_publish_adxingest]
+  depends_on = [null_resource.deploy_zip_app2]
 
-  create_duration = "60s"
+  create_duration = "20s"
 }
 
 resource "null_resource" "disable_basic_auth_adxingestapp_scm" {
@@ -548,7 +587,7 @@ locals {
 }
 
 resource "time_sleep" "wait_setup_grafana" {
-  depends_on = [null_resource.function_app_publish_adxingest]
+  depends_on = [time_sleep.wait_function_app_creation]
 
   create_duration = "60s"
 }
@@ -562,9 +601,9 @@ resource "null_resource" "set_exec_permissions" {
   }
 }
 resource "time_sleep" "wait_set_exec_permissions" {
-  depends_on = [null_resource.function_app_publish_adxingest]
+  depends_on = [time_sleep.wait_function_app_publish_adxingest]
 
-  create_duration = "30s"
+  create_duration = "90s"
 }
 
 resource "null_resource" "setup_grafana" {
@@ -601,7 +640,7 @@ resource "azurerm_role_assignment" "database" {
 
 #add storage_blob_data_contributor to the storage account
 resource "azurerm_role_assignment" "msi_storage_role" {
-  scope                = azurerm_storage_account.this.id#data.azurerm_subscription.primary.id
+  scope                = azurerm_storage_account.this.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_user_assigned_identity.terraform.principal_id
   depends_on = [time_sleep.wait_setup_grafana]
@@ -609,7 +648,7 @@ resource "azurerm_role_assignment" "msi_storage_role" {
 
 #add reader to the timerstartpipelineapp
 resource "azurerm_role_assignment" "msi_timerstartpipelineapp_role" {
-  scope                = azurerm_windows_function_app.timerstartpipelineapp.id#data.azurerm_subscription.primary.id
+  scope                = azurerm_windows_function_app.timerstartpipelineapp.id
   role_definition_name = "Reader"
   principal_id         = azurerm_user_assigned_identity.terraform.principal_id
   depends_on = [time_sleep.wait_setup_grafana]
@@ -617,11 +656,12 @@ resource "azurerm_role_assignment" "msi_timerstartpipelineapp_role" {
 
 #add reader to the adxingestapp
 resource "azurerm_role_assignment" "msi_adxingestionapp_role" {
-  scope                = azurerm_windows_function_app.adxingestionapp.id#data.azurerm_subscription.primary.id
+  scope                = azurerm_windows_function_app.adxingestionapp.id
   role_definition_name = "Reader"
   principal_id         = azurerm_user_assigned_identity.terraform.principal_id
   depends_on = [time_sleep.wait_setup_grafana]
 }
+
 
 # add monitoring reader access to msi
 resource "azurerm_role_assignment" "msi_monitoringreader_role" {
