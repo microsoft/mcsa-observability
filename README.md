@@ -198,3 +198,8 @@ To add other users to view/edit the Grafana dashboard, follow [adding role assig
 #### Storage access 
 
 sas token - expires in a year need to update it
+
+#### az grafana known issue with higher az cli versions
+az grafana create not compatible with az cli versions > 2.47 ongoing issue - https://github.com/Azure/azure-cli-extensions/issues/6221, advice to use lower
+versions of cli <=2.40 until the issue is resolved.
+![recommended cli version](Images/az-cli-version.png)
