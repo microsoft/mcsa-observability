@@ -158,16 +158,15 @@ cd $currentDir/Utils/scripts/Terraform
 az login 
 
 #initialize terraform providers
-terraform init -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>"
-eg: terraform init -var="test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus"
+terraform init
 
 # run a plan on the root file
-terraform plan -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>"
-eg: terraform plan -var="test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus"
+terraform plan -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
+eg: terraform plan -var="test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
 
 # Terraform apply
-terraform apply -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>"
-eg: terraform apply -var="test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus"
+terraform apply -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
+eg: terraform apply -var="test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
 ```
 ### Post Installation
 #### Post Installation Steps:
