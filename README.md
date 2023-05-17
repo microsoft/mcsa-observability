@@ -81,12 +81,36 @@ echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsof
     sudo tee /etc/apt/sources.list.d/azure-cli.list
 
 # 4.Update repository information and install the azure-cli package:
+## if using shell script
 sudo apt-get update -y
 sudo apt-get install -y azure-cli
+
+##if using terraform (use version < 2.46)
+apt-cache policy azure-cli
+sudo apt-get install azure-cli=<version>-1~bullseye
+
+#5. Install Terraform
+## 1.Ensure that your system is up to date and you have installed the gnupg, software-properties-common, and curl packages installed
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+## 2.Install the HashiCorp GPG key
+wget -O- https://apt.releases.hashicorp.com/gpg | \
+gpg --dearmor | \
+sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+## 3.Verify the key's fingerprint
+gpg --no-default-keyring \
+--keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+--fingerprint
+## 4.Add the official HashiCorp repository to your system
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+sudo tee /etc/apt/sources.list.d/hashicorp.list
+## 5.Download the package information from HashiCorp
+sudo apt update
+## 6.Install Terraform from the new repository
+sudo apt-get install terraform
 ```
 
-### Installation
-
+### Installation using shell script
 ```
 ## Clone git repo into the folder
 ## TODO: Update github repo link variable
@@ -119,6 +143,49 @@ cd $currentDir/Utils/scripts
 eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/code"
 ```
 
+### Install using Terraform
+
+```
+## Clone git repo into the folder
+repolink=""
+codePath=$"./observability"
+git clone $repolink $codePath
+
+## Please setup the following required parameters for the script to run:
+## prefix - prefix string to identify the resources created with this deployment. eg: test
+## subscriptionId - subscriptionId where the solution will be deployed to
+## location - location where the azure resources will be created. eg: eastus
+
+# change directory to where the repo is cloned
+cd $codePath
+
+# set current working directory
+currentDir=$(pwd)
+
+# change directory to where Terraform main.tf is located
+cd $currentDir/Utils/scripts/Terraform
+
+#log in to the tenant where the subscription to host the resources is present
+az login
+
+#list the subscriptions under the tenant
+az account show
+
+#set the subscription where the resources are to be deployed
+az account set --subscription <subscriptionId>
+
+#initialize terraform providers
+terraform init
+
+# run a plan on the root file
+terraform plan -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
+eg: terraform plan -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
+
+# Terraform apply
+terraform apply -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
+eg: terraform apply -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
+note: make sure to confirm resource creation with a "yes" when the prompt appears on running this command
+```
 ### Post Installation
 #### Post Installation Steps:
 
@@ -148,3 +215,9 @@ To add other users to view/edit the Grafana dashboard, follow [adding role assig
 #### Storage access 
 
 sas token - expires in a year need to update it
+
+#### az grafana known issue with higher az cli versions
+az grafana create not compatible with az cli versions > 2.46 ongoing issue - https://github.com/Azure/azure-cli-extensions/issues/6221, advice to use lower
+versions of cli <=2.46 until the issue is resolved.
+
+![recommended cli version](Images/az-cli-version.png)
