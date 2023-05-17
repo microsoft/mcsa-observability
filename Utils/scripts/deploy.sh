@@ -228,14 +228,16 @@ tenantId=$(echo "$aadSP" | jq -r .tenant)
 clientId=$(echo "$aadSP" | jq -r .appId)
 clientSecret=$(echo "$aadSP" | jq -r .password)
 
-echo "Add write permissions to dashboard templates"
-METRICS_FOLDER_PATH=$scriptsPath/dashboard_templates
-
 echo "Add permissions for grafana to access adx and db"
 az kusto cluster-principal-assignment create --cluster-name "$prefix-adx" --principal-id "$clientId" \
  --principal-type "App" --role "AllDatabasesAdmin" --tenant-id "$tenantId" \
  --principal-assignment-name "$prefix-kusto-sp" --resource-group "$rg"
  
+# Add permissions for grafana to access adx and db
+az kusto cluster-principal-assignment create --cluster-name $prefix-adx --principal-id $clientId \
+ --principal-type "App" --role "AllDatabasesAdmin" --tenant-id $tenantId \
+ --principal-assignment-name $prefix-kusto-sp --resource-group $rg
+
 az kusto database-principal-assignment create --cluster-name "$prefix-adx" \
  --database-name "$metricsdbName" --principal-id "$clientId" --principal-type "App" \
  --role "Admin" --tenant-id "$tenantId" --principal-assignment-name "$prefix-kusto-sp" --resource-group "$rg"
