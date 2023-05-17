@@ -85,7 +85,7 @@ namespace Observability.AdxIngestFunctionApp
                 log.LogInformation($"Response status code: {response.StatusCode}");
             }
 
-            var responseContent = await response.Content.ReadAsStringAsync(); //TODO: Shouild handle as stream and not bring into memory as a string. // see later converting string back to a stream in IngestToAdx2Async, AppendToBlobAsync
+            var responseContent = await response.Content.ReadAsStringAsync(); //TODO: Should handle as stream and not bring into memory as a string. // see later converting string back to a stream in IngestToAdx2Async, AppendToBlobAsync
 
             var adx = new AdxClientHelper(config, log); 
             await adx.IngestToAdx2Async(responseContent, message.ResultTable);

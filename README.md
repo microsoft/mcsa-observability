@@ -1,5 +1,7 @@
 # Solution Approach to Observability
 
+This repository contains reference architecture, code sample and dashboard template for tracking Azure resources availability (uptime/downtime) trends.
+
 ## Architecture
 
 The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
