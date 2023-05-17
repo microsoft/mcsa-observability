@@ -49,11 +49,12 @@
 //create functions
 .create-or-alter function  Parse_Aksservernode_Availability() {
     let ready = Aksservernode_Availability_Raw 
-    | extend id = tostring(metrics.resourceid) 
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid) 
     | extend subscriptionId = split(id, '/')[2] 
     | extend name = split(id, '/')[-1] 
-    | extend region = tostring(metrics.resourceregion) 
-    | mv-expand value = metrics.value 
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
     | where tostring(value.name.value) == 'kube_node_status_condition' 
     | mv-expand timeseries = value.timeseries 
     | mv-expand metadatavalues = timeseries.metadatavalues 
@@ -61,11 +62,12 @@
     | mv-expand data = timeseries.data 
     | project timestamp = todatetime(data.timeStamp), id = tostring(id), nodeReady = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name); 
     let notReady = Aksservernode_Availability_Raw 
-    | extend id = tostring(metrics.resourceid) 
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
     | extend subscriptionId = split(id, '/')[2] 
     | extend name = split(id, '/')[-1] 
-    | extend region = tostring(metrics.resourceregion) 
-    | mv-expand value = metrics.value 
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
     | where tostring(value.name.value) == 'kube_node_status_condition' 
     | mv-expand timeseries = value.timeseries 
     | mv-expand metadatavalues = timeseries.metadatavalues 
@@ -73,11 +75,12 @@
     | mv-expand data = timeseries.data 
     | project timestamp = todatetime(data.timeStamp), id = tostring(id), nodeNotReady = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name); 
     let unknown = Aksservernode_Availability_Raw 
-    | extend id = tostring(metrics.resourceid) 
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
     | extend subscriptionId = split(id, '/')[2] 
     | extend name = split(id, '/')[-1] 
-    | extend region = tostring(metrics.resourceregion) 
-    | mv-expand value = metrics.value 
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
     | where tostring(value.name.value) == 'kube_node_status_condition' 
     | mv-expand timeseries = value.timeseries 
     | mv-expand metadatavalues = timeseries.metadatavalues 
@@ -91,11 +94,12 @@
 
 .create-or-alter function  Parse_Cosmosdb_Availability() {
     Cosmosdb_Availability_Raw
-    | extend id = tostring(metrics.resourceid)
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
     | extend subscriptionId = split(id, '/')[2]
     | extend name = split(id, '/')[-1]
-    | extend region = tostring(metrics.resourceregion)
-    | mv-expand value = metrics.value
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
     | where tostring(value.name.value) == 'ServiceAvailability'
     | mv-expand timeseries = value.timeseries
     | mv-expand data = timeseries.data
@@ -110,11 +114,12 @@
 
 .create-or-alter function  Parse_Firewall_Availability() {
     Firewall_Availability_Raw
-    | extend id = tostring(metrics.resourceid)
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
     | extend subscriptionId = split(id, '/')[2]
     | extend name = split(id, '/')[-1]
-    | extend region = tostring(metrics.resourceregion)
-    | mv-expand value = metrics.value
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
     | where tostring(value.name.value) == 'FirewallHealth'
     | mv-expand timeseries = value.timeseries
     | mv-expand data = timeseries.data
@@ -129,11 +134,12 @@
 
 .create-or-alter function  Parse_Keyvault_Availability() {
     Keyvault_Availability_Raw
-    | extend id = tostring(metrics.resourceid)
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
     | extend subscriptionId = split(id, '/')[2]
     | extend name = split(id, '/')[-1]
-    | extend region = tostring(metrics.resourceregion)
-    | mv-expand value = metrics.value
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
     | where tostring(value.name.value) == 'Availability'
     | mv-expand timeseries = value.timeseries
     | mv-expand data = timeseries.data
@@ -143,16 +149,17 @@
         availability = todecimal(data.average),
         subscriptionId = toguid(subscriptionId),
         location = tostring(region),
-        name = tostring(name)     
+        name = tostring(name)
 }
 
 .create-or-alter function  Parse_Loadbalancer_Availability() {
     Loadbalancer_Availability_Raw
-    | extend id = tostring(metrics.resourceid)
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
     | extend subscriptionId = split(id, '/')[2]
     | extend name = split(id, '/')[-1]
-    | extend region = tostring(metrics.resourceregion)
-    | mv-expand value = metrics.value
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
     | where tostring(value.name.value) == 'VipAvailability'
     | mv-expand timeseries = value.timeseries
     | mv-expand data = timeseries.data
@@ -167,11 +174,12 @@
 
 .create-or-alter function  Parse_Storage_Availability() {
     Storage_Availability_Raw
-    | extend id = tostring(metrics.resourceid)
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
     | extend subscriptionId = split(id, '/')[2]
     | extend name = split(id, '/')[-1]
-    | extend region = tostring(metrics.resourceregion)
-    | mv-expand value = metrics.value
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
     | where tostring(value.name.value) == 'Availability'
     | mv-expand timeseries = value.timeseries
     | mv-expand data = timeseries.data

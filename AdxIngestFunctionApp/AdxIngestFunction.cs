@@ -39,29 +39,29 @@ namespace Observability.AdxIngestFunctionApp
             var config = new ConfigurationBuilder().AddEnvironmentVariables().Build(); //TODO: Consider moving to static AdxIngestionFunction
             var message = System.Text.Json.JsonSerializer.Deserialize<Message>(myQueueItem);
             var resourceIds = message.Resources.Select(r => r.ID).ToList();
-            var jsonResouces = System.Text.Json.JsonSerializer.Serialize(resourceIds);
+            var jsonResouces = System.Text.Json.JsonSerializer.Serialize(new { resourceids = resourceIds });
 
             var timeSpan = message.From.ToString("yyyy-MM-ddTHH:mm:ss.fffZ") + "/" + message.To.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
 
-            var batchUrl = $"https://metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metricbatch?region={message.Location}&timespan={timeSpan}&interval=PT15M&metricnames=Availability&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2020-08-01-preview";
+            var batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=Availability&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
 
             if (message.Type == "microsoft.network/azurefirewalls")
             {
-                batchUrl = $"https://metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metricbatch?region={message.Location}&timespan={timeSpan}&interval=PT15M&metricnames=FirewallHealth&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2020-08-01-preview";
+                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=FirewallHealth&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
 
             if (message.Type == "microsoft.network/loadbalancers")
             {
-                batchUrl = $"https://metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metricbatch?region={message.Location}&timespan={timeSpan}&interval=PT15M&metricnames=VipAvailability&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2020-08-01-preview";
+                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=VipAvailability&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
 
             if (message.Type == "microsoft.containerservice/managedclusters")
             {
-            batchUrl = $"https://metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metricbatch?region={message.Location}&timespan={timeSpan}&interval=PT15M&metricnames=kube_node_status_condition&aggregation=average&metricNamespace={message.Type}&$filter=status2 eq '*'&validatedimensions=false&autoadjusttimegrain=true&api-version=2020-08-01-preview";
+            batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=kube_node_status_condition&aggregation=average&metricNamespace={message.Type}&filter=status2 eq '*'&validatedimensions=false&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
             if (message.Type == "microsoft.documentdb/databaseaccounts")
             {
-                batchUrl = $"https://metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metricbatch?region={message.Location}&timespan={timeSpan}&interval=PT15M&metricnames=ServiceAvailability&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2020-08-01-preview";
+                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=ServiceAvailability&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
 
             log.LogInformation($"Batch url: {batchUrl}");
