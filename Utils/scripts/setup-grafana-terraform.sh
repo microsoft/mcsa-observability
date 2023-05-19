@@ -22,7 +22,7 @@ aadSP=$(az ad sp create-for-rbac -n $prefix-sp --role contributor --scopes /subs
 tenantId=$(echo "$aadSP" | jq -r .tenant)
 clientId=$(echo "$aadSP" | jq -r .appId)
 clientSecret=$(echo "$aadSP" | jq -r .password)
-sleep 10
+sleep 30
 echo "Add write permissions to dashboard templates"
 #METRICS_FOLDER_PATH=$scriptsPath/dashboard_templates
 
