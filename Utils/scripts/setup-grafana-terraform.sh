@@ -14,6 +14,7 @@ msiprincipalId=$8
 echo $subscriptionId
 echo $prefix
 
+az config set extension.use_dynamic_install=yes_without_prompt
 
 ## tenantId=$(az account show -o tsv --query "homeTenantId")
 ## Check if we have to add scopes?  
@@ -44,8 +45,6 @@ az kusto database-principal-assignment create --cluster-name $prefix"adx" --data
  --principal-assignment-name "$prefix-db-msi" --resource-group "$rg"
 
 sleep 5
-
-az config set extension.use_dynamic_install=yes_without_prompt
 
 echo "clientID: $clientId"
 echo "tenantID: $tenantId"
