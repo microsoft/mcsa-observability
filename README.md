@@ -87,58 +87,6 @@ cd $currentDir/Utils/scripts
 
 eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/code"
 ```
-
-### Install using Terraform
-
-```
-## Clone git repo into the folder
-repolink=""
-codePath=$"./observability"
-git clone $repolink $codePath
-
-## Please setup the following required parameters for the script to run:
-## prefix - prefix string to identify the resources created with this deployment. eg: test
-## subscriptionId - subscriptionId where the solution will be deployed to
-## location - location where the azure resources will be created. eg: eastus
-
-# change directory to where the repo is cloned
-cd $codePath
-
-# set current working directory
-currentDir=$(pwd)
-
-# install pre-requisites
-bash $currentDir/Utils/scripts/pre-requisites.sh
-
-#downgrade az-cli to use version < 2.46
-apt-cache policy azure-cli
-sudo apt-get install azure-cli=<version>-1~<Codename>
-eg: sudo apt-get install azure-cli=2.46.0-1~focal (Codename - focal/bionic/bullseye etc)
-
-# change directory to where Terraform main.tf is located
-cd $currentDir/Utils/scripts/Terraform
-
-#log in to the tenant where the subscription to host the resources is present
-az login
-
-#list the subscriptions under the tenant
-az account show
-
-#set the subscription where the resources are to be deployed
-az account set --subscription <subscriptionId>
-
-#initialize terraform providers
-terraform init
-
-# run a plan on the root file
-terraform plan -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
-eg: terraform plan -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
-
-# Terraform apply
-terraform apply -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
-eg: terraform apply -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
-note: make sure to confirm resource creation with a "yes" when the prompt appears on running this command
-```
 ### Post Installation
 #### Post Installation Steps:
 
