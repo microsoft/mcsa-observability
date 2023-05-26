@@ -50,6 +50,7 @@ The following section describes the Prerequisites and Installation steps to depl
 #### Environment
 
 The script can be executed in Linux - Ubuntu 20.04 (VM, WSL).
+Use az-cli versions <=2.46
 ###note: currently cloudshell is not supported since it uses az-cli > 2.46.0
 
 ### Installation using shell script
@@ -78,6 +79,11 @@ currentDir=$(pwd)
 
 # install pre-requisites
 bash $currentDir/Utils/scripts/pre-requisites.sh
+
+#downgrade az-cli to use version < 2.46
+apt-cache policy azure-cli
+sudo apt-get install azure-cli=<version>-1~<Codename>
+eg: sudo apt-get install azure-cli=2.46.0-1~focal (Codename - focal/bionic/bullseye etc)
 
 # change directory to where scripts are located
 cd $currentDir/Utils/scripts
