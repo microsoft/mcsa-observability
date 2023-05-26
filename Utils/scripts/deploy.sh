@@ -211,7 +211,7 @@ az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix 
 az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "storageAccountName=$stor"
 az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "msiclientId=$msiclientId"
 az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "storagesas=$sas"
-az functionapp config appsettings set --name AdxIngestFunction-$prefix --resource-group $rg --settings "blobConnectionString=$blobConnectionString"
+az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "blobConnectionString=$blobConnectionString"
 
 
 ## tenantId=$(az account show -o tsv --query "homeTenantId")
