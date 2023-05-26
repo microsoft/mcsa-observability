@@ -166,7 +166,7 @@ functionsVersion="4"
 access_token_app="$(az account get-access-token --query \"accessToken\" --output tsv)"
 
 az functionapp create --name TimerStartPipelineFunction-$prefix --storage-account $stor --consumption-plan-location $location  --resource-group $rg --functions-version $functionsVersion
-curl -X POST --data-binary @$(pwd)/../../SchedulePipelineFunctionApp.zip -H "Authorization: Bearer $access_token_app" "https://TimerStartPipelineFunction-${prefix}.scm.azurewebsites.net/api/zipdeploy"
+curl -X POST --data-binary @$(pwd)/../../SchedulePipelineFunctionApp.zip -H "Authorization: Bearer $access_token_app" "https://TimerStartPipelineFunction-$prefix.scm.azurewebsites.net/api/zipdeploy"
 
 az functionapp create --name AdxIngestFunction-$prefix --storage-account $stor --consumption-plan-location $location --resource-group $rg --functions-version $functionsVersion
 curl -X POST --data-binary @$(pwd)/../../AdxIngestFunctionApp.zip -H "Authorization: Bearer $access_token_app" "https://AdxIngestFunction-$prefix.scm.azurewebsites.net/api/zipdeploy"
