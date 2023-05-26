@@ -162,18 +162,14 @@ sbConnStr=$(az servicebus namespace authorization-rule keys list --resource-grou
 ## Deploy functions
 echo "Deploying functions"
 functionsVersion="4"
+#create an aad auth token
+access_token_app="$(az account get-access-token --query \"accessToken\" --output tsv)"
 
 az functionapp create --name TimerStartPipelineFunction-$prefix --storage-account $stor --consumption-plan-location $location  --resource-group $rg --functions-version $functionsVersion
-## az functionapp deployment source config --branch $branch --manual-integration --name TimerStartPipelineFunction --repo-url $gitrepo --resource-group $rg
-az functionapp deployment source config-zip -g $rg -n TimerStartPipelineFunction-$prefix --src $currentDir/SchedulePipelineFunctionApp.zip
-az resource update --resource-group $rg --name scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/TimerStartPipelineFunction-$prefix --set properties.allow=false
-az resource update --resource-group $rg --name ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/TimerStartPipelineFunction-$prefix --set properties.allow=false
+curl -X POST --data-binary @$(pwd)/../../SchedulePipelineFunctionApp.zip -H "Authorization: Bearer $access_token_app" "https://TimerStartPipelineFunction-${prefix}.scm.azurewebsites.net/api/zipdeploy"
 
 az functionapp create --name AdxIngestFunction-$prefix --storage-account $stor --consumption-plan-location $location --resource-group $rg --functions-version $functionsVersion
-## az functionapp deployment source config --branch $branch --manual-integration --name AdxIngestFunction --repo-url $gitrepo --resource-group $rg
-az functionapp deployment source config-zip -g $rg -n AdxIngestFunction-$prefix --src $currentDir/AdxIngestFunctionApp.zip
-az resource update --resource-group $rg --name scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/AdxIngestFunction-$prefix --set properties.allow=false
-az resource update --resource-group $rg --name ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/AdxIngestFunction-$prefix --set properties.allow=false
+curl -X POST --data-binary @$(pwd)/../../AdxIngestFunctionApp.zip -H "Authorization: Bearer $access_token_app" "https://AdxIngestFunction-$prefix.scm.azurewebsites.net/api/zipdeploy"
 
 az functionapp identity assign -g $rg -n TimerStartPipelineFunction-$prefix --identities $msi
 az functionapp identity assign -g $rg -n AdxIngestFunction-$prefix --identities $msi
