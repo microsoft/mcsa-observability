@@ -220,6 +220,7 @@ METRICS_FOLDER_PATH=$scriptsPath/dashboard_templates
 
 echo "Create SP for grafana"
 aadSP=$(az ad sp create-for-rbac -n $prefix-sp --role contributor --scopes /subscriptions/$subscriptionId/resourceGroups/$rg) 
+
 sleep 30
 
 echo $aadSP

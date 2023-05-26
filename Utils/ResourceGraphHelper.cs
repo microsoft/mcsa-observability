@@ -10,6 +10,7 @@ using System.Text;
 
 namespace Observability.Utils
 {
+    //TODO: Make methods asynchronous
     public class ResourceGraphHelper
     {
         ArmClient client;

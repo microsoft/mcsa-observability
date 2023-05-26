@@ -1,5 +1,7 @@
 # Solution Approach to Observability
 
+This repository contains reference architecture, code sample and dashboard template for tracking Azure resources availability (uptime/downtime) trends.
+
 ## Architecture
 
 The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
@@ -47,44 +49,10 @@ The following section describes the Prerequisites and Installation steps to depl
 
 #### Environment
 
-The script can be executed in Linux - Ubuntu 20.04 (VM, WSL) or Azure cloud shell.
+The script can be executed in Linux - Ubuntu 20.04 (VM, WSL).
+###note: currently cloudshell is not supported since it uses az-cli > 2.46.0
 
-#### Install pre-requisite libraries
-
-```sudo apt-get update -y
-sudo apt-get install -y git
-wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-sudo dpkg -i packages-microsoft-prod.deb
-rm packages-microsoft-prod.deb
-sudo apt-get update -y
-sudo apt-get install -y dotnet-sdk-6.0
-sudo apt-get install -y zip
-sudo apt-get install -y jq
-
-## Install az cli
-# 1.Get packages needed for the install process:
-sudo apt-get update -y
-sudo apt-get install -y ca-certificates curl apt-transport-https lsb-release gnupg
-
-# 2.Download and install the Microsoft signing key:
-sudo mkdir -p /etc/apt/keyrings
-curl -sLS https://packages.microsoft.com/keys/microsoft.asc | \
-    gpg --dearmor | \
-    sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null
-sudo chmod go+r /etc/apt/keyrings/microsoft.gpg
-
-# 3.Add the Azure CLI software repository:
-AZ_REPO=$(lsb_release -cs)
-echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | \
-    sudo tee /etc/apt/sources.list.d/azure-cli.list
-
-# 4.Update repository information and install the azure-cli package:
-sudo apt-get update -y
-sudo apt-get install -y azure-cli
-```
-
-### Installation
-
+### Installation using shell script
 ```
 ## Clone git repo into the folder
 ## TODO: Update github repo link variable
@@ -108,6 +76,9 @@ subscriptionId=""
 location=""
 currentDir=$(pwd)
 
+# install pre-requisites
+bash $currentDir/Utils/scripts/pre-requisites.sh
+
 # change directory to where scripts are located
 cd $currentDir/Utils/scripts
 
@@ -116,7 +87,6 @@ cd $currentDir/Utils/scripts
 
 eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/code"
 ```
-
 ### Post Installation
 #### Post Installation Steps:
 
@@ -146,3 +116,9 @@ To add other users to view/edit the Grafana dashboard, follow [adding role assig
 #### Storage access 
 
 sas token - expires in a year need to update it
+
+#### az grafana known issue with higher az cli versions
+az grafana create not compatible with az cli versions > 2.46 ongoing issue - https://github.com/Azure/azure-cli-extensions/issues/6221, advice to use lower
+versions of cli <=2.46 until the issue is resolved.
+
+![recommended cli version](Images/az-cli-version.png)
