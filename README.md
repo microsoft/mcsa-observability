@@ -4,7 +4,7 @@ This repository contains reference architecture, code sample and dashboard templ
 
 ## Architecture
 
-The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
+The following diagram gives a high-level view of the Azure services used in the Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
 
 ![Solution Architecture](Images/architecture.png)
 
@@ -121,7 +121,7 @@ To add other users to view/edit the Grafana dashboard, follow [adding role assig
 
 #### Storage access 
 
-sas token - expires in a year need to update it
+sas token - expires in a year, please update as required
 
 #### Known Issues
 * The 'az grafana create' command is not compatible with Azure CLI versions greater than 2.46. This is an ongoing issue documented in https://github.com/Azure/azure-cli-extensions/issues/6221. We advice to use lower
