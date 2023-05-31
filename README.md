@@ -96,7 +96,7 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 ### Post Installation
 #### Post Installation Steps:
 
-The solution relies on the following data to be present in the "Resource Provider and Subscriptions table" before it can be used to visualize the data. Follow the steps below to complete the post installation steps.
+The solution relies on the following data to be present in the 'Resource Provider and Subscriptions' table before it can be used to visualize the data. Please follow the steps below to complete the post-installation process.
 
 #### Updating Resource Types
 
@@ -123,8 +123,8 @@ To add other users to view/edit the Grafana dashboard, follow [adding role assig
 
 sas token - expires in a year need to update it
 
-#### az grafana known issue with higher az cli versions
-az grafana create not compatible with az cli versions > 2.46 ongoing issue - https://github.com/Azure/azure-cli-extensions/issues/6221, advice to use lower
-versions of cli <=2.46 until the issue is resolved.
+#### Known Issues
+* The 'az grafana create' command is not compatible with Azure CLI versions greater than 2.46. This is an ongoing issue documented in https://github.com/Azure/azure-cli-extensions/issues/6221. We advice to use lower
+versions of Azure CLI;specifically version <=2.46, until the issue is resolved.
 
 ![recommended cli version](Images/az-cli-version.png)
