@@ -51,7 +51,7 @@ The following section describes the Prerequisites and Installation steps to depl
 
 The script can be executed in Linux - Ubuntu 20.04 (VM, WSL).
 Use az-cli versions <=2.46
-###note: currently cloudshell is not supported since it uses az-cli > 2.46.0
+> Note: Cloudshell is not supported since it uses az-cli > 2.46.0
 
 ### Installation using shell script
 ```
