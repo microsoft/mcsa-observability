@@ -59,6 +59,7 @@ function populate_datasource_uid() {
         echo "$( jq --arg uid "$uid" '.dashboard.panels[].targets[]?.datasource |= if (.type=="grafana-azure-data-explorer-datasource") then (.uid=$uid) else . end' $file)" > $file
         echo "$( jq --arg dbName "$dbName" '.dashboard.panels[].targets[]?.database = $dbName' $file)" > $file
         echo "$( jq --arg uid "$uid" '.dashboard.templating.list[].datasource |= if (.type=="grafana-azure-data-explorer-datasource") then (.uid=$uid) else . end' $file)" > $file
+        echo $(cat $file | jq '.dashboard' | jq) > $file
         sleep 2
     done
 }
