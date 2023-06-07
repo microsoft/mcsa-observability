@@ -127,6 +127,7 @@ az account show
 #set the subscription where the resources are to be deployed
 az account set --subscription <subscriptionId>
 
+## 1. Create resources using Terraform
 #initialize terraform providers
 terraform init
 
@@ -134,10 +135,33 @@ terraform init
 terraform plan -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
 eg: terraform plan -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
 
-# Terraform apply
+# run apply on the root file
 terraform apply -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
 eg: terraform apply -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
 note: make sure to confirm resource creation with a "yes" when the prompt appears on running this command
+
+# create api key and export all variables
+export TF_VAR_url=$(az grafana show -g $TF_VAR_prefix-RG -n $TF_VAR_prefix-grafana -o json | jq -r .properties.endpoint)
+export TF_VAR_token=$(az grafana api-key create --key `date +%s` --name $TF_VAR_prefix-grafana -g $TF_VAR_prefix-RG -r editor --time-to-live 60m -o json | jq -r .key)
+export TF_VAR_sp_client_secret=$(terraform output -raw sp_client_secret)
+export TF_VAR_tenant_id=$(terraform output -raw tenant_id)
+export TF_VAR_sp_client_id=$(terraform output -raw sp_client_id)
+export TF_VAR_database_name=$(terraform output -raw database_name)
+export TF_VAR_cluster_url=$(terraform output -raw cluster_url)
+export TF_VAR_sp_object_id=$(terraform output -raw sp_object_id)
+export TF_VAR_prefix=$(terraform output -raw prefix)
+
+## 2. Update grafana instance to create datasource, folders and dashboards using Terraform
+
+#initialize terraform providers
+terraform init -upgrade
+
+# run a plan on the root file
+terraform plan
+
+# run apply on the root file
+terraform apply
+
 ```
 ### Post Installation
 #### Post Installation Steps:
