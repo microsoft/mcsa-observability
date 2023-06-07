@@ -116,7 +116,7 @@ resource "null_resource" "add_perm_2" {
   triggers = {
     addperm2 = local.addperm_2
   }
-  depends_on = [null_resource.datasource_create]
+  depends_on = [grafana_dashboard.storage,grafana_dashboard.loadbalancer,grafana_dashboard.keyvault,grafana_dashboard.firewalls,grafana_dashboard.cosmos_db,grafana_dashboard.aks_server_node,grafana_dashboard.resource_observability]
 }
 
 //update uid of datasource on the dashboards
