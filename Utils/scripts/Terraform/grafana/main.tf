@@ -29,9 +29,9 @@ provider "grafana" {
 locals {
 dashboard_templates = "${path.cwd}/../../dashboard_templates"
 addperm_1 = "chmod 755 ${path.cwd}/../../grafana-datasource.sh"
-addperm_2 = "chmod 755 ${path.cwd}/../../update_drilldowns.sh"
+addperm_2 = "chmod 755 ${path.cwd}/../../update_drilldown.sh"
 create_datasource = "${path.cwd}/../../grafana-datasource.sh ${var.prefix} ${var.cluster_url} ${var.tenant_id} ${var.sp_client_id} ${var.sp_client_secret} ${var.database_name} ${local.dashboard_templates}"
-update_drilldowns = "${path.cwd}/../../update_drilldowns.sh ${var.prefix} ${local.dashboard_templates}"
+update_drilldowns = "${path.cwd}/../../update_drilldown.sh ${var.prefix} ${local.dashboard_templates}"
 }
 
 resource "grafana_folder" "observability" {
