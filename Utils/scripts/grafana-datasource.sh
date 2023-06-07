@@ -53,13 +53,12 @@ echo $METRICS_FOLDER_PATH
 function populate_datasource_uid() {
   FILE_LIST="$METRICS_FOLDER_PATH/*"
   for file in $FILE_LIST 
-    do 
+    do
         echo "Managed Grafana: Updating datasource uid for $file file"
-        echo "$( jq --arg uid "$uid" '.dashboard.panels[].datasource |= if (.type=="grafana-azure-data-explorer-datasource") then (.uid=$uid) else . end' $file)" > $file
-        echo "$( jq --arg uid "$uid" '.dashboard.panels[].targets[]?.datasource |= if (.type=="grafana-azure-data-explorer-datasource") then (.uid=$uid) else . end' $file)" > $file
-        echo "$( jq --arg dbName "$dbName" '.dashboard.panels[].targets[]?.database = $dbName' $file)" > $file
-        echo "$( jq --arg uid "$uid" '.dashboard.templating.list[].datasource |= if (.type=="grafana-azure-data-explorer-datasource") then (.uid=$uid) else . end' $file)" > $file
-        echo $(cat $file | jq '.dashboard' | jq) > $file
+        echo "$( jq --arg uid "$uid" '.panels[].datasource |= if (.type=="grafana-azure-data-explorer-datasource") then (.uid=$uid) else . end' $file)" > $file
+        echo "$( jq --arg uid "$uid" '.panels[].targets[]?.datasource |= if (.type=="grafana-azure-data-explorer-datasource") then (.uid=$uid) else . end' $file)" > $file
+        echo "$( jq --arg dbName "$dbName" '.panels[].targets[]?.database = $dbName' $file)" > $file
+        echo "$( jq --arg uid "$uid" '.templating.list[].datasource |= if (.type=="grafana-azure-data-explorer-datasource") then (.uid=$uid) else . end' $file)" > $file
         sleep 2
     done
 }

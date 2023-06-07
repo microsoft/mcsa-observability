@@ -1,7 +1,4 @@
 {
-  "message": "Availability Metrics",
-  "overwrite": true,
-  "dashboard": {
 
     "annotations": {
       "list": [
@@ -1577,4 +1574,3 @@
     "version": 98,
     "weekStart": ""
   }
-}

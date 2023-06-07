@@ -517,6 +517,18 @@ resource "azurerm_kusto_cluster_principal_assignment" "this" {
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
 }
 
+resource "azurerm_kusto_cluster_principal_assignment" "msi" {
+  name                = "KustoSpAssignment"
+  resource_group_name = azurerm_resource_group.rg.name
+  cluster_name        = azurerm_kusto_cluster.this.name
+
+  tenant_id      = data.azurerm_client_config.current.tenant_id
+  principal_id   = azurerm_user_assigned_identity.terraform.principal_id#data.azurerm_client_config.current.client_id
+  principal_type = "App"
+  role           = "AllDatabasesAdmin"
+  depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
+}
+
 resource "azurerm_kusto_database_principal_assignment" "this" {
   name                = "DatabaseSpAssignment"
   resource_group_name = azurerm_resource_group.rg.name
@@ -525,6 +537,19 @@ resource "azurerm_kusto_database_principal_assignment" "this" {
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
   principal_id   = azuread_service_principal.this.application_id#data.azurerm_client_config.current.client_id
+  principal_type = "App"
+  role           = "Admin"
+  depends_on = [azurerm_kusto_database.database]
+}
+
+resource "azurerm_kusto_database_principal_assignment" "msi" {
+  name                = "DatabaseSpAssignment"
+  resource_group_name = azurerm_resource_group.rg.name
+  cluster_name        = azurerm_kusto_cluster.this.name
+  database_name       = azurerm_kusto_database.database.name
+
+  tenant_id      = data.azurerm_client_config.current.tenant_id
+  principal_id   = azurerm_user_assigned_identity.terraform.principal_id#data.azurerm_client_config.current.client_id
   principal_type = "App"
   role           = "Admin"
   depends_on = [azurerm_kusto_database.database]

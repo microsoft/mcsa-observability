@@ -1,7 +1,4 @@
 {
-  "message": "Cosmosdb Metrics",
-  "overwrite": true,
-  "dashboard": {
     "annotations": {
       "list": [
         {
@@ -246,4 +243,3 @@
     "version": 12,
     "weekStart": ""
   }
-}

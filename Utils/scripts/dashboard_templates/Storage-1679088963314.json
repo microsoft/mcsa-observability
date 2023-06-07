@@ -1,7 +1,4 @@
 {
-  "message": "Storage Metrics",
-  "overwrite": true,
-  "dashboard": {
     "annotations": {
       "list": [
         {
@@ -258,4 +255,3 @@
     "version": 17,
     "weekStart": ""
   }
-}

@@ -1,7 +1,4 @@
 {
-  "message": "Loadbalancer Metrics",
-  "overwrite": true,
-  "dashboard": {
     "annotations": {
       "list": [
         {
@@ -233,4 +230,3 @@
     "version": 11,
     "weekStart": ""
   }
-}
