@@ -128,6 +128,8 @@ az account show
 az account set --subscription <subscriptionId>
 
 ## 1. Create resources using Terraform
+cd resources
+
 #initialize terraform providers
 terraform init
 
@@ -152,6 +154,7 @@ export TF_VAR_sp_object_id=$(terraform output -raw sp_object_id)
 export TF_VAR_prefix=$(terraform output -raw prefix)
 
 ## 2. Update grafana instance to create datasource, folders and dashboards using Terraform
+cd ../grafana
 
 #initialize terraform providers
 terraform init -upgrade
