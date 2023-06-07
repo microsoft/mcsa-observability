@@ -518,7 +518,7 @@ resource "azurerm_kusto_cluster_principal_assignment" "this" {
 }
 
 resource "azurerm_kusto_cluster_principal_assignment" "msi" {
-  name                = "KustoSpAssignment"
+  name                = "KustoMsiAssignment"
   resource_group_name = azurerm_resource_group.rg.name
   cluster_name        = azurerm_kusto_cluster.this.name
 
@@ -543,7 +543,7 @@ resource "azurerm_kusto_database_principal_assignment" "this" {
 }
 
 resource "azurerm_kusto_database_principal_assignment" "msi" {
-  name                = "DatabaseSpAssignment"
+  name                = "DatabaseMsiAssignment"
   resource_group_name = azurerm_resource_group.rg.name
   cluster_name        = azurerm_kusto_cluster.this.name
   database_name       = azurerm_kusto_database.database.name
