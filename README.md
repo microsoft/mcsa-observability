@@ -165,7 +165,8 @@ terraform init -upgrade
 terraform plan
 
 # run apply on the root file
-terraform apply
+#run apply twice, Terraform in the latest version introduced a security check throwing an error if plan and apply phase do not have the same values, grafana provider has not caught up with this check, we add the datasource uids to our config jsons which creates the inconsistency, this is a bug that will be tracked in the provider issue tracker
+terraform apply  
 
 ```
 ### Post Installation
