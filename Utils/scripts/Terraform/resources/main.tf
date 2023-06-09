@@ -34,6 +34,9 @@ provider "azapi" {
 
 #access the configuration of the AzureRM provider - current user credentials
 data "azurerm_client_config" "current" {}
+data "azuread_user" "current_user" {
+  object_id = data.azurerm_client_config.current.object_id
+}
 data azuread_client_config "current" {}
 data "azurerm_subscription" "primary" {
 }
@@ -599,6 +602,14 @@ resource "azurerm_role_assignment" "msi_adxingestionapp_role" {
   role_definition_name = "Reader"
   principal_id         = azurerm_user_assigned_identity.terraform.principal_id
   depends_on = [azurerm_windows_function_app.adxingestionapp, azurerm_user_assigned_identity.terraform]
+}
+
+#assign grafana admin access to user
+resource "azurerm_role_assignment" "grafana" {
+  scope                = azurerm_dashboard_grafana.this.id
+  role_definition_name = "Grafana Admin"
+  principal_id         = data.azurerm_client_config.current.object_id
+  depends_on = [azurerm_dashboard_grafana.this]
 }
 
 output "sp_object_id" {
