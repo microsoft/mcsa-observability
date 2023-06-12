@@ -156,7 +156,7 @@ export TF_VAR_url=$(az grafana show -g $TF_VAR_prefix-RG -n $TF_VAR_prefix-grafa
 export TF_VAR_token=$(az grafana api-key create --key `date +%s` --name $TF_VAR_prefix-grafana -g $TF_VAR_prefix-RG -r editor --time-to-live 60m -o json | jq -r .key)
 
 ## 2. Update grafana instance to create datasource, folders and dashboards using Terraform
-cd ../grafana
+cd ../grafana-datasource
 
 #initialize terraform providers
 terraform init -upgrade
@@ -165,9 +165,19 @@ terraform init -upgrade
 terraform plan
 
 # run apply on the root file
-#run apply twice, Terraform in the latest version introduced a security check throwing an error if plan and apply phase do not have the same values, grafana provider has not caught up with this check, we add the datasource uids to our config jsons which creates the inconsistency, this is a bug that will be tracked in the provider issue tracker
 terraform apply  
 
+## 3. Update grafana instance to create folders and dashboards using Terraform
+cd ../grafana-dashboards
+
+#initialize terraform providers
+terraform init -upgrade
+
+# run a plan on the root file
+terraform plan
+
+# run apply on the root file
+terraform apply  
 ```
 ### Post Installation
 #### Post Installation Steps:

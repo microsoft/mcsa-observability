@@ -32,55 +32,56 @@ addperm_2 = "chmod 755 ${path.cwd}/../../update_drilldown.sh"
 update_drilldowns = "${path.cwd}/../../update_drilldown.sh ${var.prefix} ${local.dashboard_templates}"
 }
 
-
+resource "grafana_folder" "observability" {
+  title = "Observability_Dashboard"
+}
 
 resource "grafana_dashboard" "resource_observability" {
   folder     = grafana_folder.observability.id
   overwrite = true
   config_json = file("../../dashboard_templates/AzureResourceObservability-1679088842231.json")
-  depends_on = [null_resource.datasource_create]
 }
 
 resource "grafana_dashboard" "aks_server_node" {
   folder     = grafana_folder.observability.id
   overwrite = true
   config_json = file("../../dashboard_templates/AksServerNode-1679088882867.json")
-  depends_on = [null_resource.datasource_create]
+  depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "cosmos_db" {
   folder     = grafana_folder.observability.id
   overwrite = true
   config_json = file("../../dashboard_templates/CosmosDB-1679088907885.json")
-  depends_on = [null_resource.datasource_create]
+  depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "firewalls" {
   folder     = grafana_folder.observability.id
   overwrite = true
   config_json = file("../../dashboard_templates/Firewalls-1679088928078.json")
-  depends_on = [null_resource.datasource_create]
+  depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "keyvault" {
   folder     = grafana_folder.observability.id
   overwrite = true
   config_json = file("../../dashboard_templates/Keyvault-1679088939482.json")
-  depends_on = [null_resource.datasource_create]
+  depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "loadbalancer" {
   folder     = grafana_folder.observability.id
   overwrite = true
   config_json = file("../../dashboard_templates/Loadbalancer-1679088952762.json")
-  depends_on = [null_resource.datasource_create]
+  depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "storage" {
   folder     = grafana_folder.observability.id
   overwrite = true
   config_json = file("../../dashboard_templates/Storage-1679088963314.json")
-  depends_on = [null_resource.datasource_create]
+  depends_on = [grafana_dashboard.resource_observability]
 }
 
 //add permission to execute the file
