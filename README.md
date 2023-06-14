@@ -4,7 +4,7 @@ This repository contains reference architecture, code sample and dashboard templ
 
 ## Architecture
 
-The following diagram gives a high-level view of the Azure services used in the Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
+The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
 
 ![Solution Architecture](Images/architecture.png)
 
@@ -50,8 +50,7 @@ The following section describes the Prerequisites and Installation steps to depl
 #### Environment
 
 The script can be executed in Linux - Ubuntu 20.04 (VM, WSL).
-Use az-cli versions <=2.46
-> Note: Cloudshell is not supported since it uses az-cli > 2.46.0
+###note: currently cloudshell is not supported since it uses az-cli > 2.46.0
 
 ### Installation using shell script
 ```
@@ -80,11 +79,6 @@ currentDir=$(pwd)
 # install pre-requisites
 bash $currentDir/Utils/scripts/pre-requisites.sh
 
-#downgrade az-cli to use version < 2.46
-apt-cache policy azure-cli
-sudo apt-get install azure-cli=<version>-1~<Codename>
-eg: sudo apt-get install azure-cli=2.46.0-1~focal (Codename - focal/bionic/bullseye etc)
-
 # change directory to where scripts are located
 cd $currentDir/Utils/scripts
 
@@ -93,14 +87,106 @@ cd $currentDir/Utils/scripts
 
 eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/code"
 ```
+
+### Install using Terraform
+
+```
+## Clone git repo into the folder
+repolink=""
+codePath=$"./observability"
+git clone $repolink $codePath
+
+## Please setup the following required parameters for the script to run:
+## prefix - prefix string to identify the resources created with this deployment. eg: test
+## subscriptionId - subscriptionId where the solution will be deployed to
+## location - location where the azure resources will be created. eg: eastus
+
+# change directory to where the repo is cloned
+cd $codePath
+
+# set current working directory
+currentDir=$(pwd)
+
+# install pre-requisites
+bash $currentDir/Utils/scripts/pre-requisites.sh
+
+#downgrade az-cli to use version < 2.46
+apt-cache policy azure-cli
+sudo apt-get install azure-cli=<version>-1~<Codename>
+eg: sudo apt-get install azure-cli=2.46.0-1~focal (Codename - focal/bionic/bullseye etc)
+
+# change directory to where Terraform main.tf is located
+cd $currentDir/Utils/scripts/Terraform
+
+#log in to the tenant where the subscription to host the resources is present
+az login
+
+#list the subscriptions under the tenant
+az account show
+
+#set the subscription where the resources are to be deployed
+az account set --subscription <subscriptionId>
+
+## 1. Create resources using Terraform
+cd resources
+
+#initialize terraform providers
+terraform init
+
+# run a plan on the root file
+terraform plan -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
+eg: terraform plan -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
+
+# run apply on the root file
+terraform apply -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
+eg: terraform apply -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
+note: make sure to confirm resource creation with a "yes" when the prompt appears on running this command
+
+# add "grafana admin" role to the user as described here - https://learn.microsoft.com/en-us/azure/managed-grafana/how-to-share-grafana-workspace?tabs=azure-portal
+
+# create api key and export all variables
+export TF_VAR_sp_client_secret=$(terraform output -raw sp_client_secret)
+export TF_VAR_tenant_id=$(terraform output -raw tenant_id)
+export TF_VAR_sp_client_id=$(terraform output -raw sp_client_id)
+export TF_VAR_database_name=$(terraform output -raw database_name)
+export TF_VAR_cluster_url=$(terraform output -raw cluster_url)
+export TF_VAR_sp_object_id=$(terraform output -raw sp_object_id)
+export TF_VAR_prefix=$(terraform output -raw prefix)
+export TF_VAR_url=$(az grafana show -g $TF_VAR_prefix-RG -n $TF_VAR_prefix-grafana -o json | jq -r .properties.endpoint)
+export TF_VAR_token=$(az grafana api-key create --key `date +%s` --name $TF_VAR_prefix-grafana -g $TF_VAR_prefix-RG -r editor --time-to-live 60m -o json | jq -r .key)
+
+## 2. Update grafana instance to create datasource, folders and dashboards using Terraform
+cd ../grafana-datasource
+
+#initialize terraform providers
+terraform init -upgrade
+
+# run a plan on the root file
+terraform plan
+
+# run apply on the root file
+terraform apply  
+
+## 3. Update grafana instance to create folders and dashboards using Terraform
+cd ../grafana-dashboards
+
+#initialize terraform providers
+terraform init -upgrade
+
+# run a plan on the root file
+terraform plan
+
+# run apply on the root file
+terraform apply  
+```
 ### Post Installation
 #### Post Installation Steps:
 
-The solution relies on the following data to be present in the 'Resource Provider and Subscriptions' table before it can be used to visualize the data. Please follow the steps below to complete the post-installation process.
+The solution relies on the following data to be present in the "Resource Provider and Subscriptions table" before it can be used to visualize the data. Follow the steps below to complete the post installation steps.
 
 #### Updating Resource Types
 
-1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_Import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
+1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
 
 ![githubfiledownload](Images/githubfiledownload-1.png)
 > Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
@@ -109,7 +195,7 @@ The solution relies on the following data to be present in the 'Resource Provide
 
 #### Updating Subscriptions
 
-1. Download the file - [subscriptions.csv](Utils/scripts/csv_Import/subscriptions.csv)  to local
+1. Download the file - [subscriptions.csv](Utils/scripts/csv_import/subscriptions.csv)  to local
 2. Modify the CSV to include details of the subscriptions for which you want to track resource health.
 3. Follow the data ingestion steps as outlined in the previous instructions for ResourceType.csv file.
 
@@ -121,10 +207,10 @@ To add other users to view/edit the Grafana dashboard, follow [adding role assig
 
 #### Storage access 
 
-sas token - expires in a year, please update as required
+sas token - expires in a year need to update it
 
-#### Known Issues
-* The 'az grafana create' command is not compatible with Azure CLI versions greater than 2.46. This is an ongoing issue documented in https://github.com/Azure/azure-cli-extensions/issues/6221. We advice to use lower
-versions of Azure CLI;specifically version <=2.46, until the issue is resolved.
+#### az grafana known issue with higher az cli versions
+az grafana create not compatible with az cli versions > 2.46 ongoing issue - https://github.com/Azure/azure-cli-extensions/issues/6221, advice to use lower
+versions of cli <=2.46 until the issue is resolved.
 
 ![recommended cli version](Images/az-cli-version.png)
