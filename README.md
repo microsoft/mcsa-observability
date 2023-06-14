@@ -4,7 +4,7 @@ This repository contains reference architecture, code sample and dashboard templ
 
 ## Architecture
 
-The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
+The following diagram gives a high-level view of the Azure services used in the Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
 
 ![Solution Architecture](Images/architecture.png)
 
@@ -50,7 +50,8 @@ The following section describes the Prerequisites and Installation steps to depl
 #### Environment
 
 The script can be executed in Linux - Ubuntu 20.04 (VM, WSL).
-###note: currently cloudshell is not supported since it uses az-cli > 2.46.0
+Use az-cli versions <=2.46
+> Note: Cloudshell is not supported since it uses az-cli > 2.46.0
 
 ### Installation using shell script
 ```
@@ -79,37 +80,6 @@ currentDir=$(pwd)
 # install pre-requisites
 bash $currentDir/Utils/scripts/pre-requisites.sh
 
-# change directory to where scripts are located
-cd $currentDir/Utils/scripts
-
-# command to run
-/bin/bash ./deploy.sh $prefix $subscriptionId $location $currentDir
-
-eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/code"
-```
-
-### Install using Terraform
-
-```
-## Clone git repo into the folder
-repolink=""
-codePath=$"./observability"
-git clone $repolink $codePath
-
-## Please setup the following required parameters for the script to run:
-## prefix - prefix string to identify the resources created with this deployment. eg: test
-## subscriptionId - subscriptionId where the solution will be deployed to
-## location - location where the azure resources will be created. eg: eastus
-
-# change directory to where the repo is cloned
-cd $codePath
-
-# set current working directory
-currentDir=$(pwd)
-
-# install pre-requisites
-bash $currentDir/Utils/scripts/pre-requisites.sh
-
 #downgrade az-cli to use version < 2.46
 apt-cache policy azure-cli
 sudo apt-get install azure-cli=<version>-1~<Codename>
@@ -132,10 +102,12 @@ cd resources
 
 #initialize terraform providers
 terraform init
+=======
+# change directory to where scripts are located
+cd $currentDir/Utils/scripts
 
-# run a plan on the root file
-terraform plan -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
-eg: terraform plan -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
+# command to run
+/bin/bash ./deploy.sh $prefix $subscriptionId $location $currentDir
 
 # run apply on the root file
 terraform apply -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
@@ -178,15 +150,17 @@ terraform plan
 
 # run apply on the root file
 terraform apply  
+=======
+eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/code"
 ```
 ### Post Installation
 #### Post Installation Steps:
 
-The solution relies on the following data to be present in the "Resource Provider and Subscriptions table" before it can be used to visualize the data. Follow the steps below to complete the post installation steps.
+The solution relies on the following data to be present in the 'Resource Provider and Subscriptions' table before it can be used to visualize the data. Please follow the steps below to complete the post-installation process.
 
 #### Updating Resource Types
 
-1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
+1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_Import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
 
 ![githubfiledownload](Images/githubfiledownload-1.png)
 > Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
@@ -195,7 +169,7 @@ The solution relies on the following data to be present in the "Resource Provide
 
 #### Updating Subscriptions
 
-1. Download the file - [subscriptions.csv](Utils/scripts/csv_import/subscriptions.csv)  to local
+1. Download the file - [subscriptions.csv](Utils/scripts/csv_Import/subscriptions.csv)  to local
 2. Modify the CSV to include details of the subscriptions for which you want to track resource health.
 3. Follow the data ingestion steps as outlined in the previous instructions for ResourceType.csv file.
 
@@ -207,10 +181,10 @@ To add other users to view/edit the Grafana dashboard, follow [adding role assig
 
 #### Storage access 
 
-sas token - expires in a year need to update it
+sas token - expires in a year, please update as required
 
-#### az grafana known issue with higher az cli versions
-az grafana create not compatible with az cli versions > 2.46 ongoing issue - https://github.com/Azure/azure-cli-extensions/issues/6221, advice to use lower
-versions of cli <=2.46 until the issue is resolved.
+#### Known Issues
+* The 'az grafana create' command is not compatible with Azure CLI versions greater than 2.46. This is an ongoing issue documented in https://github.com/Azure/azure-cli-extensions/issues/6221. We advice to use lower
+versions of Azure CLI;specifically version <=2.46, until the issue is resolved.
 
 ![recommended cli version](Images/az-cli-version.png)
