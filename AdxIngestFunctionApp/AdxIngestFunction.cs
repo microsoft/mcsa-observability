@@ -63,7 +63,14 @@ namespace Observability.AdxIngestFunctionApp
             {
                 batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=ServiceAvailability&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
-
+            if (message.Type == "microsoft.cognitiveservices/accounts")
+            {
+                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=SuccessRate&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
+            }
+            if (message.Type == "microsoft.eventHub/namespaces")
+            {
+                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=IncomingRequests,ServerErrors&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
+            }
             log.LogInformation($"Batch url: {batchUrl}");
 
             using HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Post, batchUrl);
