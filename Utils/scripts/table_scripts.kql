@@ -57,7 +57,7 @@
 
 .create table Storage_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create table Eventshub_Availability (['date']: datetime, ['id']: string, successfulRequests: decimal, serverErrors: decimal, location: string, subscriptionId: guid, name: string)
+.create table Eventshub_Availability (['date']: datetime, ['id']: string, incomingRequests: decimal, serverErrors: decimal, location: string, subscriptionId: guid, name: string)
 
 .create table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
