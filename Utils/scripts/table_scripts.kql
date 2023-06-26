@@ -11,6 +11,12 @@
 
 .create table Storage_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
+.create table Eventshub_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create table Cognitive_Svc_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create table Container_Registry_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
 // Create ingestion mapping
 .create table Aksservernode_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
@@ -23,6 +29,12 @@
 .create table Loadbalancer_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 .create table Storage_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create table Eventshub_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create table Cognitive_Svc_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create table Container_Registry_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 //create adx tables
 .create table Resource_Providers (name: string, ['type']: string, resultTableName: string)
@@ -45,8 +57,68 @@
 
 .create table Storage_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
+.create table Eventshub_Availability (['date']: datetime, ['id']: string, successfulRequests: decimal, serverErrors: decimal, location: string, subscriptionId: guid, name: string)
+
+.create table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+
+.create table Container_Registry_Availability (['date']: datetime, ['id']: string, successfulPullCount: decimal, totalPullCount: decimal, location: string, subscriptionId: guid, name: string)
 
 //create functions
+
+.create-or-alter function  Parse_Eventshub_Availability() {
+let requests = Eventshub_Availability_Raw 
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid) 
+    | extend subscriptionId = split(id, '/')[2] 
+    | extend name = split(id, '/')[-1] 
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'IncomingRequests' 
+    | mv-expand timeseries = value.timeseries 
+    | mv-expand data = timeseries.data 
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), incomingrequests = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+let errors = Eventshub_Availability_Raw 
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid) 
+    | extend subscriptionId = split(id, '/')[2] 
+    | extend name = split(id, '/')[-1] 
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'ServerErrors' 
+    | mv-expand timeseries = value.timeseries 
+    | mv-expand data = timeseries.data 
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), servererrors = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+(requests | join kind=leftouter errors on $left.timestamp == $right.timestamp and $left.id == $right.id) 
+    | project timestamp, id, incomingrequests, servererrors, location, subscriptionId, name
+}
+
+.create-or-alter function  Parse_Container_Registry_Availability() {
+let successful = Container_Registry_Availability_Raw 
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid) 
+    | extend subscriptionId = split(id, '/')[2] 
+    | extend name = split(id, '/')[-1] 
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'SuccessfulPullCount' 
+    | mv-expand timeseries = value.timeseries 
+    | mv-expand data = timeseries.data 
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpullcount = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+let total = Container_Registry_Availability_Raw 
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid) 
+    | extend subscriptionId = split(id, '/')[2] 
+    | extend name = split(id, '/')[-1] 
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'TotalPullCount' 
+    | mv-expand timeseries = value.timeseries 
+    | mv-expand data = timeseries.data 
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), totalpullcount = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+(successful | join kind=leftouter total on $left.timestamp == $right.timestamp and $left.id == $right.id) 
+    | project timestamp, id, successfulpullcount, totalpullcount, location, subscriptionId, name
+}
+
 .create-or-alter function  Parse_Aksservernode_Availability() {
     let ready = Aksservernode_Availability_Raw 
     | mv-expand values = metrics.values
@@ -192,6 +264,26 @@
         name = tostring(name)     
 }
 
+.create-or-alter function  Parse_Cognitive_Svc_Availability() {
+    Cognitive_Svc_Availability_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'SuccessRate'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | project
+        timestamp = todatetime(data.timeStamp),
+        id = tostring(id),
+        availability = todecimal(data.average),
+        subscriptionId = toguid(subscriptionId),
+        location = tostring(region),
+        name = tostring(name)     
+}
+
 // Update results table policies
 .alter table Aksservernode_Availability policy update @'[{"Source": "Aksservernode_Availability_Raw", "Query": "Parse_Aksservernode_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
@@ -204,6 +296,12 @@
 .alter table Loadbalancer_Availability policy update @'[{"Source": "Loadbalancer_Availability_Raw", "Query": "Parse_Loadbalancer_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
 .alter table Storage_Availability policy update @'[{"Source": "Storage_Availability_Raw", "Query": "Parse_Storage_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Eventshub_Availability policy update @'[{"Source": "Eventshub_Availability_Raw", "Query": "Parse_Eventshub_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Cognitive_Svc_Availability policy update @'[{"Source": "Cognitive_Svc_Availability_Raw", "Query": "Parse_Cognitive_Svc_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Container_Registry_Availability policy update @'[{"Source": "Container_Registry_Availability_Raw", "Query": "Parse_Container_Registry_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
 
 // Adding zero retention policies on Raw tables
@@ -218,3 +316,9 @@
 .alter-merge table Loadbalancer_Availability_Raw policy retention softdelete = 0s
 
 .alter-merge table Storage_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Eventshub_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Cognitive_Svc_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Container_Registry_Availability_Raw policy retention softdelete = 0s
