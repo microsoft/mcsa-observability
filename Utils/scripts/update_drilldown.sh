@@ -33,7 +33,7 @@ cosmosdbuid=$(az grafana dashboard list --name $prefix-grafana --resource-group 
 cosmosdbdrilldown=$endpoint/d/$cosmosdbuid/cosmosdb-details$queryparams
 echo $cosmosdbdrilldown
 
-jsonfile=$METRICS_FOLDER_PATH/AzureResourceObservability-1679088842231.json
+jsonfile=$METRICS_FOLDER_PATH/Azure Resource Observability-1687853750785.json
 echo $jsonfile
 
 echo "$(jq --arg storagedrilldown "$storagedrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="storage drill down details") then .url=$storagedrilldown else . end' $jsonfile)" > $jsonfile
