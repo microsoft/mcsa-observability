@@ -39,7 +39,7 @@ resource "grafana_folder" "observability" {
 resource "grafana_dashboard" "resource_observability" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/Azure Resource Observability-1687851227502.json")
+  config_json = file("../../dashboard_templates/Azure Resource Observability-1687853750785.json")
 }
 
 resource "grafana_dashboard" "aks_server_node" {
