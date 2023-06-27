@@ -76,7 +76,8 @@ let requests = Eventshub_Availability_Raw
     | where tostring(value.name.value) == 'IncomingRequests' 
     | mv-expand timeseries = value.timeseries 
     | mv-expand data = timeseries.data 
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), incomingrequests = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), incomingrequests = iff(todecimal(data.average)>todecimal(0),todecimal(data.average),todecimal(1)),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let errors = Eventshub_Availability_Raw 
     | mv-expand values = metrics.values
     | extend id = tostring(values.resourceid) 
@@ -87,9 +88,10 @@ let errors = Eventshub_Availability_Raw
     | where tostring(value.name.value) == 'ServerErrors' 
     | mv-expand timeseries = value.timeseries 
     | mv-expand data = timeseries.data 
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), servererrors = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), servererrors = todecimal(data.average),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 (requests | join kind=leftouter errors on $left.timestamp == $right.timestamp and $left.id == $right.id) 
-    | project timestamp, id, incomingrequests, servererrors, location, subscriptionId, name
+    | project timestamp, id, incomingrequests, servererrors=iff(incomingrequests>todecimal(0),servererrors,todecimal(1)), location, subscriptionId, name
 }
 
 .create-or-alter function  Parse_Container_Registry_Availability() {
@@ -103,7 +105,7 @@ let successful = Container_Registry_Availability_Raw
     | where tostring(value.name.value) == 'SuccessfulPullCount' 
     | mv-expand timeseries = value.timeseries 
     | mv-expand data = timeseries.data 
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpullcount = iff(todecimal(data.average)>todecimal(0), todecimal(data.average),todecimal(1)),
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpullcount = todecimal(data.average),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let total = Container_Registry_Availability_Raw 
     | mv-expand values = metrics.values
@@ -118,7 +120,7 @@ let total = Container_Registry_Availability_Raw
     | project timestamp = todatetime(data.timeStamp), id = tostring(id), totalpullcount = iff(todecimal(data.average)>todecimal(0),todecimal(data.average),todecimal(1)),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 (successful | join kind=leftouter total on $left.timestamp == $right.timestamp and $left.id == $right.id)
-    | project timestamp, id, successfulpullcount, totalpullcount, location, subscriptionId, name
+    | project timestamp, id, successfulpullcount=iff(totalpullcount>todecimal(0),successfulpullcount,todecimal(1)), totalpullcount, location, subscriptionId, name
 }
 
 .create-or-alter function  Parse_Aksservernode_Availability() {
