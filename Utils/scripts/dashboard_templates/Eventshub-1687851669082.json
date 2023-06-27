@@ -120,7 +120,7 @@
           "resultFormat": "table"
         }
       ],
-      "title": "# of Loadbalancers with Availability < 100",
+      "title": "# of Eventshub with Availability < 100",
       "type": "table"
     }
   ],
