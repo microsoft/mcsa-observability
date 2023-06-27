@@ -1160,7 +1160,7 @@
           "resultFormat": "table"
         }
       ],
-      "title": "Container Registry Avg [Successful Tx / All Tx]",
+      "title": "Container Registry Avg [(successfulPullCount/totalPullCount)*100]",
       "type": "timeseries"
     },
     {
@@ -1850,7 +1850,7 @@
         "type": "grafana-azure-data-explorer-datasource",
         "uid": "0C1agqXVk"
       },
-      "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters",
+      "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcognitiveservicesaccounts",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1987,6 +1987,7 @@
         "type": "grafana-azure-data-explorer-datasource",
         "uid": "0C1agqXVk"
       },
+      "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsofteventhubnamespaces",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2034,7 +2035,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2101,7 +2103,7 @@
           "resultFormat": "table"
         }
       ],
-      "title": "Eventshub[Successful Tx / All Tx]",
+      "title": "Eventshub[(incomingRequests-serverErrors)/incomingRequests)*100]",
       "type": "timeseries"
     }
   ],
@@ -2148,11 +2150,13 @@
           "selected": false,
           "text": [
             " AG_CI_CE_BLK_CORE_ANITRA",
-            " AG-CE-CI-TESTSUB-ONELHIRMEZ"
+            " AG-CE-CI-TESTSUB-ONELHIRMEZ",
+            " AG-CE-CI-TESTSUB-DIVYABHU"
           ],
           "value": [
             "0302e263-20e2-44ea-9d57-91db52a566fe",
-            "d6a99beb-93da-4c87-8e7a-2ad995aa1c94"
+            "d6a99beb-93da-4c87-8e7a-2ad995aa1c94",
+            "7d528e8d-eb2d-4ebb-9aab-2d9d2f3a466a"
           ]
         },
         "datasource": {
@@ -2176,14 +2180,18 @@
         "current": {
           "selected": false,
           "text": [
+            "westus",
             "eastus",
             "westus2",
-            "westus3"
+            "eastus2",
+            "centralus"
           ],
           "value": [
+            "westus",
             "eastus",
             "westus2",
-            "westus3"
+            "eastus2",
+            "centralus"
           ]
         },
         "datasource": {
@@ -2229,13 +2237,13 @@
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "utc",
   "title": "Azure Resource Observability",
   "uid": "VVUlnjx4z",
-  "version": 25,
+  "version": 32,
   "weekStart": ""
 }
