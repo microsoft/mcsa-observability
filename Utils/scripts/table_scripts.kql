@@ -103,7 +103,8 @@ let successful = Container_Registry_Availability_Raw
     | where tostring(value.name.value) == 'SuccessfulPullCount' 
     | mv-expand timeseries = value.timeseries 
     | mv-expand data = timeseries.data 
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpullcount = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpullcount = iff(todecimal(data.average)>todecimal(0), todecimal(data.average),todecimal(1)),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let total = Container_Registry_Availability_Raw 
     | mv-expand values = metrics.values
     | extend id = tostring(values.resourceid) 
@@ -114,8 +115,9 @@ let total = Container_Registry_Availability_Raw
     | where tostring(value.name.value) == 'TotalPullCount' 
     | mv-expand timeseries = value.timeseries 
     | mv-expand data = timeseries.data 
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), totalpullcount = todecimal(data.average), location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-(successful | join kind=leftouter total on $left.timestamp == $right.timestamp and $left.id == $right.id) 
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), totalpullcount = iff(todecimal(data.average)>todecimal(0),todecimal(data.average),todecimal(1)),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+(successful | join kind=leftouter total on $left.timestamp == $right.timestamp and $left.id == $right.id)
     | project timestamp, id, successfulpullcount, totalpullcount, location, subscriptionId, name
 }
 
