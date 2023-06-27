@@ -144,11 +144,11 @@ let totalPush = Container_Registry_Availability_Raw
     | project timestamp = todatetime(data.timeStamp), id = tostring(id), totalpushcount = todecimal(data.average),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let pulls = (successfulPull | join kind=leftouter totalPull on $left.timestamp == $right.timestamp and $left.id == $right.id)
-| project timestamp, id, successfulpullcount, totalpullcount, location, subscriptionId, name;
+| project timestamp, id, successfulpullcount, totalpullcount, successfulpushcount, totalpushcount, location, subscriptionId, name;
 let pushes = (successfulPush | join kind=leftouter totalPush on $left.timestamp == $right.timestamp and $left.id == $right.id)
-| project timestamp, id, successfulpushcount, totalpushcount, location, subscriptionId, name;
+| project timestamp, id, successfulpushcount, totalpushcount, successfulpushcount, totalpushcount, location, subscriptionId, name;
 (pulls | join kind=leftouter pushes on $left.timestamp == $right.timestamp and $left.id == $right.id)
-| project timestamp, id, successfulpullcount, totalpullcount, successfulpushcount, totalpushcount, subscriptionId, name
+| project timestamp, id, successfulpullcount, totalpullcount, successfulpushcount, totalpushcount, location, subscriptionId, name
 }
 
 .create-or-alter function  Parse_Aksservernode_Availability() {
