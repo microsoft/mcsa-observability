@@ -112,7 +112,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Subscriptions\n|join Container_Registry_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, successfulPullCount, totalPullCount,\nsolution, subscriptionId,tenancy, availability = (successfulPullCount/totalPullCount)*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
+          "query": "Subscriptions\n|join Container_Registry_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, successfulPullCount, totalPullCount,\nsolution, subscriptionId,tenancy, availability = ((successfulPullCount+successfulPushCount)/(totalPullCount+totalPushCount))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -232,6 +232,6 @@
   "timezone": "utc",
   "title": "ContainerRegistry",
   "uid": "mBHFSeX4z",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }

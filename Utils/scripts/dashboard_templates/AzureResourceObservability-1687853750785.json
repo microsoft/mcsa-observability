@@ -1152,7 +1152,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Subscriptions\n|join Container_Registry_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(successfulPullCount) and isnotnull(totalPullCount)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize acr = (avg(successfulPullCount*100/totalPullCount)) by ['date']",
+          "query": "Subscriptions\n|join Container_Registry_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(successfulPullCount) and isnotnull(totalPullCount) and isnotnull(successfulPushCount) and isnotnull(totalPushCount)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize acr = avg(((successfulPullCount+successfulPushCount)/(totalPullCount+totalPushCount))*100) by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -1160,7 +1160,145 @@
           "resultFormat": "table"
         }
       ],
-      "title": "Container Registry Avg [(successfulPullCount/totalPullCount)*100]",
+      "title": "Container Registry Avg [((successfulPull+successfulPush)/(totalPullCount+totalPushCount))*100]",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 8,
+      "panels": [],
+      "title": "Storage",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "0C1agqXVk"
+      },
+      "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftstoragestorageaccounts",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 6,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "storage drill down details",
+              "url": "https://sriv04-grafana-ghbudcheczgfa6cy.eus.grafana.azure.com/d/DaOLR3u4z/storage?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              },
+              {
+                "color": "dark-green",
+                "value": 100
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 10,
+        "x": 0,
+        "y": 16
+      },
+      "id": 25,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "database": "sriv04-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "0C1agqXVk"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Storage_Availability",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.4.1",
+          "query": "Subscriptions\n|join Storage_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize storage = (avg(availability)) by ['date']",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Storage Avg [Successful Tx / All Tx]",
       "type": "timeseries"
     },
     {
@@ -1169,144 +1307,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
-      },
-      "id": 8,
-      "panels": [
-        {
-          "datasource": {
-            "type": "grafana-azure-data-explorer-datasource",
-            "uid": "0C1agqXVk"
-          },
-          "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftstoragestorageaccounts",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 6,
-              "links": [
-                {
-                  "targetBlank": true,
-                  "title": "storage drill down details",
-                  "url": "https://sriv04-grafana-ghbudcheczgfa6cy.eus.grafana.azure.com/d/DaOLR3u4z/storage?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
-                }
-              ],
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "dark-red"
-                  },
-                  {
-                    "color": "dark-green",
-                    "value": 100
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 10,
-            "x": 0,
-            "y": 16
-          },
-          "id": 25,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "database": "sriv04-metricsdb",
-              "datasource": {
-                "type": "grafana-azure-data-explorer-datasource",
-                "uid": "0C1agqXVk"
-              },
-              "expression": {
-                "from": {
-                  "property": {
-                    "name": "Storage_Availability",
-                    "type": "string"
-                  },
-                  "type": "property"
-                },
-                "groupBy": {
-                  "expressions": [],
-                  "type": "and"
-                },
-                "reduce": {
-                  "expressions": [],
-                  "type": "and"
-                },
-                "where": {
-                  "expressions": [],
-                  "type": "and"
-                }
-              },
-              "pluginVersion": "4.2.0",
-              "query": "Subscriptions\n|join Storage_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize storage = (avg(availability)) by ['date']",
-              "querySource": "raw",
-              "rawMode": true,
-              "refId": "A",
-              "resultFormat": "table"
-            }
-          ],
-          "title": "Storage Avg [Successful Tx / All Tx]",
-          "type": "timeseries"
-        }
-      ],
-      "title": "Storage",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 16
+        "y": 23
       },
       "id": 10,
       "panels": [
@@ -1565,7 +1566,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 24
       },
       "id": 12,
       "panels": [
@@ -1702,7 +1703,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 25
       },
       "id": 14,
       "panels": [
@@ -1838,7 +1839,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 26
       },
       "id": 33,
       "panels": [],
@@ -1898,8 +1899,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1914,7 +1914,7 @@
         "h": 8,
         "w": 10,
         "x": 0,
-        "y": 20
+        "y": 27
       },
       "id": 35,
       "options": {
@@ -1975,7 +1975,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 35
       },
       "id": 39,
       "panels": [],
@@ -2035,8 +2035,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2051,7 +2050,7 @@
         "h": 7,
         "w": 10,
         "x": 0,
-        "y": 29
+        "y": 36
       },
       "id": 41,
       "options": {
@@ -2116,7 +2115,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "Solution 1",
             "Solution 3",
@@ -2148,16 +2147,8 @@
       {
         "current": {
           "selected": false,
-          "text": [
-            " AG_CI_CE_BLK_CORE_ANITRA",
-            " AG-CE-CI-TESTSUB-ONELHIRMEZ",
-            " AG-CE-CI-TESTSUB-DIVYABHU"
-          ],
-          "value": [
-            "0302e263-20e2-44ea-9d57-91db52a566fe",
-            "d6a99beb-93da-4c87-8e7a-2ad995aa1c94",
-            "7d528e8d-eb2d-4ebb-9aab-2d9d2f3a466a"
-          ]
+          "text": " AG_CI_CE_BLK_CORE_ANITRA",
+          "value": "0302e263-20e2-44ea-9d57-91db52a566fe"
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
@@ -2178,7 +2169,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "westus",
             "eastus",
@@ -2244,6 +2235,6 @@
   "timezone": "utc",
   "title": "Azure Resource Observability",
   "uid": "VVUlnjx4z",
-  "version": 32,
+  "version": 36,
   "weekStart": ""
 }

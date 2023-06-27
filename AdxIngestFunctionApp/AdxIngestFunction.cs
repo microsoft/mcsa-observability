@@ -73,7 +73,7 @@ namespace Observability.AdxIngestFunctionApp
             }
             if (message.Type == "microsoft.containerregistry/registries")
             {
-                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=SuccessfulPullCount,TotalPullCount&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
+                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=SuccessfulPullCount,TotalPullCount,SuccessfulPushCount,TotalPushCount&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
             log.LogInformation($"Batch url: {batchUrl}");
 
