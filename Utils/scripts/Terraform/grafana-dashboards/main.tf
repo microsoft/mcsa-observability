@@ -39,7 +39,7 @@ resource "grafana_folder" "observability" {
 resource "grafana_dashboard" "resource_observability" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/AzureResourceObservability-1679088842231.json")
+  config_json = file("../../dashboard_templates/Azure Resource Observability-1687851227502.json")
 }
 
 resource "grafana_dashboard" "aks_server_node" {
@@ -84,6 +84,27 @@ resource "grafana_dashboard" "storage" {
   depends_on = [grafana_dashboard.resource_observability]
 }
 
+resource "grafana_dashboard" "eventshub" {
+  folder     = grafana_folder.observability.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/Eventshub-1687851669082.json")
+  depends_on = [grafana_dashboard.resource_observability]
+}
+
+resource "grafana_dashboard" "containerregistry" {
+  folder     = grafana_folder.observability.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/ContainerRegistry-1687851648145.json")
+  depends_on = [grafana_dashboard.resource_observability]
+}
+
+resource "grafana_dashboard" "cognitiveservices" {
+  folder     = grafana_folder.observability.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/CognitiveServices-1687851601199.json")
+  depends_on = [grafana_dashboard.resource_observability]
+}
+
 //add permission to execute the file
 resource "null_resource" "add_perm_2" {
   provisioner "local-exec" {
@@ -92,7 +113,7 @@ resource "null_resource" "add_perm_2" {
   triggers = {
     addperm2 = local.addperm_2
   }
-  depends_on = [grafana_dashboard.storage,grafana_dashboard.loadbalancer,grafana_dashboard.keyvault,grafana_dashboard.firewalls,grafana_dashboard.cosmos_db,grafana_dashboard.aks_server_node,grafana_dashboard.resource_observability]
+  depends_on = [grafana_dashboard.storage,grafana_dashboard.loadbalancer,grafana_dashboard.keyvault,grafana_dashboard.firewalls,grafana_dashboard.cosmos_db,grafana_dashboard.aks_server_node,grafana_dashboard.resource_observability,grafana_dashboard.eventshub,grafana_dashboard.cognitiveservices,grafana_dashboard.containerregistry]
 }
 
 //update uid of datasource on the dashboards
