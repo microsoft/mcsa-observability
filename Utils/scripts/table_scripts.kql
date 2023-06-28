@@ -17,6 +17,8 @@
 
 .create table Container_Registry_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
+.create table LogAnalytics_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
 // Create ingestion mapping
 .create table Aksservernode_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
@@ -35,6 +37,8 @@
 .create table Cognitive_Svc_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 .create table Container_Registry_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create table LogAnalytics_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 //create adx tables
 .create table Resource_Providers (name: string, ['type']: string, resultTableName: string)
@@ -62,6 +66,8 @@
 .create table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
 .create table Container_Registry_Availability (['date']: datetime, ['id']: string, successfulPullCount: decimal, totalPullCount: decimal, successfulPushCount: decimal, totalPushCount: decimal, location: string, subscriptionId: guid, name: string)
+
+.create table LogAnalytics_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
 //create functions
 
@@ -316,6 +322,26 @@ let pushes = (successfulPush | join kind=leftouter totalPush on $left.timestamp 
         name = tostring(name)     
 }
 
+.create-or-alter function  Parse_LogAnalytics_Availability() {
+    LogAnalytics_Availability_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'AvailabilityRate_Query'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | project
+        timestamp = todatetime(data.timeStamp),
+        id = tostring(id),
+        availability = todecimal(data.average),
+        subscriptionId = toguid(subscriptionId),
+        location = tostring(region),
+        name = tostring(name)     
+}
+
 // Update results table policies
 .alter table Aksservernode_Availability policy update @'[{"Source": "Aksservernode_Availability_Raw", "Query": "Parse_Aksservernode_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
@@ -334,6 +360,8 @@ let pushes = (successfulPush | join kind=leftouter totalPush on $left.timestamp 
 .alter table Cognitive_Svc_Availability policy update @'[{"Source": "Cognitive_Svc_Availability_Raw", "Query": "Parse_Cognitive_Svc_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
 .alter table Container_Registry_Availability policy update @'[{"Source": "Container_Registry_Availability_Raw", "Query": "Parse_Container_Registry_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table LogAnalytics_Availability policy update @'[{"Source": "LogAnalytics_Availability_Raw", "Query": "Parse_LogAnalytics_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
 
 // Adding zero retention policies on Raw tables
@@ -354,3 +382,5 @@ let pushes = (successfulPush | join kind=leftouter totalPush on $left.timestamp 
 .alter-merge table Cognitive_Svc_Availability_Raw policy retention softdelete = 0s
 
 .alter-merge table Container_Registry_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table LogAnalytics_Availability_Raw policy retention softdelete = 0s
