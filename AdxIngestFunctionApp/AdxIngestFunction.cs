@@ -75,6 +75,10 @@ namespace Observability.AdxIngestFunctionApp
             {
                 batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=SuccessfulPullCount,TotalPullCount,SuccessfulPushCount,TotalPushCount&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
+            if (message.Type == "microsoft.operationalinsights/workspaces")
+            {
+                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=AvailabilityRate_Query&aggregation=count&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
+            }
             log.LogInformation($"Batch url: {batchUrl}");
 
             using HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Post, batchUrl);
