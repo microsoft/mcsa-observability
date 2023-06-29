@@ -112,7 +112,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Subscriptions\n|join Eventshub_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, incomingRequests, serverErrors,\nsolution, subscriptionId,tenancy, availability = (incomingRequests-serverErrors)*100/incomingRequests\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
+          "query": "Eventshub_Availability\n| project ['date'], id, location, name, incomingRequests, serverErrors,\n subscriptionId, availability = (incomingRequests-serverErrors)*100/incomingRequests\n| where  ['date']  == datetime($selecteddate)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n //and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
