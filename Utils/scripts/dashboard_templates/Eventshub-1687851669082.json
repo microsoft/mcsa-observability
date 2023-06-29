@@ -24,14 +24,14 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 36,
+  "id": 37,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "0C1agqXVk"
+        "uid": "DGZYRn9Vz"
       },
       "fieldConfig": {
         "defaults": {
@@ -85,10 +85,10 @@
       "pluginVersion": "9.4.12",
       "targets": [
         {
-          "database": "sriv04-metricsdb",
+          "database": "sriv11-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "0C1agqXVk"
+            "uid": "DGZYRn9Vz"
           },
           "expression": {
             "from": {
@@ -112,7 +112,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Eventshub_Availability\n| project ['date'], id, location, name, incomingRequests, serverErrors,\n subscriptionId, availability = (incomingRequests-serverErrors)*100/incomingRequests\n| where  ['date']  == datetime($selecteddate)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n //and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
+          "query": "Eventshub_Availability\n| project ['date'], id, location, name, incomingRequests, serverErrors,\n subscriptionId, availability = (incomingRequests-serverErrors)*100/incomingRequests\n| where  ['date']  == datetime($selecteddate)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -120,7 +120,7 @@
           "resultFormat": "table"
         }
       ],
-      "title": "# of Eventshub with Availability < 100",
+      "title": "# of Eventhubs with Availability < 100",
       "type": "table"
     }
   ],
@@ -159,7 +159,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "0C1agqXVk"
+          "uid": "DGZYRn9Vz"
         },
         "definition": "",
         "hide": 2,
@@ -183,7 +183,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "0C1agqXVk"
+          "uid": "DGZYRn9Vz"
         },
         "definition": "",
         "hide": 2,
@@ -207,7 +207,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "0C1agqXVk"
+          "uid": "DGZYRn9Vz"
         },
         "definition": "",
         "hide": 2,
@@ -230,8 +230,8 @@
   },
   "timepicker": {},
   "timezone": "utc",
-  "title": "Eventshub",
+  "title": "Eventhubs",
   "uid": "K9cdIeu4z",
-  "version": 5,
+  "version": 4,
   "weekStart": ""
 }
