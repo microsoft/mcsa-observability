@@ -709,7 +709,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Eventshub_Availability\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions)\n| summarize dcount(id)",
+          "query": "Eventhubs_Availability\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions)\n| summarize dcount(id)",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -2186,7 +2186,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Subscriptions\r\n|join Eventshub_Availability on subscriptionId\r\n| where $__timeFilter(['date']) and isnotnull(incomingRequests) and isnotnull(serverErrors)\r\n and location in ($Region) and subscriptionId in ($Subscriptions)\r\n and solution in ($Solution)\r\n| summarize eventhubs = avg((incomingRequests-serverErrors)/incomingRequests)*100 by ['date']",
+          "query": "Subscriptions\r\n|join Eventhubs_Availability on subscriptionId\r\n| where $__timeFilter(['date']) and isnotnull(incomingRequests) and isnotnull(serverErrors)\r\n and location in ($Region) and subscriptionId in ($Subscriptions)\r\n and solution in ($Solution)\r\n| summarize eventhubs = avg((incomingRequests-serverErrors)/incomingRequests)*100 by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -2415,13 +2415,13 @@
           "type": "grafana-azure-data-explorer-datasource",
           "uid": "DGZYRn9Vz"
         },
-        "definition": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Cognitive_Svc_Availability\n| distinct location;\nlet region_8 = Container_Registry_Availability\n| distinct location;\nlet region_9 = Eventshub_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8, region_9 | distinct *",
+        "definition": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Cognitive_Svc_Availability\n| distinct location;\nlet region_8 = Container_Registry_Availability\n| distinct location;\nlet region_9 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8, region_9 | distinct *",
         "hide": 0,
         "includeAll": false,
         "multi": true,
         "name": "Region",
         "options": [],
-        "query": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Cognitive_Svc_Availability\n| distinct location;\nlet region_8 = Container_Registry_Availability\n| distinct location;\nlet region_9 = Eventshub_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8, region_9 | distinct *",
+        "query": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Cognitive_Svc_Availability\n| distinct location;\nlet region_8 = Container_Registry_Availability\n| distinct location;\nlet region_9 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8, region_9 | distinct *",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,

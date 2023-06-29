@@ -1,6 +1,6 @@
 ﻿name,type,resultTableName
 cognitiveservice,microsoft.cognitiveservices/accounts,Cognitive_Svc_Availability
-eventshub,microsoft.eventhub/namespaces,Eventshub_Availability
+eventhubs,microsoft.eventhub/namespaces,Eventhubs_Availability
 acr,microsoft.containerregistry/registries,Container_Registry_Availability
 cosmosdb,microsoft.documentdb/databaseaccounts,Cosmosdb_Availability
 aksservernode,microsoft.containerservice/managedclusters,Aksservernode_Availability

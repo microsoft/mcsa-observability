@@ -11,7 +11,7 @@
 
 .create table Storage_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Eventshub_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create table Eventhubs_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
 .create table Cognitive_Svc_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
@@ -32,7 +32,7 @@
 
 .create table Storage_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Eventshub_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create table Eventhubs_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 .create table Cognitive_Svc_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
@@ -61,7 +61,7 @@
 
 .create table Storage_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create table Eventshub_Availability (['date']: datetime, ['id']: string, incomingRequests: decimal, serverErrors: decimal, location: string, subscriptionId: guid, name: string)
+.create table Eventhubs_Availability (['date']: datetime, ['id']: string, incomingRequests: decimal, serverErrors: decimal, location: string, subscriptionId: guid, name: string)
 
 .create table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
@@ -71,8 +71,8 @@
 
 //create functions
 
-.create-or-alter function  Parse_Eventshub_Availability() {
-let requests = Eventshub_Availability_Raw 
+.create-or-alter function  Parse_Eventhubs_Availability() {
+let requests = Eventhubs_Availability_Raw 
     | mv-expand values = metrics.values
     | extend id = tostring(values.resourceid) 
     | extend subscriptionId = split(id, '/')[2] 
@@ -84,7 +84,7 @@ let requests = Eventshub_Availability_Raw
     | mv-expand data = timeseries.data 
     | project timestamp = todatetime(data.timeStamp), id = tostring(id), incomingrequests = todecimal(data.average),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let errors = Eventshub_Availability_Raw 
+let errors = Eventhubs_Availability_Raw 
     | mv-expand values = metrics.values
     | extend id = tostring(values.resourceid) 
     | extend subscriptionId = split(id, '/')[2] 
@@ -355,7 +355,7 @@ let pushes = (successfulPush | join kind=leftouter totalPush on $left.timestamp 
 
 .alter table Storage_Availability policy update @'[{"Source": "Storage_Availability_Raw", "Query": "Parse_Storage_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
-.alter table Eventshub_Availability policy update @'[{"Source": "Eventshub_Availability_Raw", "Query": "Parse_Eventshub_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+.alter table Eventhubs_Availability policy update @'[{"Source": "Eventhubs_Availability_Raw", "Query": "Parse_Eventhubs_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
 .alter table Cognitive_Svc_Availability policy update @'[{"Source": "Cognitive_Svc_Availability_Raw", "Query": "Parse_Cognitive_Svc_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
@@ -377,7 +377,7 @@ let pushes = (successfulPush | join kind=leftouter totalPush on $left.timestamp 
 
 .alter-merge table Storage_Availability_Raw policy retention softdelete = 0s
 
-.alter-merge table Eventshub_Availability_Raw policy retention softdelete = 0s
+.alter-merge table Eventhubs_Availability_Raw policy retention softdelete = 0s
 
 .alter-merge table Cognitive_Svc_Availability_Raw policy retention softdelete = 0s
 

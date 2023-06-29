@@ -112,7 +112,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Eventshub_Availability\n| project ['date'], id, location, name, incomingRequests, serverErrors,\n subscriptionId, availability = (incomingRequests-serverErrors)*100/incomingRequests\n| where  ['date']  == datetime($selecteddate)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
+          "query": "Eventhubs_Availability\n| project ['date'], id, location, name, incomingRequests, serverErrors,\n subscriptionId, availability = (incomingRequests-serverErrors)*100/incomingRequests\n| where  ['date']  == datetime($selecteddate)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,

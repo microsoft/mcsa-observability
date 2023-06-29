@@ -32,7 +32,7 @@ The following availability metrics are supported by Azure Monitor. This version 
 | Storage        | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftclassicstoragestorageaccounts)      |
 | Cosmos DB       | [ServiceAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts)  |
 | Key Vault       | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftkeyvaultvaults)                     |
-| Eventshub       | [IncomingRequests,ServerErrors]( https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsofteventhubnamespaces)                     |
+| Eventhubs       | [IncomingRequests,ServerErrors]( https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsofteventhubnamespaces)                     |
 | Cognitive Services       | [SuccessRate]( https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcognitiveservicesaccounts)                     |
 | Container Registry       | [SuccessfulPullCount,TotalPullCount](  https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters)                     |
 | Log Analytics       | [AvailabilityRate_Query](  https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftoperationalinsightsworkspaces)                     |
