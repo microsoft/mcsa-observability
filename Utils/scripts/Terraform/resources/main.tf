@@ -10,9 +10,6 @@ terraform {
       source  = "hashicorp/azuread"
       version = "~> 2.0"
     }
-    azapi = {
-      source = "azure/azapi"
-    }
     grafana = {
       source = "grafana/grafana"
       version = "1.36.1"
@@ -27,9 +24,6 @@ provider "azurerm" {
    }
   }
   subscription_id = "${var.subscriptionId}"
-}
-
-provider "azapi" {
 }
 
 #access the configuration of the AzureRM provider - current user credentials
