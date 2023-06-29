@@ -2364,10 +2364,10 @@
         "current": {
           "selected": true,
           "text": [
-            " AG_CI_CE_BLK_CORE_ANITRA"
+            " TEST_SUB"
           ],
           "value": [
-            "0302e263-20e2-44ea-9d57-91db52a566fe"
+            "0302e263-20e2-44ea-9d57-91db42a576fs"
           ]
         },
         "datasource": {
