@@ -101,60 +101,58 @@ let errors = Eventhubs_Availability_Raw
 }
 
 .create-or-alter function  Parse_Container_Registry_Availability() {
-let successfulPull = Container_Registry_Availability_Raw 
+let successfulPull = Container_Registry_Availability_Raw
     | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid) 
-    | extend subscriptionId = split(id, '/')[2] 
-    | extend name = split(id, '/')[-1] 
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'SuccessfulPullCount' 
-    | mv-expand timeseries = value.timeseries 
-    | mv-expand data = timeseries.data 
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpullcount = todecimal(data.average),
+    | where tostring(value.name.value) == 'SuccessfulPullCount'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpullcount = todecimal(data.average),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let totalPull = Container_Registry_Availability_Raw 
+let totalPull = Container_Registry_Availability_Raw
     | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid) 
-    | extend subscriptionId = split(id, '/')[2] 
-    | extend name = split(id, '/')[-1] 
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'TotalPullCount' 
-    | mv-expand timeseries = value.timeseries 
-    | mv-expand data = timeseries.data 
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), totalpullcount = todecimal(data.average),
+    | where tostring(value.name.value) == 'TotalPullCount'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), totalpullcount = todecimal(data.average),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let successfulPush = Container_Registry_Availability_Raw 
+let successfulPush = Container_Registry_Availability_Raw
     | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid) 
-    | extend subscriptionId = split(id, '/')[2] 
-    | extend name = split(id, '/')[-1] 
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'SuccessfulPushCount' 
-    | mv-expand timeseries = value.timeseries 
-    | mv-expand data = timeseries.data 
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpushcount = todecimal(data.average),
+    | where tostring(value.name.value) == 'SuccessfulPushCount'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpushcount = todecimal(data.average),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let totalPush = Container_Registry_Availability_Raw 
+let totalPush = Container_Registry_Availability_Raw
     | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid) 
-    | extend subscriptionId = split(id, '/')[2] 
-    | extend name = split(id, '/')[-1] 
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'TotalPushCount' 
-    | mv-expand timeseries = value.timeseries 
-    | mv-expand data = timeseries.data 
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), totalpushcount = todecimal(data.average),
+    | where tostring(value.name.value) == 'TotalPushCount'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), totalpushcount = todecimal(data.average),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let pulls = (successfulPull | join kind=leftouter totalPull on $left.timestamp == $right.timestamp and $left.id == $right.id)
-| project timestamp, id, successfulpullcount, totalpullcount, location, subscriptionId, name;
-let pushes = (successfulPush | join kind=leftouter totalPush on $left.timestamp == $right.timestamp and $left.id == $right.id)
-| project timestamp, id, successfulpushcount, totalpushcount, location, subscriptionId, name;
-(pulls | join kind=leftouter pushes on $left.timestamp == $right.timestamp and $left.id == $right.id)
-| project timestamp, id, successfulpullcount, totalpullcount, successfulpushcount, totalpushcount, location, subscriptionId, name
+    (successfulPull | join kind = innerunique totalPull on $left.timestamp == $right.timestamp and $left.id == $right.id)
+    | join kind = innerunique successfulPush on $left.timestamp == $right.timestamp and $left.id == $right.id
+    | join kind = innerunique  totalPush on $left.timestamp == $right.timestamp and $left.id == $right.id
+    | project timestamp, id, successfulpullcount, totalpullcount, successfulpushcount, totalpushcount, location, subscriptionId, name
 }
 
 .create-or-alter function  Parse_Aksservernode_Availability() {
