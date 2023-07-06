@@ -4,6 +4,14 @@
 .create table Cognitive_Svc_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 //create adx tables
+.create table Resource_Providers (name: string, ['type']: string, resultTableName: string)
+
+.create table Subscription_Names (subscriptionId: guid, name: string)
+
+.create table Subscriptions (solution: string, tenancy: string, component: string, subscriptionId: guid, createdAt: datetime)
+
+.create table Subscriptions_Processed (subscriptionId: guid, dateProcessed: datetime)
+
 .create table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
 //create functions
