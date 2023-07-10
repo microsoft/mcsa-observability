@@ -1,73 +1,73 @@
 //create raw tables
-.create table Aksservernode_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Aksservernode_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Cosmosdb_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Cosmosdb_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Firewall_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Firewall_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Keyvault_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Keyvault_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Loadbalancer_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Loadbalancer_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Storage_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Storage_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Eventhubs_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Eventhubs_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Cognitive_Svc_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Cognitive_Svc_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Container_Registry_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Container_Registry_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table LogAnalytics_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table LogAnalytics_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
 // Create ingestion mapping
-.create table Aksservernode_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Aksservernode_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Cosmosdb_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Cosmosdb_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Firewall_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Firewall_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Keyvault_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Keyvault_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Loadbalancer_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Loadbalancer_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Storage_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Storage_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Eventhubs_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Eventhubs_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Cognitive_Svc_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Cognitive_Svc_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Container_Registry_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Container_Registry_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table LogAnalytics_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table LogAnalytics_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 //create adx tables
-.create table Resource_Providers (name: string, ['type']: string, resultTableName: string)
+.create-merge table Resource_Providers (name: string, ['type']: string, resultTableName: string)
 
-.create table Subscription_Names (subscriptionId: guid, name: string)
+.create-merge table Subscription_Names (subscriptionId: guid, name: string)
 
-.create table Subscriptions (solution: string, tenancy: string, component: string, subscriptionId: guid, createdAt: datetime)
+.create-merge table Subscriptions (solution: string, tenancy: string, component: string, subscriptionId: guid, createdAt: datetime)
 
-.create table Subscriptions_Processed (subscriptionId: guid, dateProcessed: datetime)
+.create-merge table Subscriptions_Processed (subscriptionId: guid, dateProcessed: datetime)
 
-.create table Aksservernode_Availability (['date']: datetime, ['id']: string, nodeReady: decimal, nodeNotReady: decimal, nodeUnknown: decimal, location: string, subscriptionId: guid, name: string) 
+.create-merge table Aksservernode_Availability (['date']: datetime, ['id']: string, nodeReady: decimal, nodeNotReady: decimal, nodeUnknown: decimal, location: string, subscriptionId: guid, name: string) 
 
-.create table Cosmosdb_Availability (['date']: datetime, name: string, availability: decimal, subscriptionId: guid, location: string, ['id']: string)
+.create-merge table Cosmosdb_Availability (['date']: datetime, name: string, availability: decimal, subscriptionId: guid, location: string, ['id']: string)
 
-.create table Firewall_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+.create-merge table Firewall_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create table Keyvault_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+.create-merge table Keyvault_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create table Loadbalancer_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+.create-merge table Loadbalancer_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create table Storage_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+.create-merge table Storage_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create table Eventhubs_Availability (['date']: datetime, ['id']: string, incomingRequests: decimal, serverErrors: decimal, location: string, subscriptionId: guid, name: string)
+.create-merge table Eventhubs_Availability (['date']: datetime, ['id']: string, incomingRequests: decimal, serverErrors: decimal, location: string, subscriptionId: guid, name: string)
 
-.create table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+.create-merge table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create table Container_Registry_Availability (['date']: datetime, ['id']: string, successfulPullCount: decimal, totalPullCount: decimal, successfulPushCount: decimal, totalPushCount: decimal, location: string, subscriptionId: guid, name: string)
+.create-merge table Container_Registry_Availability (['date']: datetime, ['id']: string, successfulPullCount: decimal, totalPullCount: decimal, successfulPushCount: decimal, totalPushCount: decimal, location: string, subscriptionId: guid, name: string)
 
-.create table LogAnalytics_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+.create-merge table LogAnalytics_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
 //create functions
 
