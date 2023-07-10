@@ -70,6 +70,13 @@ locals{
     #run_setup_grafana = "${path.cwd}/../../setup-grafana-terraform.sh ${var.prefix} ${var.location} ${data.azurerm_client_config.current.subscription_id} ${azurerm_kusto_cluster.this.uri} ${local.metricdb_name} ${local.dashboard_templates} ${azurerm_resource_group.rg.name} ${azurerm_user_assigned_identity.terraform.principal_id}"
 }
 
+#create a random string
+resource "random_string" "this" {
+  length = 5
+  special = false
+  upper = false
+}
+
 #create ad application
 resource "azuread_application" "this" {
   display_name = "${var.prefix}-sp"
@@ -131,7 +138,7 @@ resource "azurerm_storage_container" "data" {
 }
 
 resource "azurerm_storage_container" "scripts" {
-  name                  = "scripts"
+  name                  = "${random_string.this.id}scripts"
   storage_account_name  = azurerm_storage_account.this.name
   container_access_type = "private"
   depends_on = [azurerm_storage_account.this]
