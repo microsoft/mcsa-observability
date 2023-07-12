@@ -138,7 +138,7 @@ resource "azurerm_storage_container" "data" {
 }
 
 resource "azurerm_storage_container" "scripts" {
-  name                  = "${random_string.this.id}scripts"
+  name                  = "scripts"
   storage_account_name  = azurerm_storage_account.this.name
   container_access_type = "private"
   depends_on = [azurerm_storage_account.this]
