@@ -70,11 +70,10 @@ locals{
     #run_setup_grafana = "${path.cwd}/../../setup-grafana-terraform.sh ${var.prefix} ${var.location} ${data.azurerm_client_config.current.subscription_id} ${azurerm_kusto_cluster.this.uri} ${local.metricdb_name} ${local.dashboard_templates} ${azurerm_resource_group.rg.name} ${azurerm_user_assigned_identity.terraform.principal_id}"
 }
 
-#create a random string
-resource "random_string" "this" {
-  length = 5
-  special = false
-  upper = false
+resource "null_resource" "always_run" {
+  triggers = {
+    timestamp = "${timestamp()}"
+  }
 }
 
 #create ad application
@@ -324,6 +323,11 @@ resource "null_resource" "dotnet_build_timerpipelineapp" {
   triggers = {
     dotnet_build_command = local.dotnet_build_timerpipelineapp
   }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 }
 
 resource "null_resource" "dotnet_publish_timerpipelineapp" {
@@ -333,6 +337,11 @@ resource "null_resource" "dotnet_publish_timerpipelineapp" {
   depends_on = [null_resource.dotnet_build_timerpipelineapp]
   triggers = {
     dotnet_build_command = local.dotnet_publish_timerpipelineapp
+  }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
   }
 }
 
@@ -354,6 +363,11 @@ resource "null_resource" "deploy_zip_app1" {
   depends_on = [data.archive_file.file_function_app_timerpipeline, azurerm_windows_function_app.timerstartpipelineapp]
   triggers = {
     generate_azaccess_token = local.curl_zip_deploy_app1
+  }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
   }
 }
 
@@ -434,6 +448,11 @@ resource "null_resource" "dotnet_build_adxingestapp" {
   triggers = {
     dotnet_build_command = local.dotnet_build_adxingestapp
   }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 }
 
 resource "null_resource" "dotnet_publish_adxingestapp" {
@@ -443,6 +462,11 @@ resource "null_resource" "dotnet_publish_adxingestapp" {
   depends_on = [null_resource.dotnet_build_adxingestapp]
   triggers = {
     dotnet_build_command = local.dotnet_publish_adxingestapp
+  }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
   }
 }
 
@@ -465,6 +489,11 @@ resource "null_resource" "deploy_zip_app2" {
   triggers = {
     generate_azaccess_token = local.curl_zip_deploy_app2
   }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 }
 
 resource "null_resource" "disable_basic_auth_adxingestapp_scm" {
@@ -486,16 +515,6 @@ resource "null_resource" "disable_basic_auth_adxingestapp_ftp" {
     disable_basic_auth_adxingestapp_ftp_command = local.disable_basic_auth_adxingestapp_ftp
   }
 }
-
-/*resource "null_resource" "set_exec_permissions" {
-  provisioner "local-exec" {
-    command = local.set_exec_permissions
-  }
-  depends_on = [azurerm_resource_group.rg]
-  triggers = {
-    exec_permissions = local.set_exec_permissions
-  }
-}*/
 
 resource "azurerm_dashboard_grafana" "this" {
   name                              = "${var.prefix}-grafana"

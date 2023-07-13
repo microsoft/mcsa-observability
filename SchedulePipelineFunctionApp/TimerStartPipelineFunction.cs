@@ -16,7 +16,7 @@ namespace Observability.SchedulePipelineFunctionApp
     public class TimerStartPipelineFunction
     {
         [FunctionName("TimerStartPipelineFunction")]
-        public static async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer, ILogger log)
+        public static async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"TimerStartPipelineFunction started: {DateTime.Now}");
 
