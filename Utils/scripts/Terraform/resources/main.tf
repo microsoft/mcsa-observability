@@ -298,6 +298,11 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     type = "UserAssigned"
     identity_ids = ["/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.prefix}-RG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${var.prefix}-msi"]
   }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 
   site_config {}
 
@@ -421,6 +426,11 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
   identity {
     type = "UserAssigned"
     identity_ids = ["/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.prefix}-RG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${var.prefix}-msi"]
+  }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
   }
 
   site_config {}
