@@ -17,6 +17,10 @@ terraform {
       source = "grafana/grafana"
       version = "1.36.1"
     }
+    zipper = {
+      source = "ArthurHlt/zipper"
+      version = "0.14.0"
+    }
   }
 }
 
@@ -30,6 +34,10 @@ provider "azurerm" {
 }
 
 provider "azapi" {
+}
+
+provider "zipper" {
+  skip_ssl_validation = false
 }
 
 #access the configuration of the AzureRM provider - current user credentials
@@ -350,22 +358,18 @@ resource "null_resource" "dotnet_publish_timerpipelineapp" {
   }
 }
 
-data "archive_file" "file_function_app_timerpipeline" {
-  type        = "zip"
-  source_dir  = "${path.cwd}/../../../../SchedulePipelineFunctionApp/bin/publish"
-  output_path = "${path.cwd}/../../../../SchedulePipelineFunctionApp/SchedulePipelineFunctionApp.zip"
+resource "zipper_file" "fixture1" {
+  source             = "${path.cwd}/../../../../SchedulePipelineFunctionApp/bin/publish"
+  output_path        = "${path.cwd}/../../../../SchedulePipelineFunctionApp/SchedulePipelineFunctionApp.zip"
   depends_on = [null_resource.dotnet_publish_timerpipelineapp]
-}
-
-output "full-file_path" {
-value = data.archive_file.file_function_app_timerpipeline.output_path
+  not_when_nonexists = false
 }
 
 resource "null_resource" "deploy_zip_app1" {
   provisioner "local-exec" {
     command = local.curl_zip_deploy_app1
   }
-  depends_on = [data.archive_file.file_function_app_timerpipeline, azurerm_windows_function_app.timerstartpipelineapp]
+  depends_on = [zipper_file.fixture1, azurerm_windows_function_app.timerstartpipelineapp]
   triggers = {
     generate_azaccess_token = local.curl_zip_deploy_app1
   }
@@ -480,22 +484,18 @@ resource "null_resource" "dotnet_publish_adxingestapp" {
   }
 }
 
-data "archive_file" "file_function_app_adxingest" {
-  type        = "zip"
-  source_dir  = "${path.cwd}/../../../../AdxIngestFunctionApp/bin/publish"
-  output_path = "${path.cwd}/../../../../AdxIngestFunctionApp/AdxIngestFunctionApp.zip"
+resource "zipper_file" "fixture2" {
+  source             = "${path.cwd}/../../../../AdxIngestFunctionApp/bin/publish"
+  output_path        = "${path.cwd}/../../../../AdxIngestFunctionApp/AdxIngestFunctionApp.zip"
   depends_on = [null_resource.dotnet_publish_adxingestapp]
-}
-
-output "full-file_path_adxingestapp" {
-value = data.archive_file.file_function_app_adxingest.output_path
+  not_when_nonexists = false
 }
 
 resource "null_resource" "deploy_zip_app2" {
   provisioner "local-exec" {
     command = local.curl_zip_deploy_app2
   }
-  depends_on = [data.archive_file.file_function_app_adxingest, azurerm_windows_function_app.adxingestionapp]
+  depends_on = [zipper_file.fixture2, azurerm_windows_function_app.adxingestionapp]
   triggers = {
     generate_azaccess_token = local.curl_zip_deploy_app2
   }
