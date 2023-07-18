@@ -143,7 +143,7 @@ terraform plan
 #run apply on the tf file
 terraform apply
 ```
-Copy the highlighted values that need to be added for the backend config in the tf files to create the resources
+Copy the highlighted values that need to be added for the backend config in the tf files to create the storage to store tfstate files
 ![tfstate storage outputs](Images/tfstate-storage.png)
 
 these values should be added to the backend type in each of the steps 1,2 and 3 below in terraform main.tf files (resources,grafana-datasource,grafana-dashboards) like so before initializing terraform
@@ -151,6 +151,7 @@ these values should be added to the backend type in each of the steps 1,2 and 3 
 ```
 ## 1. Create resources using Terraform
 cd ../resources
+note: if you are running terraform on existing resources please download the tfstate file into this folder from azure blob storage created above (tfstate/resources/terraform.tfstate)
 
 #initialize terraform providers
 
@@ -180,6 +181,7 @@ export TF_VAR_token=$(az grafana api-key create --key `date +%s` --name $TF_VAR_
 
 ## 2. Update grafana instance to create datasource, folders and dashboards using Terraform
 cd ../grafana-datasource
+note: if you are running terraform on existing resources please download the tfstate file into this folder from azure blob storage created above (tfstate/grafana-datasource/terraform.tfstate)
 
 #initialize terraform providers
 terraform init -upgrade
@@ -192,6 +194,7 @@ terraform apply
 
 ## 3. Update grafana instance to create folders and dashboards using Terraform
 cd ../grafana-dashboards
+note: if you are running terraform on existing resources please download the tfstate file into this folder from azure blob storage created above (tfstate/grafana-dashboards/terraform.tfstate)
 
 #initialize terraform providers
 terraform init -upgrade
