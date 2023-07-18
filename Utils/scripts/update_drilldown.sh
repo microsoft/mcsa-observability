@@ -45,7 +45,7 @@ eventhubsbuid=$(az grafana dashboard list --name $prefix-grafana --resource-grou
 eventhubsdrilldown=$endpoint/d/$eventhubsbuid/eventhubs$queryparams
 echo $eventhubsdrilldown
 
-jsonfile=$METRICS_FOLDER_PATH/AzureResourceObservability-1687853750785.json
+jsonfile=$METRICS_FOLDER_PATH/AzureResourceObservability.json
 echo $jsonfile
 
 echo "$(jq --arg storagedrilldown "$storagedrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="storage drill down details") then .url=$storagedrilldown else . end' $jsonfile)" > $jsonfile
