@@ -54,7 +54,7 @@ echo  "$(jq --arg keyvaultdrilldown "$keyvaultdrilldown" '.panels[].fieldConfig.
         
 echo  "$(jq --arg aksdrilldown "$aksdrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="aksservernode drill down details") then .url=$aksdrilldown else . end' $jsonfile)" > $jsonfile
 
-echo  "$(jq --arg firewalldrilldown "$keyvaultdrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="firewall drill down details") then .url=$firewalldrilldown else . end' $jsonfile)" > $jsonfile
+echo  "$(jq --arg firewalldrilldown "$firewalldrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="firewall drill down details") then .url=$firewalldrilldown else . end' $jsonfile)" > $jsonfile
 
 echo  "$(jq --arg lbdrilldown "$lbdrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="loadbalancer drill down details") then .url=$lbdrilldown else . end' $jsonfile)" > $jsonfile
 
