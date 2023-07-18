@@ -131,10 +131,29 @@ az account show
 #set the subscription where the resources are to be deployed
 az account set --subscription <subscriptionId>
 
-## 1. Create resources using Terraform
-cd resources
+## Create storage account to store tfstate files
+cd backend-config
 
 #initialize terraform providers
+terraform init
+
+#run a plan on the tf file
+terraform plan
+
+#run apply on the tf file
+terraform apply
+```
+Copy the highlighted values that need to be added for the backend config in the tf files to create the resources
+![tfstate storage outputs](Images/tfstate-storage.png)
+
+these values should be added to the backend type in each of the steps 1,2 and 3 below in terraform main.tf files (resources,grafana-datasource,grafana-dashboards) like so before initializing terraform
+![azurerm backend type](Images/backend-type.png)
+```
+## 1. Create resources using Terraform
+cd ../resources
+
+#initialize terraform providers
+
 terraform init
 
 # run a plan on the root file

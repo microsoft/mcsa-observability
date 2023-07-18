@@ -1,8 +1,8 @@
 terraform {
   backend "azurerm" {
-      resource_group_name  = "tfstate"
+      resource_group_name  = "<resource_group_name>"
       storage_account_name = "<storage_account_name>"
-      container_name       = "tfstate"
+      container_name       = "grafana-datasource"
       key                  = "terraform.tfstate"
   }
   required_providers {
