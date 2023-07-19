@@ -1,4 +1,10 @@
 terraform {
+  backend "azurerm" {
+      resource_group_name  = "tfstate"
+      storage_account_name = "tfstatejh2zp"
+      container_name       = "tfstate"
+      key                  = "grafana-dashboards-terraform.tfstate"
+  }
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -39,69 +45,69 @@ resource "grafana_folder" "observability" {
 resource "grafana_dashboard" "resource_observability" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/AzureResourceObservability.json")
+  config_json = file("../../dashboard_templates/AzureResourceObservability-1687853750785.json")
 }
 
 resource "grafana_dashboard" "aks_server_node" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/AksServerNode.json")
+  config_json = file("../../dashboard_templates/AksServerNode-1679088882867.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "cosmos_db" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/CosmosDB.json")
+  config_json = file("../../dashboard_templates/CosmosDB-1679088907885.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "firewalls" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/Firewalls.json")
+  config_json = file("../../dashboard_templates/Firewalls-1679088928078.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "keyvault" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/Keyvault.json")
+  config_json = file("../../dashboard_templates/Keyvault-1679088939482.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "loadbalancer" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/Loadbalancer.json")
+  config_json = file("../../dashboard_templates/Loadbalancer-1679088952762.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "storage" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/Storage.json")
+  config_json = file("../../dashboard_templates/Storage-1679088963314.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "eventhubs" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/Eventhubs.json")
+  config_json = file("../../dashboard_templates/Eventhubs-1687851669082.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "containerregistry" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/ContainerRegistry.json")
+  config_json = file("../../dashboard_templates/ContainerRegistry-1687851648145.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 
 resource "grafana_dashboard" "cognitiveservices" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/CognitiveServices.json")
+  config_json = file("../../dashboard_templates/CognitiveServices-1687851601199.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 

@@ -45,7 +45,7 @@ eventhubsbuid=$(az grafana dashboard list --name $prefix-grafana --resource-grou
 eventhubsdrilldown=$endpoint/d/$eventhubsbuid/eventhubs$queryparams
 echo $eventhubsdrilldown
 
-jsonfile=$METRICS_FOLDER_PATH/AzureResourceObservability.json
+jsonfile=$METRICS_FOLDER_PATH/AzureResourceObservability-1687853750785.json
 echo $jsonfile
 
 echo "$(jq --arg storagedrilldown "$storagedrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="storage drill down details") then .url=$storagedrilldown else . end' $jsonfile)" > $jsonfile
@@ -54,7 +54,7 @@ echo  "$(jq --arg keyvaultdrilldown "$keyvaultdrilldown" '.panels[].fieldConfig.
         
 echo  "$(jq --arg aksdrilldown "$aksdrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="aksservernode drill down details") then .url=$aksdrilldown else . end' $jsonfile)" > $jsonfile
 
-echo  "$(jq --arg firewalldrilldown "$firewalldrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="firewall drill down details") then .url=$firewalldrilldown else . end' $jsonfile)" > $jsonfile
+echo  "$(jq --arg firewalldrilldown "$keyvaultdrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="firewall drill down details") then .url=$firewalldrilldown else . end' $jsonfile)" > $jsonfile
 
 echo  "$(jq --arg lbdrilldown "$lbdrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="loadbalancer drill down details") then .url=$lbdrilldown else . end' $jsonfile)" > $jsonfile
 

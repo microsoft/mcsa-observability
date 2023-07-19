@@ -24,14 +24,14 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 30,
+  "id": 38,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+        "uid": "uRhkgPj4k"
       },
       "fieldConfig": {
         "defaults": {
@@ -40,7 +40,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "color-text",
+            "cellOptions": {
+              "type": "color-text"
+            },
             "filterable": true,
             "inspect": true
           },
@@ -60,34 +62,10 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "name"
-            },
-            "properties": [
-              {
-                "id": "custom.width"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "location"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 189
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 10,
+        "h": 12,
         "w": 24,
         "x": 0,
         "y": 0
@@ -95,22 +73,22 @@
       "id": 2,
       "options": {
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
           ],
           "show": false
         },
-        "showHeader": true,
-        "sortBy": []
+        "showHeader": true
       },
-      "pluginVersion": "9.3.8",
+      "pluginVersion": "9.4.12",
       "targets": [
         {
-          "database": "grafana08-metricsdb",
+          "database": "func04-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+            "uid": "uRhkgPj4k"
           },
           "expression": {
             "from": {
@@ -133,20 +111,22 @@
               "type": "and"
             }
           },
-          "pluginVersion": "4.2.0",
-          "query": "Storage_Availability\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability)\nand location in ($Region) and subscriptionId in ($Subscriptions) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
+          "pluginVersion": "4.4.1",
+          "query": "LogAnalytics_Availability\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability)\nand location in ($Region) and subscriptionId in ($Subscriptions) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
           "querySource": "raw",
+          "queryType": "KQL",
           "rawMode": true,
           "refId": "A",
           "resultFormat": "table"
         }
       ],
-      "title": "# of Storage with Availability < 100",
+      "title": "# of LogAnalytics with Availability < 100",
       "type": "table"
     }
   ],
-  "refresh": false,
-  "schemaVersion": 37,
+  "refresh": "",
+  "revision": 1,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -180,7 +160,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -204,7 +184,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -228,7 +208,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -251,8 +231,8 @@
   },
   "timepicker": {},
   "timezone": "utc",
-  "title": "Storage",
-  "uid": "",
-  "version": 17,
+  "title": "LogAnalytics",
+  "uid": "mpNZfMr4k",
+  "version": 2,
   "weekStart": ""
 }

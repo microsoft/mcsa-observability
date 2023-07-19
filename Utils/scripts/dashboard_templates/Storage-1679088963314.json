@@ -24,14 +24,14 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 37,
+  "id": 30,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "DGZYRn9Vz"
+        "uid": "uRhkgPj4k"
       },
       "fieldConfig": {
         "defaults": {
@@ -40,9 +40,7 @@
           },
           "custom": {
             "align": "auto",
-            "cellOptions": {
-              "type": "color-text"
-            },
+            "displayMode": "color-text",
             "filterable": true,
             "inspect": true
           },
@@ -62,10 +60,34 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "name"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "location"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 189
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 12,
+        "h": 10,
         "w": 24,
         "x": 0,
         "y": 0
@@ -73,22 +95,22 @@
       "id": 2,
       "options": {
         "footer": {
-          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
           ],
           "show": false
         },
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": []
       },
-      "pluginVersion": "9.4.12",
+      "pluginVersion": "9.3.8",
       "targets": [
         {
-          "database": "sriv11-metricsdb",
+          "database": "func04-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "DGZYRn9Vz"
+            "uid": "uRhkgPj4k"
           },
           "expression": {
             "from": {
@@ -111,22 +133,20 @@
               "type": "and"
             }
           },
-          "pluginVersion": "4.4.1",
-          "query": "Eventhubs_Availability\n| project ['date'], id, location, name, incomingRequests, serverErrors,\n subscriptionId, availability = (incomingRequests-serverErrors)*100/incomingRequests\n| where  ['date']  == datetime($selecteddate)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
+          "pluginVersion": "4.2.0",
+          "query": "Storage_Availability\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability)\nand location in ($Region) and subscriptionId in ($Subscriptions) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
           "querySource": "raw",
-          "queryType": "KQL",
           "rawMode": true,
           "refId": "A",
           "resultFormat": "table"
         }
       ],
-      "title": "# of Eventhubs with Availability < 100",
+      "title": "# of Storage with Availability < 100",
       "type": "table"
     }
   ],
-  "refresh": "",
-  "revision": 1,
-  "schemaVersion": 38,
+  "refresh": false,
+  "schemaVersion": 37,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -148,7 +168,8 @@
         ],
         "query": "2023-01-12 00:00:00",
         "skipUrlSync": false,
-        "type": "textbox"
+        "type": "textbox",
+        "datasource": null
       },
       {
         "current": {
@@ -159,7 +180,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "DGZYRn9Vz"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -183,7 +204,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "DGZYRn9Vz"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -207,7 +228,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "DGZYRn9Vz"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -230,8 +251,8 @@
   },
   "timepicker": {},
   "timezone": "utc",
-  "title": "Eventhubs",
-  "uid": "K9cdIeu4z",
-  "version": 4,
+  "title": "Storage",
+  "uid": "",
+  "version": 17,
   "weekStart": ""
 }

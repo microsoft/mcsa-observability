@@ -1,35 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_OBSERVABILITY_METRICS DATA SOURCE",
-      "label": "Observability Metrics Data Source",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "grafana-azure-data-explorer-datasource",
-      "pluginName": "Azure Data Explorer Datasource"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "9.4.12"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-azure-data-explorer-datasource",
-      "name": "Azure Data Explorer Datasource",
-      "version": "4.5.0"
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -55,14 +24,14 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
+  "id": 32,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+        "uid": "uRhkgPj4k"
       },
       "fieldConfig": {
         "defaults": {
@@ -71,9 +40,7 @@
           },
           "custom": {
             "align": "auto",
-            "cellOptions": {
-              "type": "color-text"
-            },
+            "displayMode": "color-text",
             "filterable": true,
             "inspect": true
           },
@@ -104,7 +71,6 @@
       "id": 2,
       "options": {
         "footer": {
-          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -113,13 +79,13 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "9.4.12",
+      "pluginVersion": "9.3.8",
       "targets": [
         {
-          "database": "sriv11-metricsdb",
+          "database": "func04-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+            "uid": "uRhkgPj4k"
           },
           "expression": {
             "from": {
@@ -142,10 +108,9 @@
               "type": "and"
             }
           },
-          "pluginVersion": "4.5.0",
-          "query": "Subscriptions\n|join Aksservernode_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId,tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where   ['date']  == datetime($selecteddate)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
+          "pluginVersion": "4.2.0",
+          "query": "Subscriptions\n|join Aksservernode_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId,tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
           "querySource": "raw",
-          "queryType": "KQL",
           "rawMode": true,
           "refId": "A",
           "resultFormat": "table"
@@ -155,9 +120,8 @@
       "type": "table"
     }
   ],
-  "refresh": "",
-  "revision": 1,
-  "schemaVersion": 38,
+  "refresh": false,
+  "schemaVersion": 37,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -179,13 +143,19 @@
         ],
         "query": "2023-03-16 20:42:00",
         "skipUrlSync": false,
-        "type": "textbox"
+        "type": "textbox",
+        "datasource": null
       },
       {
-        "current": {},
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -201,10 +171,15 @@
         "type": "query"
       },
       {
-        "current": {},
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -220,10 +195,15 @@
         "type": "query"
       },
       {
-        "current": {},
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -248,6 +228,6 @@
   "timezone": "utc",
   "title": "AksServerNode",
   "uid": "OD9S0za4z",
-  "version": 2,
+  "version": 28,
   "weekStart": ""
 }
