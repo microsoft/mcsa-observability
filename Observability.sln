@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdxIngestFunctionApp", "AdxIngestFunctionApp\AdxIngestFunctionApp.csproj", "{B7ABEAF5-D880-423B-A858-DA1C6CEE268B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulePipelineFunctionApp", "SchedulePipelineFunctionApp\SchedulePipelineFunctionApp.csproj", "{84878825-0C54-466F-84F7-AC6404132E2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj", "{34829A36-B3C3-4377-B527-F35A73F38BCC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{36C96AA5-9ACA-4A5B-A0B1-AA0C39EF5DC8}"
+	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.MD = CHANGELOG.MD
+		DATAINGESTION.md = DATAINGESTION.md
+		LICENSE.MD = LICENSE.MD
+		README.MD = README.MD
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{70C109EC-63F0-4F3A-870D-8FB893BD14AE}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\architecture-raw.vsdx = Docs\architecture-raw.vsdx
+		Docs\dataingestion-1.png = Docs\dataingestion-1.png
+		Docs\dataingestion-2.png = Docs\dataingestion-2.png
+		Docs\dataingestion-3.png = Docs\dataingestion-3.png
+		Docs\dataingestion-4.png = Docs\dataingestion-4.png
+		Docs\dataingestion-5.png = Docs\dataingestion-5.png
+		Docs\dataingestion-6.png = Docs\dataingestion-6.png
+		Docs\dataingestion-7.png = Docs\dataingestion-7.png
+		Docs\githubfiledownload-1.png = Docs\githubfiledownload-1.png
+		Docs\visualization.png = Docs\visualization.png
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B7ABEAF5-D880-423B-A858-DA1C6CEE268B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7ABEAF5-D880-423B-A858-DA1C6CEE268B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7ABEAF5-D880-423B-A858-DA1C6CEE268B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7ABEAF5-D880-423B-A858-DA1C6CEE268B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84878825-0C54-466F-84F7-AC6404132E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84878825-0C54-466F-84F7-AC6404132E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84878825-0C54-466F-84F7-AC6404132E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84878825-0C54-466F-84F7-AC6404132E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34829A36-B3C3-4377-B527-F35A73F38BCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34829A36-B3C3-4377-B527-F35A73F38BCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34829A36-B3C3-4377-B527-F35A73F38BCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34829A36-B3C3-4377-B527-F35A73F38BCC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {803B7ABC-EBC4-45D7-8FFD-5B85138EE35F}
+	EndGlobalSection
+EndGlobal

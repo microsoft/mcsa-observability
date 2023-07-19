@@ -1,0 +1,18 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/Helper/bin/Debug/net6.0
+/Helper/obj
+/EpicFunctionApp/EpicFunction1.cs
+/Helper/ServiceBus/ServiceBus.cs
+/Utils/bin/Debug/net6.0
+/Utils/obj
+/ScaletestFunctionApp/bin
+/ScaletestFunctionApp/obj
+/Helper/bin/Release/net6.0
+/Utils/bin/Release/net6.0
+/SchedulePipelineFunctionApp/Properties/PublishProfiles
+/SchedulePipelineFunctionApp/Properties/ServiceDependencies/TimerStartPipelineFunction-onel03 - Zip Deploy
+/AdxIngestFunctionApp/Properties
