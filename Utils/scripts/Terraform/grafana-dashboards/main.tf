@@ -1,10 +1,4 @@
 terraform {
-  backend "azurerm" {
-      resource_group_name  = "tfstate"
-      storage_account_name = "tfstatejh2zp"
-      container_name       = "tfstate"
-      key                  = "grafana-dashboards-terraform.tfstate"
-  }
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
