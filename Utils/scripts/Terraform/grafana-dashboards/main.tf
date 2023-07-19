@@ -59,7 +59,7 @@ resource "grafana_dashboard" "cosmos_db" {
 resource "grafana_dashboard" "firewalls" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/Firewalls-1679088928078.json")
+  config_json = file("../../dashboard_templates/Firewalls-1689786810784.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 

@@ -1576,7 +1576,7 @@
             {
               "targetBlank": true,
               "title": "firewall drill down details",
-              "url": "https://func04-grafana-e3crgvguazb5b2f2.eus.grafana.azure.com/d/CkBGgPC4k/keyvault?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              "url": "https://finaltest-grafana-cwekcvcge3g3dad8.eus.grafana.azure.com/d/ml5td_CVz/firewalls?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
