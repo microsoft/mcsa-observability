@@ -105,6 +105,13 @@ resource "grafana_dashboard" "cognitiveservices" {
   depends_on = [grafana_dashboard.resource_observability]
 }
 
+resource "grafana_dashboard" "loganalytics" {
+  folder     = grafana_folder.observability.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/LogAnalytics-1688018903992.json")
+  depends_on = [grafana_dashboard.resource_observability]
+}
+
 //add permission to execute the file
 resource "null_resource" "add_perm_2" {
   provisioner "local-exec" {
