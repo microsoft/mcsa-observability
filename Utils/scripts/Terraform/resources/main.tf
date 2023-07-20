@@ -200,6 +200,11 @@ resource "azurerm_storage_blob" "this" {
   type                   = "Block"
   source                 = "${path.cwd}/../../table_scripts.kql"
   depends_on = [azurerm_storage_container.scripts]
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 }
 
 #create a kusto cluster
