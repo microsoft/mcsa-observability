@@ -93,7 +93,6 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 ```
 
 ### Install using Terraform
-
 ```
 ## Clone git repo into the folder
 repolink=""
@@ -121,7 +120,10 @@ eg: sudo apt-get install azure-cli=2.46.0-1~focal (Codename - focal/bionic/bulls
 
 # change directory to where Terraform main.tf is located
 cd $currentDir/Utils/scripts/Terraform
-
+```
+#Note: if you are deploying feature improvements on top of an existing deployment, please copy over the tfstate files from the folders resources,grafana-datasource and grafana-dashboards from your existing deployment to the cloned repository
+![terraform-folders](Images/terraform-folders.png) 
+```
 #log in to the tenant where the subscription to host the resources is present
 az login
 
@@ -218,3 +220,7 @@ az grafana create not compatible with az cli versions > 2.46 ongoing issue - htt
 versions of cli <=2.46 until the issue is resolved.
 
 ![recommended cli version](Images/az-cli-version.png)
+
+#### persisting tfstate files
+please ensure you are storing the tfstate files in the following locations so that they can be used to deploy further improvements in the future
+![terraform-folders](Images/terraform-folders.png)
