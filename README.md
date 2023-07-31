@@ -32,6 +32,10 @@ The following availability metrics are supported by Azure Monitor. This version 
 | Storage        | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftclassicstoragestorageaccounts)      |
 | Cosmos DB       | [ServiceAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts)  |
 | Key Vault       | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftkeyvaultvaults)                     |
+| Eventhubs       | [IncomingRequests,ServerErrors]( https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsofteventhubnamespaces)                     |
+| Cognitive Services       | [SuccessRate]( https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcognitiveservicesaccounts)                     |
+| Container Registry       | [SuccessfulPullCount,TotalPullCount](  https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters)                     |
+| Log Analytics       | [AvailabilityRate_Query](  https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftoperationalinsightsworkspaces)                     |
 
 ## Visualization
 
@@ -89,7 +93,6 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 ```
 
 ### Install using Terraform
-
 ```
 ## Clone git repo into the folder
 repolink=""
@@ -117,7 +120,10 @@ eg: sudo apt-get install azure-cli=2.46.0-1~focal (Codename - focal/bionic/bulls
 
 # change directory to where Terraform main.tf is located
 cd $currentDir/Utils/scripts/Terraform
-
+```
+#Note: if you are deploying feature improvements on top of an existing deployment, please copy over the tfstate files from the folders resources,grafana-datasource and grafana-dashboards from your existing deployment to the cloned repository
+![terraform-folders](Images/terraform-folders.png) 
+```
 #log in to the tenant where the subscription to host the resources is present
 az login
 
@@ -134,11 +140,11 @@ cd resources
 terraform init
 
 # run a plan on the root file
-terraform plan -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
+terraform plan -var="prefix=<prefix>" -var="subscriptionId=<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
 eg: terraform plan -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
 
 # run apply on the root file
-terraform apply -var="prefix=<prefix>" -var="subscriptionId<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
+terraform apply -var="prefix=<prefix>" -var="subscriptionId=<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
 eg: terraform apply -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
 note: make sure to confirm resource creation with a "yes" when the prompt appears on running this command
 
@@ -199,7 +205,7 @@ The solution relies on the following data to be present in the "Resource Provide
 2. Modify the CSV to include details of the subscriptions for which you want to track resource health.
 3. Follow the data ingestion steps as outlined in the previous instructions for ResourceType.csv file.
 
-Finally, add reader role for the Managed Identity created by script to the subscriptions that you want to monitor
+Finally, add "Monitoring Reader" role for the Managed Identity created by script to the subscriptions that you want to monitor
 
 #### Grafana access
 
@@ -214,3 +220,7 @@ az grafana create not compatible with az cli versions > 2.46 ongoing issue - htt
 versions of cli <=2.46 until the issue is resolved.
 
 ![recommended cli version](Images/az-cli-version.png)
+
+#### persisting tfstate files
+please ensure you are storing the tfstate files in the following locations so that they can be used to deploy further improvements in the future
+![terraform-folders](Images/terraform-folders.png)

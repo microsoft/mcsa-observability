@@ -39,7 +39,7 @@ resource "grafana_folder" "observability" {
 resource "grafana_dashboard" "resource_observability" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/AzureResourceObservability-1679088842231.json")
+  config_json = file("../../dashboard_templates/AzureResourceObservability-1687853750785.json")
 }
 
 resource "grafana_dashboard" "aks_server_node" {
@@ -59,7 +59,7 @@ resource "grafana_dashboard" "cosmos_db" {
 resource "grafana_dashboard" "firewalls" {
   folder     = grafana_folder.observability.id
   overwrite = true
-  config_json = file("../../dashboard_templates/Firewalls-1679088928078.json")
+  config_json = file("../../dashboard_templates/Firewalls-1689786810784.json")
   depends_on = [grafana_dashboard.resource_observability]
 }
 
@@ -84,6 +84,34 @@ resource "grafana_dashboard" "storage" {
   depends_on = [grafana_dashboard.resource_observability]
 }
 
+resource "grafana_dashboard" "eventhubs" {
+  folder     = grafana_folder.observability.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/Eventhubs-1687851669082.json")
+  depends_on = [grafana_dashboard.resource_observability]
+}
+
+resource "grafana_dashboard" "containerregistry" {
+  folder     = grafana_folder.observability.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/ContainerRegistry-1687851648145.json")
+  depends_on = [grafana_dashboard.resource_observability]
+}
+
+resource "grafana_dashboard" "cognitiveservices" {
+  folder     = grafana_folder.observability.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/CognitiveServices-1687851601199.json")
+  depends_on = [grafana_dashboard.resource_observability]
+}
+
+resource "grafana_dashboard" "loganalytics" {
+  folder     = grafana_folder.observability.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/LogAnalytics-1688018903992.json")
+  depends_on = [grafana_dashboard.resource_observability]
+}
+
 //add permission to execute the file
 resource "null_resource" "add_perm_2" {
   provisioner "local-exec" {
@@ -92,7 +120,7 @@ resource "null_resource" "add_perm_2" {
   triggers = {
     addperm2 = local.addperm_2
   }
-  depends_on = [grafana_dashboard.storage,grafana_dashboard.loadbalancer,grafana_dashboard.keyvault,grafana_dashboard.firewalls,grafana_dashboard.cosmos_db,grafana_dashboard.aks_server_node,grafana_dashboard.resource_observability]
+  depends_on = [grafana_dashboard.storage,grafana_dashboard.loadbalancer,grafana_dashboard.keyvault,grafana_dashboard.firewalls,grafana_dashboard.cosmos_db,grafana_dashboard.aks_server_node,grafana_dashboard.resource_observability,grafana_dashboard.eventhubs,grafana_dashboard.cognitiveservices,grafana_dashboard.containerregistry]
 }
 
 //update uid of datasource on the dashboards

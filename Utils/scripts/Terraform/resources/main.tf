@@ -17,6 +17,10 @@ terraform {
       source = "grafana/grafana"
       version = "1.36.1"
     }
+    zipper = {
+      source = "ArthurHlt/zipper"
+      version = "0.14.0"
+    }
   }
 }
 
@@ -30,6 +34,10 @@ provider "azurerm" {
 }
 
 provider "azapi" {
+}
+
+provider "zipper" {
+  skip_ssl_validation = false
 }
 
 #access the configuration of the AzureRM provider - current user credentials
@@ -68,6 +76,12 @@ locals{
     dashboard_templates = "${path.cwd}/../../dashboard_templates"
     #set_exec_permissions = "chmod 755 ${path.cwd}/../../setup-grafana-terraform.sh"
     #run_setup_grafana = "${path.cwd}/../../setup-grafana-terraform.sh ${var.prefix} ${var.location} ${data.azurerm_client_config.current.subscription_id} ${azurerm_kusto_cluster.this.uri} ${local.metricdb_name} ${local.dashboard_templates} ${azurerm_resource_group.rg.name} ${azurerm_user_assigned_identity.terraform.principal_id}"
+}
+
+resource "null_resource" "always_run" {
+  triggers = {
+    timestamp = "${timestamp()}"
+  }
 }
 
 #create ad application
@@ -186,6 +200,11 @@ resource "azurerm_storage_blob" "this" {
   type                   = "Block"
   source                 = "${path.cwd}/../../table_scripts.kql"
   depends_on = [azurerm_storage_container.scripts]
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 }
 
 #create a kusto cluster
@@ -292,6 +311,11 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     type = "UserAssigned"
     identity_ids = ["/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.prefix}-RG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${var.prefix}-msi"]
   }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 
   site_config {}
 
@@ -317,6 +341,11 @@ resource "null_resource" "dotnet_build_timerpipelineapp" {
   triggers = {
     dotnet_build_command = local.dotnet_build_timerpipelineapp
   }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 }
 
 resource "null_resource" "dotnet_publish_timerpipelineapp" {
@@ -327,26 +356,32 @@ resource "null_resource" "dotnet_publish_timerpipelineapp" {
   triggers = {
     dotnet_build_command = local.dotnet_publish_timerpipelineapp
   }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 }
 
-data "archive_file" "file_function_app_timerpipeline" {
-  type        = "zip"
-  source_dir  = "${path.cwd}/../../../../SchedulePipelineFunctionApp/bin/publish"
-  output_path = "${path.cwd}/../../../../SchedulePipelineFunctionApp/SchedulePipelineFunctionApp.zip"
+resource "zipper_file" "fixture1" {
+  source             = "${path.cwd}/../../../../SchedulePipelineFunctionApp/bin/publish"
+  output_path        = "${path.cwd}/../../../../SchedulePipelineFunctionApp/SchedulePipelineFunctionApp.zip"
   depends_on = [null_resource.dotnet_publish_timerpipelineapp]
-}
-
-output "full-file_path" {
-value = data.archive_file.file_function_app_timerpipeline.output_path
+  not_when_nonexists = false
 }
 
 resource "null_resource" "deploy_zip_app1" {
   provisioner "local-exec" {
     command = local.curl_zip_deploy_app1
   }
-  depends_on = [data.archive_file.file_function_app_timerpipeline, azurerm_windows_function_app.timerstartpipelineapp]
+  depends_on = [zipper_file.fixture1, azurerm_windows_function_app.timerstartpipelineapp]
   triggers = {
     generate_azaccess_token = local.curl_zip_deploy_app1
+  }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
   }
 }
 
@@ -401,6 +436,11 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     type = "UserAssigned"
     identity_ids = ["/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.prefix}-RG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${var.prefix}-msi"]
   }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 
   site_config {}
   
@@ -427,6 +467,11 @@ resource "null_resource" "dotnet_build_adxingestapp" {
   triggers = {
     dotnet_build_command = local.dotnet_build_adxingestapp
   }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 }
 
 resource "null_resource" "dotnet_publish_adxingestapp" {
@@ -437,26 +482,32 @@ resource "null_resource" "dotnet_publish_adxingestapp" {
   triggers = {
     dotnet_build_command = local.dotnet_publish_adxingestapp
   }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 }
 
-data "archive_file" "file_function_app_adxingest" {
-  type        = "zip"
-  source_dir  = "${path.cwd}/../../../../AdxIngestFunctionApp/bin/publish"
-  output_path = "${path.cwd}/../../../../AdxIngestFunctionApp/AdxIngestFunctionApp.zip"
+resource "zipper_file" "fixture2" {
+  source             = "${path.cwd}/../../../../AdxIngestFunctionApp/bin/publish"
+  output_path        = "${path.cwd}/../../../../AdxIngestFunctionApp/AdxIngestFunctionApp.zip"
   depends_on = [null_resource.dotnet_publish_adxingestapp]
-}
-
-output "full-file_path_adxingestapp" {
-value = data.archive_file.file_function_app_adxingest.output_path
+  not_when_nonexists = false
 }
 
 resource "null_resource" "deploy_zip_app2" {
   provisioner "local-exec" {
     command = local.curl_zip_deploy_app2
   }
-  depends_on = [data.archive_file.file_function_app_adxingest, azurerm_windows_function_app.adxingestionapp]
+  depends_on = [zipper_file.fixture2, azurerm_windows_function_app.adxingestionapp]
   triggers = {
     generate_azaccess_token = local.curl_zip_deploy_app2
+  }
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
   }
 }
 
@@ -479,16 +530,6 @@ resource "null_resource" "disable_basic_auth_adxingestapp_ftp" {
     disable_basic_auth_adxingestapp_ftp_command = local.disable_basic_auth_adxingestapp_ftp
   }
 }
-
-/*resource "null_resource" "set_exec_permissions" {
-  provisioner "local-exec" {
-    command = local.set_exec_permissions
-  }
-  depends_on = [azurerm_resource_group.rg]
-  triggers = {
-    exec_permissions = local.set_exec_permissions
-  }
-}*/
 
 resource "azurerm_dashboard_grafana" "this" {
   name                              = "${var.prefix}-grafana"

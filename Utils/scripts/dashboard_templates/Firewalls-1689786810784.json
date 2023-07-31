@@ -24,14 +24,14 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 30,
+  "id": 37,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "uRhkgPj4k"
+        "uid": "rviRxljVk"
       },
       "fieldConfig": {
         "defaults": {
@@ -40,7 +40,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "color-text",
+            "cellOptions": {
+              "type": "color-text"
+            },
             "filterable": true,
             "inspect": true
           },
@@ -95,6 +97,7 @@
       "id": 2,
       "options": {
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -104,13 +107,13 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.3.8",
+      "pluginVersion": "9.4.12",
       "targets": [
         {
-          "database": "func04-metricsdb",
+          "database": "main12-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "uRhkgPj4k"
+            "uid": "rviRxljVk"
           },
           "expression": {
             "from": {
@@ -133,20 +136,22 @@
               "type": "and"
             }
           },
-          "pluginVersion": "4.2.0",
-          "query": "Storage_Availability\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability)\nand location in ($Region) and subscriptionId in ($Subscriptions) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
+          "pluginVersion": "4.5.0",
+          "query": "Firewall_Availability\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability)\nand location in ($Region) and subscriptionId in ($Subscriptions) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
           "querySource": "raw",
+          "queryType": "KQL",
           "rawMode": true,
           "refId": "A",
           "resultFormat": "table"
         }
       ],
-      "title": "# of Storage with Availability < 100",
+      "title": "# of Firewall with Availability < 100",
       "type": "table"
     }
   ],
-  "refresh": false,
-  "schemaVersion": 37,
+  "refresh": "",
+  "revision": 1,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -180,7 +185,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "uRhkgPj4k"
+          "uid": "rviRxljVk"
         },
         "definition": "",
         "hide": 2,
@@ -204,7 +209,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "uRhkgPj4k"
+          "uid": "rviRxljVk"
         },
         "definition": "",
         "hide": 2,
@@ -228,7 +233,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "uRhkgPj4k"
+          "uid": "rviRxljVk"
         },
         "definition": "",
         "hide": 2,
@@ -251,8 +256,8 @@
   },
   "timepicker": {},
   "timezone": "utc",
-  "title": "Storage",
-  "uid": "",
-  "version": 17,
+  "title": "Firewalls",
+  "uid": "8HDuNUC4z",
+  "version": 3,
   "weekStart": ""
 }

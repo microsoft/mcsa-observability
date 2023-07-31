@@ -1,52 +1,160 @@
 //create raw tables
-.create table Aksservernode_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Aksservernode_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Cosmosdb_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Cosmosdb_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Firewall_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Firewall_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Keyvault_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Keyvault_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Loadbalancer_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Loadbalancer_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create table Storage_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Storage_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create-merge table Eventhubs_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create-merge table Cognitive_Svc_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create-merge table Container_Registry_Availability_Raw (metrics: dynamic) with (folder = "Raw")
+
+.create-merge table LogAnalytics_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
 // Create ingestion mapping
-.create table Aksservernode_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Aksservernode_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Cosmosdb_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Cosmosdb_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Firewall_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Firewall_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Keyvault_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Keyvault_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Loadbalancer_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Loadbalancer_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create table Storage_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Storage_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create-or-alter table Eventhubs_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create-or-alter table Cognitive_Svc_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create-or-alter table Container_Registry_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create-or-alter table LogAnalytics_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 //create adx tables
-.create table Resource_Providers (name: string, ['type']: string, resultTableName: string)
+.create-merge table Resource_Providers (name: string, ['type']: string, resultTableName: string)
 
-.create table Subscription_Names (subscriptionId: guid, name: string)
+.create-merge table Subscription_Names (subscriptionId: guid, name: string)
 
-.create table Subscriptions (solution: string, tenancy: string, component: string, subscriptionId: guid, createdAt: datetime)
+.create-merge table Subscriptions (solution: string, tenancy: string, component: string, subscriptionId: guid, createdAt: datetime)
 
-.create table Subscriptions_Processed (subscriptionId: guid, dateProcessed: datetime)
+.create-merge table Subscriptions_Processed (subscriptionId: guid, dateProcessed: datetime)
 
-.create table Aksservernode_Availability (['date']: datetime, ['id']: string, nodeReady: decimal, nodeNotReady: decimal, nodeUnknown: decimal, location: string, subscriptionId: guid, name: string) 
+.create-merge table Aksservernode_Availability (['date']: datetime, ['id']: string, nodeReady: decimal, nodeNotReady: decimal, nodeUnknown: decimal, location: string, subscriptionId: guid, name: string) 
 
-.create table Cosmosdb_Availability (['date']: datetime, name: string, availability: decimal, subscriptionId: guid, location: string, ['id']: string)
+.create-merge table Cosmosdb_Availability (['date']: datetime, name: string, availability: decimal, subscriptionId: guid, location: string, ['id']: string)
 
-.create table Firewall_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+.create-merge table Firewall_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create table Keyvault_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+.create-merge table Keyvault_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create table Loadbalancer_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+.create-merge table Loadbalancer_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create table Storage_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+.create-merge table Storage_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
+.create-merge table Eventhubs_Availability (['date']: datetime, ['id']: string, incomingRequests: decimal, serverErrors: decimal, location: string, subscriptionId: guid, name: string)
+
+.create-merge table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+
+.create-merge table Container_Registry_Availability (['date']: datetime, ['id']: string, successfulPullCount: decimal, totalPullCount: decimal, successfulPushCount: decimal, totalPushCount: decimal, location: string, subscriptionId: guid, name: string)
+
+.create-merge table LogAnalytics_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
 //create functions
+
+.create-or-alter function  Parse_Eventhubs_Availability() {
+let requests = Eventhubs_Availability_Raw 
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid) 
+    | extend subscriptionId = split(id, '/')[2] 
+    | extend name = split(id, '/')[-1] 
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'IncomingRequests' 
+    | mv-expand timeseries = value.timeseries 
+    | mv-expand data = timeseries.data 
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), incomingrequests = todecimal(data.average),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+let errors = Eventhubs_Availability_Raw 
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid) 
+    | extend subscriptionId = split(id, '/')[2] 
+    | extend name = split(id, '/')[-1] 
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'ServerErrors' 
+    | mv-expand timeseries = value.timeseries 
+    | mv-expand data = timeseries.data 
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), servererrors = todecimal(data.average),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+(requests | join kind=leftouter errors on $left.timestamp == $right.timestamp and $left.id == $right.id) 
+    | project timestamp, id, incomingrequests, servererrors, location, subscriptionId, name
+}
+
+.create-or-alter function  Parse_Container_Registry_Availability() {
+let successfulPull = Container_Registry_Availability_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'SuccessfulPullCount'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpullcount = todecimal(data.average),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+let totalPull = Container_Registry_Availability_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'TotalPullCount'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), totalpullcount = todecimal(data.average),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+let successfulPush = Container_Registry_Availability_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'SuccessfulPushCount'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), successfulpushcount = todecimal(data.average),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+let totalPush = Container_Registry_Availability_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'TotalPushCount'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), totalpushcount = todecimal(data.average),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+    (successfulPull | join kind = innerunique totalPull on $left.timestamp == $right.timestamp and $left.id == $right.id)
+    | join kind = innerunique successfulPush on $left.timestamp == $right.timestamp and $left.id == $right.id
+    | join kind = innerunique  totalPush on $left.timestamp == $right.timestamp and $left.id == $right.id
+    | project timestamp, id, successfulpullcount, totalpullcount, successfulpushcount, totalpushcount, location, subscriptionId, name
+}
+
 .create-or-alter function  Parse_Aksservernode_Availability() {
     let ready = Aksservernode_Availability_Raw 
     | mv-expand values = metrics.values
@@ -192,6 +300,46 @@
         name = tostring(name)     
 }
 
+.create-or-alter function  Parse_Cognitive_Svc_Availability() {
+    Cognitive_Svc_Availability_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'SuccessRate'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | project
+        timestamp = todatetime(data.timeStamp),
+        id = tostring(id),
+        availability = todecimal(data.average),
+        subscriptionId = toguid(subscriptionId),
+        location = tostring(region),
+        name = tostring(name)     
+}
+
+.create-or-alter function  Parse_LogAnalytics_Availability() {
+    LogAnalytics_Availability_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'AvailabilityRate_Query'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | project
+        timestamp = todatetime(data.timeStamp),
+        id = tostring(id),
+        availability = todecimal(data.average),
+        subscriptionId = toguid(subscriptionId),
+        location = tostring(region),
+        name = tostring(name)     
+}
+
 // Update results table policies
 .alter table Aksservernode_Availability policy update @'[{"Source": "Aksservernode_Availability_Raw", "Query": "Parse_Aksservernode_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
@@ -204,6 +352,14 @@
 .alter table Loadbalancer_Availability policy update @'[{"Source": "Loadbalancer_Availability_Raw", "Query": "Parse_Loadbalancer_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
 .alter table Storage_Availability policy update @'[{"Source": "Storage_Availability_Raw", "Query": "Parse_Storage_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Eventhubs_Availability policy update @'[{"Source": "Eventhubs_Availability_Raw", "Query": "Parse_Eventhubs_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Cognitive_Svc_Availability policy update @'[{"Source": "Cognitive_Svc_Availability_Raw", "Query": "Parse_Cognitive_Svc_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Container_Registry_Availability policy update @'[{"Source": "Container_Registry_Availability_Raw", "Query": "Parse_Container_Registry_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table LogAnalytics_Availability policy update @'[{"Source": "LogAnalytics_Availability_Raw", "Query": "Parse_LogAnalytics_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
 
 // Adding zero retention policies on Raw tables
@@ -218,3 +374,11 @@
 .alter-merge table Loadbalancer_Availability_Raw policy retention softdelete = 0s
 
 .alter-merge table Storage_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Eventhubs_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Cognitive_Svc_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Container_Registry_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table LogAnalytics_Availability_Raw policy retention softdelete = 0s

@@ -31,7 +31,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+        "uid": "uRhkgPj4k"
       },
       "fieldConfig": {
         "defaults": {
@@ -82,10 +82,10 @@
       "pluginVersion": "9.3.8",
       "targets": [
         {
-          "database": "grafana08-metricsdb",
+          "database": "func04-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+            "uid": "uRhkgPj4k"
           },
           "expression": {
             "from": {
@@ -155,7 +155,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -179,7 +179,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
@@ -203,7 +203,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "${DS_OBSERVABILITY_METRICS DATA SOURCE}"
+          "uid": "uRhkgPj4k"
         },
         "definition": "",
         "hide": 2,
