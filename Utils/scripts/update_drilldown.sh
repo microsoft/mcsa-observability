@@ -45,6 +45,10 @@ eventhubsbuid=$(az grafana dashboard list --name $prefix-grafana --resource-grou
 eventhubsdrilldown=$endpoint/d/$eventhubsbuid/eventhubs$queryparams
 echo $eventhubsdrilldown
 
+loganalyticsbuid=$(az grafana dashboard list --name $prefix-grafana --resource-group $prefix-RG --query "[?contains(@.title, 'LogAnalytics')].uid" -o tsv)
+loganalyticsdrilldown=$endpoint/d/$loganalyticsbuid/loganalytics$queryparams
+echo $loganalyticsdrilldown
+
 jsonfile=$METRICS_FOLDER_PATH/AzureResourceObservability-1687853750785.json
 echo $jsonfile
 
@@ -64,7 +68,9 @@ echo  "$(jq --arg cognitiveservicedrilldown "$cognitiveservicedrilldown" '.panel
 
 echo  "$(jq --arg containerregistrydrilldown "$containerregistrydrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="acr drill down details") then .url=$containerregistrydrilldown else . end' $jsonfile)" > $jsonfile
 
-echo  "$(jq --arg eventhubsdrilldown "$eventhubsdrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="eventhub drill down details") then .url=$eventhubsdrilldown else . end' $jsonfile)" > $jsonfile
+echo  "$(jq --arg eventhubsdrilldown "$eventhubsdrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="eventhubs drill down details") then .url=$eventhubsdrilldown else . end' $jsonfile)" > $jsonfile
+
+echo  "$(jq --arg loganalyticsdrilldown "$loganalyticsdrilldown" '.panels[].fieldConfig.defaults.links[]? |= if(.title=="loganalytics drill down details") then .url=$loganalyticsdrilldown else . end' $jsonfile)" > $jsonfile
 
 
 echo "Managed Grafana: Importing dashboard for $jsonfile file"
