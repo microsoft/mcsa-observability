@@ -25,7 +25,7 @@ Ingest Function. Loads data records from one or more sources into a table in Azu
 
 Monitor. End-to-end observability for applications. Provides access to application logs via Kusto Query Language. Also enables dashboard reports and monitoring and alerting capabilities.
 
-Azure Blob. Object storage solution for the cloud. Optimized for storing massive amounts of unstructured data.
+Azure Blob. Object storage solution for the cloud. Ooptimized for storing massive amounts of unstructured data.
 
 ## Availability Metrics 
 
