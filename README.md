@@ -2,40 +2,48 @@
 
 This repository contains reference architecture, code sample and dashboard template for tracking Azure resources availability (uptime/downtime) trends.
 
+This solution implements  the pillars of the [Microsoft Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/), which is a set of guiding tenets that you can use to improve the quality of a workload. One of the key considerations of the solution was the reliability pillar, which ensures that your application can meet the commitments you make to your customers. To support this, this solution helps to ensure that Azure applications are consistently reliable and meet the expectations of customers. In addition, this solution considers the operational excellence pillar, ensuring that processes can keep an application running in production. Together, these pillars come together to ensure that applications remain consistently available and reliable customers. For more information about these framework pillars, see [Overview of the reliability pillar](https://learn.microsoft.com/en-us/azure/well-architected/resiliency/overview) and [Overview of the operational excellence pillar](https://learn.microsoft.com/en-us/azure/well-architected/devops/overview).
+
 ## Architecture
 
 The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
 
 ![Solution Architecture](Images/architecture.png)
-
-1. Timer fires and gets a list of subscriptions and resource types 
-2. For each subscription, and resource type, get a list of resource ids
-3. And create batches of size N from this list
-4. Send each batch of resource ids as a message to Service Bus
-5. Function executes for each SB message
-6. And calls Azure Monitor with the batch of resource ids and timeframe to get metrics
-7. And saves metrics json returned in an Azure Blob file
-8. And ingests json with the metrics for that resource type into ADX table
-9. Dashboard in Grafana
-
+ 
 Unlike Azure Monitor, which provides the average availability of one resource at a time, this solution provides the average availability of all resources of the same resource type in your subscriptions. For example, instead of providing the availability of one Key Vault, this solution will provide the average availability of all Key Vaults in your subscriptions.
 
-## Availability Metrics
+## Components
+The above diagram consists of a range of Azure components, which will be further outlined below.
 
-The following availability metrics are supported by Azure Monitor. This version of the solution queries only these metrics
+Azure Data Explorer Clusters. End-to-end solution for data ingestion, query, visualization, and management.
 
-| Resource Type   | Metric Name(Azure Monitor)                                                                                                                  |
-|--------------- |---------------------------------------------------------------------------------------------------------------------------------------------- |
-| AKS Server Node  | [kube_node_status_condition](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters)    |
-| Load Balancer   | [VipAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkloadbalancers)            |
-| Firewall       | [FirewallHealth](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkazurefirewalls)            |
-| Storage        | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftclassicstoragestorageaccounts)      |
-| Cosmos DB       | [ServiceAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts)  |
-| Key Vault       | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftkeyvaultvaults)                     |
-| Eventhubs       | [IncomingRequests,ServerErrors]( https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsofteventhubnamespaces)                     |
-| Cognitive Services       | [SuccessRate]( https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcognitiveservicesaccounts)                     |
-| Container Registry       | [SuccessfulPullCount,TotalPullCount](  https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters)                     |
-| Log Analytics       | [AvailabilityRate_Query](  https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftoperationalinsightsworkspaces)                     |
+Resource Graph Explorer. Enables running Resource Graph queries directly in the Azure portal.
+
+Service Bus. Decouples applications and services from each other, to allow for load-balancing and safe data transfer.
+
+Ingest Function. Loads data records from one or more sources into a table in Azure Data Explorer. Once ingested, the data becomes available for query.
+
+Monitor. End-to-end observability for applications. Provides access to application logs via Kusto Query Language. Also enables dashboard reports and monitoring and alerting capabilities.
+
+Azure Blob. Object storage solution for the cloud. Optimized for storing massive amounts of unstructured data.
+
+## Availability Metrics 
+
+In Azure services, availability refers to the percentage of time that a service or application is available and functioning as expected. 
+
+The following availability metrics are supported by Azure Monitor. This version of the solution queries only these metrics.
+
+| Resource Type   | Metric Name(Azure Monitor)  |  Availability metric calculation  |
+|--------------- |---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| AKS Server Node  | [kube_node_status_condition](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters)    | (Ready / (Ready + Not Ready)) x 100 |
+| Load Balancer   | [VipAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkloadbalancers)            | - |
+| Firewall       | [FirewallHealth](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkazurefirewalls)            | - |
+| Storage        | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftclassicstoragestorageaccounts)      | - |
+| Cosmos DB       | [ServiceAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts)  | - |
+| Key Vault       | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftkeyvaultvaults) | - |
+| Cognitive Services  | [SuccessRate](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcognitiveservicesaccounts) | - |
+| Event Hubs       | [IncomingRequests, ServerErrors](https://learn.microsoft.com/en-us/azure/event-hubs/monitor-event-hubs-reference)                     | ((IncomingRequests - ServerErrors) / IncomingRequests) x 100 |
+| Container Registry       | [Successful/Total Push, Successful/Total Pull](https://learn.microsoft.com/en-us/azure/container-registry/monitor-service-reference)                     | ((Successful Push + Pull)/(Total Push + Pull)) x 100 |
 
 ## Visualization
 
