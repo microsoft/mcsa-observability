@@ -16,7 +16,7 @@ Unlike Azure Monitor, which provides the average availability of one resource at
 
 The above diagram consists of a range of Azure components, which will be further outlined below.
 
-[**Azure Data Explorer Clusters**](https://learn.microsoft.com/en-us/azure/data-explorer/data-explorer-overview) End-to-end solution for data ingestion, query, visualization, and management. Also used as the timeseries datastore for the availablity metrics
+[**Azure Data Explorer Clusters**](https://learn.microsoft.com/en-us/azure/data-explorer/data-explorer-overview) End-to-end solution for data ingestion, query, visualization, and management. Also used as the time series database for the availability metrics
 
 [**Resource Graph Explorer**](https://learn.microsoft.com/en-us/azure/governance/resource-graph/overview) Enables running Resource Graph queries directly in the Azure portal.
 
@@ -48,7 +48,7 @@ The following availability metrics are supported by Azure Monitor. This version 
 
 ## Visualization
 
-In this section, you will see how the Grafana dashboard displays availability metrics over a given timeframe for each queried resource type.
+In this section, you will see how the Grafana dashboard displays availability metrics over a given time frame for each queried resource type.
 
 ![Solution Visualization](Images/visualization.png)
 
@@ -64,7 +64,7 @@ The following section describes the Prerequisites and Installation steps to depl
 
 The script can be executed in Linux - Ubuntu 20.04 (VM, WSL).
 
-> Note: currently cloudshell is not supported since it uses az-cli > 2.46.0
+> Note: currently Azure Cloud Shell is not supported since it uses az-cli > 2.46.0
 
 ### Installation using shell script
 
@@ -137,6 +137,7 @@ cd $currentDir/Utils/scripts/Terraform
 ```
 
 > Note: if you are deploying feature improvements on top of an existing deployment, please copy over the tfstate files from the folders resources,grafana-datasource and grafana-dashboards from your existing deployment to the cloned repository
+
 ![terraform-folders](Images/terraform-folders.png)
 
 ```bash
