@@ -9,27 +9,28 @@ This solution implements  the pillars of the [Microsoft Azure Well-Architected F
 The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
 
 ![Solution Architecture](Images/architecture.png)
- 
+
 Unlike Azure Monitor, which provides the average availability of one resource at a time, this solution provides the average availability of all resources of the same resource type in your subscriptions. For example, instead of providing the availability of one Key Vault, this solution will provide the average availability of all Key Vaults in your subscriptions.
 
 ## Components
+
 The above diagram consists of a range of Azure components, which will be further outlined below.
 
-Azure Data Explorer Clusters. End-to-end solution for data ingestion, query, visualization, and management.
+[**Azure Data Explorer Clusters**](https://learn.microsoft.com/en-us/azure/data-explorer/data-explorer-overview) End-to-end solution for data ingestion, query, visualization, and management. Also used as the timeseries datastore for the availablity metrics
 
-Resource Graph Explorer. Enables running Resource Graph queries directly in the Azure portal.
+[**Resource Graph Explorer**](https://learn.microsoft.com/en-us/azure/governance/resource-graph/overview) Enables running Resource Graph queries directly in the Azure portal.
 
-Service Bus. Decouples applications and services from each other, to allow for load-balancing and safe data transfer.
+[**Service Bus**](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview) Decouples applications and services from each other, to allow for load-balancing and safe data transfer.
 
-Ingest Function. Loads data records from one or more sources into a table in Azure Data Explorer. Once ingested, the data becomes available for query.
+[**Ingest Function**](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview?pivots=programming-language-csharp) Loads data records from one or more sources into a table in Azure Data Explorer. Once ingested, the data becomes available for query.
 
-Monitor. End-to-end observability for applications. Provides access to application logs via Kusto Query Language. Also enables dashboard reports and monitoring and alerting capabilities.
+[**Grafana**](https://learn.microsoft.com/en-us/azure/managed-grafana/overview) Azure managed Grafana to visualize the availablity metrics
 
-Azure Blob. Object storage solution for the cloud. Optimized for storing massive amounts of unstructured data.
+[**Azure Blob**](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction) Object storage solution for the cloud. Optimized for storing massive amounts of unstructured data.
 
-## Availability Metrics 
+## Availability Metrics
 
-In Azure services, availability refers to the percentage of time that a service or application is available and functioning as expected. 
+In Azure services, availability refers to the percentage of time that a service or application is available and functioning as expected.
 
 The following availability metrics are supported by Azure Monitor. This version of the solution queries only these metrics.
 
@@ -62,10 +63,13 @@ The following section describes the Prerequisites and Installation steps to depl
 #### Environment
 
 The script can be executed in Linux - Ubuntu 20.04 (VM, WSL).
-###note: currently cloudshell is not supported since it uses az-cli > 2.46.0
+
+> Note: currently cloudshell is not supported since it uses az-cli > 2.46.0
 
 ### Installation using shell script
-```
+
+```bash
+
 ## Clone git repo into the folder
 ## TODO: Update github repo link variable
 
@@ -101,7 +105,8 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 ```
 
 ### Install using Terraform
-```
+
+```bash
 ## Clone git repo into the folder
 repolink=""
 codePath=$"./observability"
@@ -128,10 +133,14 @@ eg: sudo apt-get install azure-cli=2.46.0-1~focal (Codename - focal/bionic/bulls
 
 # change directory to where Terraform main.tf is located
 cd $currentDir/Utils/scripts/Terraform
+
 ```
-#Note: if you are deploying feature improvements on top of an existing deployment, please copy over the tfstate files from the folders resources,grafana-datasource and grafana-dashboards from your existing deployment to the cloned repository
-![terraform-folders](Images/terraform-folders.png) 
-```
+
+> Note: if you are deploying feature improvements on top of an existing deployment, please copy over the tfstate files from the folders resources,grafana-datasource and grafana-dashboards from your existing deployment to the cloned repository
+![terraform-folders](Images/terraform-folders.png)
+
+```bash
+
 #log in to the tenant where the subscription to host the resources is present
 az login
 
@@ -193,8 +202,10 @@ terraform plan
 # run apply on the root file
 terraform apply  
 ```
+
 ### Post Installation
-#### Post Installation Steps:
+
+#### Post Installation Steps
 
 The solution relies on the following data to be present in the "Resource Provider and Subscriptions table" before it can be used to visualize the data. Follow the steps below to complete the post installation steps.
 
@@ -203,7 +214,7 @@ The solution relies on the following data to be present in the "Resource Provide
 1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
 
 ![githubfiledownload](Images/githubfiledownload-1.png)
-> Note: While saving to local ensure that you save the file as a .csv, the default is set to .txt
+> Note: While saving to local ensure that you save the file with csv extension, the default is set to .txt
 
 2. Data ingestion: follow the steps described in the [link](DATAINGESTION.md)  to complete the data ingestion
 
@@ -219,16 +230,19 @@ Finally, add "Monitoring Reader" role for the Managed Identity created by script
 
 To add other users to view/edit the Grafana dashboard, follow [adding role assignment to managed grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/how-to-share-grafana-workspace?tabs=azure-portal)
 
-#### Storage access 
+#### Storage access
 
 sas token - expires in a year need to update it
 
 #### az grafana known issue with higher az cli versions
-az grafana create not compatible with az cli versions > 2.46 ongoing issue - https://github.com/Azure/azure-cli-extensions/issues/6221, advice to use lower
+
+az grafana create not compatible with az cli versions > 2.46 ongoing issue - [https://github.com/Azure/azure-cli-extensions/issues/6221](https://github.com/Azure/azure-cli-extensions/issues/6221), advice to use lower
 versions of cli <=2.46 until the issue is resolved.
 
 ![recommended cli version](Images/az-cli-version.png)
 
 #### persisting tfstate files
+
 please ensure you are storing the tfstate files in the following locations so that they can be used to deploy further improvements in the future
+
 ![terraform-folders](Images/terraform-folders.png)
