@@ -8,7 +8,7 @@ The following diagram gives a high-level view of Observability solution. You may
 
 ![Solution Architecture](Images/architecture.png)
 
-1. Timer fires and gets a list of subscriptions and resource types 
+1. Timer fires and gets a list of subscriptions and resource types�
 2. For each subscription, and resource type, get a list of resource ids
 3. And create batches of size N from this list
 4. Send each batch of resource ids as a message to Service Bus
@@ -20,8 +20,6 @@ The following diagram gives a high-level view of Observability solution. You may
 
 Unlike Azure Monitor, which provides the average availability of one resource at a time, this solution provides the average availability of all resources of the same resource type in your subscriptions. For example, instead of providing the availability of one Key Vault, this solution will provide the average availability of all Key Vaults in your subscriptions.
 
-<<<<<<< HEAD
-=======
 ## Components
 
 The above diagram consists of a range of Azure components, which will be further outlined below.
@@ -34,27 +32,27 @@ The above diagram consists of a range of Azure components, which will be further
 
 [**Ingest Function**](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview?pivots=programming-language-csharp) Loads data records from one or more sources into a table in Azure Data Explorer. Once ingested, the data becomes available for query.
 
-[**Grafana**](https://learn.microsoft.com/en-us/azure/managed-grafana/overview) Azure managed Grafana to visualize the availablity metrics
+[**Grafana**](https://learn.microsoft.com/en-us/azure/managed-grafana/overview) Azure managed Grafana to visualize the availability metrics
 
 [**Azure Blob**](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction) Object storage solution for the cloud. Optimized for storing massive amounts of unstructured data.
 
->>>>>>> parent of 54d1ba2 (Updating readme)
 ## Availability Metrics
 
 The following availability metrics are supported by Azure Monitor. This version of the solution queries only these metrics
 
-| Resource Type   | Metric Name(Azure Monitor)                                                                                                                  |
-|--------------- |---------------------------------------------------------------------------------------------------------------------------------------------- |
-| AKS Server Node  | [kube_node_status_condition](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters)    |
-| Load Balancer   | [VipAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkloadbalancers)            |
-| Firewall       | [FirewallHealth](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkazurefirewalls)            |
-| Storage        | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftclassicstoragestorageaccounts)      |
-| Cosmos DB       | [ServiceAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts)  |
-| Key Vault       | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftkeyvaultvaults)                     |
-| Eventhubs       | [IncomingRequests,ServerErrors]( https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsofteventhubnamespaces)                     |
-| Cognitive Services       | [SuccessRate]( https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcognitiveservicesaccounts)                     |
-| Container Registry       | [SuccessfulPullCount,TotalPullCount](  https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters)                     |
-| Log Analytics       | [AvailabilityRate_Query](  https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftoperationalinsightsworkspaces)                     |
+The following availability metrics are supported by Azure Monitor. This version of the solution queries only these metrics.
+
+| Resource Type   | Metric Name(Azure Monitor)  |  Availability metric calculation  |
+|--------------- |---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| AKS Server Node  | [kube_node_status_condition](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters)    | (Ready / (Ready + Not Ready)) x 100 |
+| Load Balancer   | [VipAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkloadbalancers)            | - |
+| Firewall       | [FirewallHealth](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkazurefirewalls)            | - |
+| Storage        | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftclassicstoragestorageaccounts)      | - |
+| Cosmos DB       | [ServiceAvailability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts)  | - |
+| Key Vault       | [Availability](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftkeyvaultvaults) | - |
+| Cognitive Services  | [SuccessRate](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcognitiveservicesaccounts) | - |
+| Event Hubs       | [IncomingRequests, ServerErrors](https://learn.microsoft.com/en-us/azure/event-hubs/monitor-event-hubs-reference)                     | ((IncomingRequests - ServerErrors) / IncomingRequests) x 100 |
+| Container Registry       | [Successful/Total Push, Successful/Total Pull](https://learn.microsoft.com/en-us/azure/container-registry/monitor-service-reference)                     | ((Successful Push + Pull)/(Total Push + Pull)) x 100 |
 
 ## Visualization
 
