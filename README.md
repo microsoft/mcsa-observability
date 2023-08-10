@@ -137,7 +137,7 @@ cd $currentDir/Utils/scripts/Terraform
 
 ```
 
-> Note: if you are deploying feature improvements on top of an existing deployment, please copy over the tfstate files from the folders resources,grafana-datasource and grafana-dashboards from your existing deployment to the cloned repository ![click here for detailed steps](Utils/Docs/TerraformDeployImprovements.md)
+> Note: if you are deploying feature improvements on top of an existing deployment, please copy over the tfstate files from the folders resources,grafana-datasource and grafana-dashboards from your existing deployment to the cloned repository ![click here for detailed steps](/TerraformDeployImprovements.md)
 
 ![terraform-folders](Images/terraform-folders.png)
 
