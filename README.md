@@ -107,6 +107,10 @@ eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/c
 
 ### Install using Terraform
 
+> Note: if you are deploying feature improvements on top of an existing deployment, please copy over the tfstate files from the folders resources,grafana-datasource and grafana-dashboards from your existing deployment to the cloned repository [click here for detailed steps](Utils/Docs/INCREMENTALDEPLOYMENT.md)
+
+![terraform-folders](Images/terraform-folders.png)
+
 ```bash
 ## Clone git repo into the folder
 repolink=""
@@ -134,14 +138,6 @@ eg: sudo apt-get install azure-cli=2.46.0-1~focal (Codename - focal/bionic/bulls
 
 # change directory to where Terraform main.tf is located
 cd $currentDir/Utils/scripts/Terraform
-
-```
-
-> Note: if you are deploying feature improvements on top of an existing deployment, please copy over the tfstate files from the folders resources,grafana-datasource and grafana-dashboards from your existing deployment to the cloned repository [click here for detailed steps](Utils/Docs/INCREMENTALDEPLOYMENT.md)
-
-![terraform-folders](Images/terraform-folders.png)
-
-```bash
 
 #log in to the tenant where the subscription to host the resources is present
 az login
