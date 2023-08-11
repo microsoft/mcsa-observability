@@ -9,11 +9,11 @@ Note : if date on the wsl is incorrect fix this before proceeding - [this](#fix-
 
 a. Login to the azure portal and navigate to ADX tables in the deployed resource group
 
-![tfstate1](../Images/adx.png)
+![tfstate1](/Images/adx.png)
 
 b. Export the following database tables as CSVs
 
-![tfstate2](../Images/adxtables.png)
+![tfstate2](/Images/adxtables.png)
 			
 c. Follow the steps to deploy the infrastructure as detailed here:
 
@@ -30,7 +30,7 @@ d. Wait for 15-30 minutes for the data to populate in the grafana instance.
 ## 2. If tfstate files from previous deployment are available
 a. Copy over tfstate files from folders resources, grafana-datasource and grafana-dashboard
 
-![tfstate2](../Images/tfstatecompare.png)
+![tfstate2](/Images/tfstatecompare.png)
 
 b. Run the steps for terraform deployment as detailed here
 		
