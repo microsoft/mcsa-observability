@@ -63,9 +63,13 @@ namespace Observability.AdxIngestFunctionApp
             {
                 batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=ServiceAvailability&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
-            if (message.Type == "microsoft.cognitiveservices/accounts")
+            if (message.Type == "microsoft.cognitiveservices/accounts" and message.Metric == "Availability" )
             {
                 batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames=SuccessRate&aggregation=average&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
+            }
+            if (message.Type == "microsoft.cognitiveservices/accounts" and message.Metric == "GeneratedTokens" )
+            {
+                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames={message.Metric}&filter=ApiName eq '*' and ModelDeploymentName eq '*'&aggregation=total&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
             if (message.Type == "microsoft.eventhub/namespaces")
             {

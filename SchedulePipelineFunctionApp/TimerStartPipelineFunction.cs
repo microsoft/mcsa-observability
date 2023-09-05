@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights;
 
 namespace Observability.SchedulePipelineFunctionApp
 {
@@ -86,6 +87,7 @@ namespace Observability.SchedulePipelineFunctionApp
                     var resources = new List<AzureResource>();
                     var type = resourceTypes.GetString(1);
                     var resultTable = resourceTypes.GetString(2);
+                    var metricType = resourceTypes.GetString(3);
 
                     var result = resourceClient.QueryGraph(subscriptionId.ToString(), type);
 
@@ -109,6 +111,7 @@ namespace Observability.SchedulePipelineFunctionApp
 
                         queueMessage.SubscriptionID = subscriptionId.ToString();
                         queueMessage.Type = type;
+                        queueMessage.Metric = metricType;
                         queueMessage.From = fromDate;
                         queueMessage.To = toDate;
                         queueMessage.ResultTable = resultTable;

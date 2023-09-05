@@ -15,6 +15,8 @@
 
 .create-merge table Cognitive_Svc_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
+.create-merge table Cognitive_Svc_GeneratedTokens_Raw (metrics: dynamic) with (folder = "Raw")
+
 .create-merge table Container_Registry_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
 .create-merge table LogAnalytics_Availability_Raw (metrics: dynamic) with (folder = "Raw")
@@ -35,6 +37,8 @@
 .create-or-alter table Eventhubs_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 .create-or-alter table Cognitive_Svc_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create-or-alter table Cognitive_Svc_GeneratedTokens_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 .create-or-alter table Container_Registry_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
@@ -64,6 +68,8 @@
 .create-merge table Eventhubs_Availability (['date']: datetime, ['id']: string, incomingRequests: decimal, serverErrors: decimal, location: string, subscriptionId: guid, name: string)
 
 .create-merge table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+
+.create-merge table Cognitive_Svc_GeneratedTokens (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
 .create-merge table Container_Registry_Availability (['date']: datetime, ['id']: string, successfulPullCount: decimal, totalPullCount: decimal, successfulPushCount: decimal, totalPushCount: decimal, location: string, subscriptionId: guid, name: string)
 
@@ -320,6 +326,26 @@ let totalPush = Container_Registry_Availability_Raw
         name = tostring(name)     
 }
 
+.create-or-alter function  Parse_Cognitive_Svc_GeneratedTokens() {
+    Cognitive_Svc_GeneratedTokens_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'SuccessRate'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand data = timeseries.data
+    | project
+        timestamp = todatetime(data.timeStamp),
+        id = tostring(id),
+        availability = todecimal(data.average),
+        subscriptionId = toguid(subscriptionId),
+        location = tostring(region),
+        name = tostring(name)     
+}
+
 .create-or-alter function  Parse_LogAnalytics_Availability() {
     LogAnalytics_Availability_Raw
     | mv-expand values = metrics.values
@@ -357,6 +383,8 @@ let totalPush = Container_Registry_Availability_Raw
 
 .alter table Cognitive_Svc_Availability policy update @'[{"Source": "Cognitive_Svc_Availability_Raw", "Query": "Parse_Cognitive_Svc_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
+.alter table Cognitive_Svc_GeneratedTokens policy update @'[{"Source": "Cognitive_Svc_GeneratedTokens_Raw", "Query": "Parse_Cognitive_Svc_GeneratedTokens()", "IsEnabled": "True", "IsTransactional": true}]'
+
 .alter table Container_Registry_Availability policy update @'[{"Source": "Container_Registry_Availability_Raw", "Query": "Parse_Container_Registry_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
 .alter table LogAnalytics_Availability policy update @'[{"Source": "LogAnalytics_Availability_Raw", "Query": "Parse_LogAnalytics_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
@@ -378,6 +406,8 @@ let totalPush = Container_Registry_Availability_Raw
 .alter-merge table Eventhubs_Availability_Raw policy retention softdelete = 0s
 
 .alter-merge table Cognitive_Svc_Availability_Raw policy retention softdelete = 0s
+
+.alter-merge table Cognitive_Svc_GeneratedTokens_Raw policy retention softdelete = 1000s
 
 .alter-merge table Container_Registry_Availability_Raw policy retention softdelete = 0s
 

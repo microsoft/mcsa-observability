@@ -5,6 +5,7 @@ namespace Observability.Utils.Data
     public class Message
     {
         public string Type { get; set; }
+        public string Metric { get; set; }
         public string SubscriptionID { get; set; }
         public string Location { get; set; }
         public DateTime From { get; set; }
