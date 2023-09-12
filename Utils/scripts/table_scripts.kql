@@ -387,11 +387,30 @@ let modeldeploymentname=Cognitive_Svc_GeneratedTokens_Raw
     | mv-expand data = timeseries.data
     | project timestamp = todatetime(data.timeStamp), id = tostring(id), generatedtokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-     (apiname | join kind = leftouter modeldeploymentname on $left.timestamp == $right.timestamp and $left.id == $right.id)
-    | project timestamp, id, generatedtokens, apiname, modeldeploymentname, subscriptionId, location, name
+let featurename=Cognitive_Svc_GeneratedTokens_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'GeneratedTokens'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand metadatavalues = timeseries.metadatavalues
+    | where metadatavalues.name.value == 'featurename'
+    | extend featurename = metadatavalues.value
+    | mv-expand data = timeseries.data
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), generatedtokens = todecimal(data.total), featurename=tostring(featurename),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+     (
+     apiname 
+     | join kind = leftouter modeldeploymentname on $left.timestamp == $right.timestamp and $left.id == $right.id
+     | join kind = leftouter featurename on $left.timestamp == $right.timestamp and $left.id == $right.id
+     )
+    | project timestamp, id, generatedtokens, apiname, modeldeploymentname, featurename, subscriptionId, location, name
  }
 
- .create-or-alter function  Parse_Cognitive_Svc_ProcessedPromptTokens() {
+.create-or-alter function  Parse_Cognitive_Svc_ProcessedPromptTokens() {
 let apiname=Cognitive_Svc_ProcessedPromptTokens_Raw
     | mv-expand values = metrics.values
     | extend id = tostring(values.resourceid)
@@ -422,11 +441,30 @@ let modeldeploymentname=Cognitive_Svc_ProcessedPromptTokens_Raw
     | mv-expand data = timeseries.data
     | project timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-     (apiname | join kind = leftouter modeldeploymentname on $left.timestamp == $right.timestamp and $left.id == $right.id)
+let featurename=Cognitive_Svc_ProcessedPromptTokens_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'ProcessedPromptTokens'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand metadatavalues = timeseries.metadatavalues
+    | where metadatavalues.name.value == 'featurename'
+    | extend featurename = metadatavalues.value
+    | mv-expand data = timeseries.data
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), featurename=tostring(featurename),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+     (
+     apiname 
+     | join kind = leftouter modeldeploymentname on $left.timestamp == $right.timestamp and $left.id == $right.id
+     | join kind = leftouter featurename on $left.timestamp == $right.timestamp and $left.id == $right.id
+     )
     | project timestamp, id, processedprompttokens, apiname, modeldeploymentname, subscriptionId, location, name
- }
+ } 
    
-  .create-or-alter function  Parse_Cognitive_Svc_InferenceTokens() {
+.create-or-alter function  Parse_Cognitive_Svc_InferenceTokens() {
 let apiname=Cognitive_Svc_InferenceTokens_Raw
     | mv-expand values = metrics.values
     | extend id = tostring(values.resourceid)
@@ -457,7 +495,26 @@ let modeldeploymentname=Cognitive_Svc_InferenceTokens_Raw
     | mv-expand data = timeseries.data
     | project timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-     (apiname | join kind = leftouter modeldeploymentname on $left.timestamp == $right.timestamp and $left.id == $right.id)
+let featurename=Cognitive_Svc_InferenceTokens_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'InferenceTokens'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand metadatavalues = timeseries.metadatavalues
+    | where metadatavalues.name.value == 'featurename'
+    | extend featurename = metadatavalues.value
+    | mv-expand data = timeseries.data
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), featurename=tostring(featurename),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+     (
+     apiname 
+     | join kind = leftouter modeldeploymentname on $left.timestamp == $right.timestamp and $left.id == $right.id
+     | join kind = leftouter featurename on $left.timestamp == $right.timestamp and $left.id == $right.id
+     )
     | project timestamp, id, inferencetokens, apiname, modeldeploymentname, subscriptionId, location, name
  }
 
