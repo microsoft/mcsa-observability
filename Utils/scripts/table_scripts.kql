@@ -89,13 +89,13 @@
 
 .create-merge table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create-merge table Cognitive_Svc_GeneratedTokens (['date']: datetime, ['id']: string, generatedtokens: decimal, apiname: string, modeldeploymentname: string, subscriptionId: guid, location: string, name: string)
+.create-merge table Cognitive_Svc_GeneratedTokens (['date']: datetime, ['id']: string, generatedtokens: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
 
-.create-merge table Cognitive_Svc_ProcessedPromptTokens (['date']: datetime, ['id']: string, processedprompttokens: decimal, apiname: string, modeldeploymentname: string, subscriptionId: guid, location: string, name: string)
+.create-merge table Cognitive_Svc_ProcessedPromptTokens (['date']: datetime, ['id']: string, processedprompttokens: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
 
-.create-merge table Cognitive_Svc_InferenceTokens (['date']: datetime, ['id']: string, inferencetokens: decimal, apiname: string, modeldeploymentname: string, subscriptionId: guid, location: string, name: string)
+.create-merge table Cognitive_Svc_InferenceTokens (['date']: datetime, ['id']: string, inferencetokens: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
 
-.create-merge table Cognitive_Svc_FineTunedTrainingHours (['date']: datetime, ['id']: string, finetunedtraininghours: decimal, apiname: string, modeldeploymentname: string, subscriptionId: guid, location: string, name: string)
+.create-merge table Cognitive_Svc_FineTunedTrainingHours (['date']: datetime, ['id']: string, finetunedtraininghours: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
 
 .create-merge table Cognitive_Svc_Latency (['date']: datetime, ['id']: string, latency: decimal, apiname:string, operationname: string, region: string, ratelimit: string, subscriptionId: guid, location: string, name: string)
 
