@@ -97,7 +97,7 @@
 
 .create-merge table Cognitive_Svc_FineTunedTrainingHours (['date']: datetime, ['id']: string, finetunedtraininghours: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
 
-.create-merge table Cognitive_Svc_Latency (['date']: datetime, ['id']: string, latency: decimal, apiname:string, operationname: string, region: string, ratelimit: string, subscriptionId: guid, location: string, name: string)
+.create-merge table Cognitive_Svc_Latency (['date']: datetime, ['id']: string, latency: decimal, apiname:string, operationname: string, region: string, ratelimitkey: string, subscriptionId: guid, location: string, name: string)
 
 .create-merge table Cognitive_Svc_RateLimit (['date']: datetime, ['id']: string, ratelimit: decimal, region: string, ratelimitkey: string, subscriptionId: guid, location: string, name: string)
 
@@ -607,6 +607,76 @@ let region=Cognitive_Svc_RateLimit_Raw
     | project timestamp, id, ratelimit, ratelimitkey, region, subscriptionId, location, name
  }
 
+ .create-or-alter function  Parse_Cognitive_Svc_Latency() {
+let ratelimitkey=Cognitive_Svc_Latency_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'Latency'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand metadatavalues = timeseries.metadatavalues
+    | where metadatavalues.name.value == 'ratelimitkey'
+    | extend ratelimitkey = metadatavalues.value
+    | mv-expand data = timeseries.data
+    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.['count']), ratelimitkey = tostring(ratelimitkey),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+let region=Cognitive_Svc_Latency_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'Latency'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand metadatavalues = timeseries.metadatavalues
+    | where metadatavalues.name.value == 'region'
+    | extend region = metadatavalues.value
+    | mv-expand data = timeseries.data
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.['count']), region=tostring(region),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+let apiname=Cognitive_Svc_Latency_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'Latency'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand metadatavalues = timeseries.metadatavalues
+    | where metadatavalues.name.value == 'apiname'
+    | extend apiname = metadatavalues.value
+    | mv-expand data = timeseries.data
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.['count']), apiname=tostring(apiname),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+let operationname=Cognitive_Svc_Latency_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'Latency'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand metadatavalues = timeseries.metadatavalues
+    | where metadatavalues.name.value == 'operationname'
+    | extend operationname = metadatavalues.value
+    | mv-expand data = timeseries.data
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.['count']), operationname=tostring(operationname),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+(
+ratelimitkey 
+| join kind = leftouter region on $left.timestamp == $right.timestamp and $left.id == $right.id
+| join kind = leftouter apiname on $left.timestamp == $right.timestamp and $left.id == $right.id
+| join kind = leftouter operationname on $left.timestamp == $right.timestamp and $left.id == $right.id
+| project timestamp, id, latency, apiname, operationname, region, ratelimitkey, subscriptionId, location, name
+)
+}
+
 .create-or-alter function  Parse_LogAnalytics_Availability() {
     LogAnalytics_Availability_Raw
     | mv-expand values = metrics.values
@@ -654,6 +724,8 @@ let region=Cognitive_Svc_RateLimit_Raw
 
 .alter table Cognitive_Svc_RateLimit policy update @'[{"Source": "Cognitive_Svc_RateLimit_Raw", "Query": "Parse_Cognitive_Svc_RateLimit()", "IsEnabled": "True", "IsTransactional": true}]'
 
+.alter table Cognitive_Svc_Latency policy update @'[{"Source": "Cognitive_Svc_Latency_Raw", "Query": "Parse_Cognitive_Svc_Latency()", "IsEnabled": "True", "IsTransactional": true}]'
+
 .alter table Container_Registry_Availability policy update @'[{"Source": "Container_Registry_Availability_Raw", "Query": "Parse_Container_Registry_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
 .alter table LogAnalytics_Availability policy update @'[{"Source": "LogAnalytics_Availability_Raw", "Query": "Parse_LogAnalytics_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
@@ -685,6 +757,8 @@ let region=Cognitive_Svc_RateLimit_Raw
 .alter-merge table Cognitive_Svc_FineTunedTrainingHours_Raw policy retention softdelete = 1000s
 
 .alter-merge table Cognitive_Svc_RateLimit_Raw policy retention softdelete = 1000s
+
+.alter-merge table Cognitive_Svc_Latency_Raw policy retention softdelete = 1000s
 
 .alter-merge table Container_Registry_Availability_Raw policy retention softdelete = 0s
 
