@@ -621,7 +621,7 @@ let ratelimitkey=Cognitive_Svc_Latency_Raw
     | where metadatavalues.name.value == 'ratelimitkey'
     | extend ratelimitkey = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.['count']), ratelimitkey = tostring(ratelimitkey),
+    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), ratelimitkey = tostring(ratelimitkey),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let region=Cognitive_Svc_Latency_Raw
     | mv-expand values = metrics.values
@@ -636,7 +636,7 @@ let region=Cognitive_Svc_Latency_Raw
     | where metadatavalues.name.value == 'region'
     | extend region = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.['count']), region=tostring(region),
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), region=tostring(region),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let apiname=Cognitive_Svc_Latency_Raw
     | mv-expand values = metrics.values
@@ -651,7 +651,7 @@ let apiname=Cognitive_Svc_Latency_Raw
     | where metadatavalues.name.value == 'apiname'
     | extend apiname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.['count']), apiname=tostring(apiname),
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), apiname=tostring(apiname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let operationname=Cognitive_Svc_Latency_Raw
     | mv-expand values = metrics.values
@@ -666,7 +666,7 @@ let operationname=Cognitive_Svc_Latency_Raw
     | where metadatavalues.name.value == 'operationname'
     | extend operationname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.['count']), operationname=tostring(operationname),
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), operationname=tostring(operationname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 (
 ratelimitkey 
