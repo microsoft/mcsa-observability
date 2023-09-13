@@ -472,7 +472,7 @@ let apiname=Cognitive_Svc_InferenceTokens_Raw
     | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'InferenceTokens'
+    | where tostring(value.name.value) == 'TokenTransaction'
     | mv-expand timeseries = value.timeseries
     | mv-expand metadatavalues = timeseries.metadatavalues
     | where metadatavalues.name.value == 'apiname'
@@ -487,7 +487,7 @@ let modeldeploymentname=Cognitive_Svc_InferenceTokens_Raw
     | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'InferenceTokens'
+    | where tostring(value.name.value) == 'TokenTransaction'
     | mv-expand timeseries = value.timeseries
     | mv-expand metadatavalues = timeseries.metadatavalues
     | where metadatavalues.name.value == 'modeldeploymentname'
@@ -502,7 +502,7 @@ let featurename=Cognitive_Svc_InferenceTokens_Raw
     | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'InferenceTokens'
+    | where tostring(value.name.value) == 'TokenTransaction'
     | mv-expand timeseries = value.timeseries
     | mv-expand metadatavalues = timeseries.metadatavalues
     | where metadatavalues.name.value == 'featurename'
@@ -526,7 +526,7 @@ let apiname=Cognitive_Svc_FineTunedTrainingHours_Raw
     | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'TokenTransaction'
+    | where tostring(value.name.value) == 'FineTunedTrainingHours'
     | mv-expand timeseries = value.timeseries
     | mv-expand metadatavalues = timeseries.metadatavalues
     | where metadatavalues.name.value == 'apiname'
@@ -541,7 +541,7 @@ let modeldeploymentname=Cognitive_Svc_FineTunedTrainingHours_Raw
     | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'TokenTransaction'
+    | where tostring(value.name.value) == 'FineTunedTrainingHours'
     | mv-expand timeseries = value.timeseries
     | mv-expand metadatavalues = timeseries.metadatavalues
     | where metadatavalues.name.value == 'modeldeploymentname'
@@ -556,7 +556,7 @@ let featurename=Cognitive_Svc_FineTunedTrainingHours_Raw
     | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'TokenTransaction'
+    | where tostring(value.name.value) == 'FineTunedTrainingHours'
     | mv-expand timeseries = value.timeseries
     | mv-expand metadatavalues = timeseries.metadatavalues
     | where metadatavalues.name.value == 'featurename'
