@@ -526,7 +526,7 @@ let apiname=Cognitive_Svc_FineTunedTrainingHours_Raw
     | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'FineTunedTrainingHours'
+    | where tostring(value.name.value) == 'TokenTransaction'
     | mv-expand timeseries = value.timeseries
     | mv-expand metadatavalues = timeseries.metadatavalues
     | where metadatavalues.name.value == 'apiname'
@@ -541,7 +541,7 @@ let modeldeploymentname=Cognitive_Svc_FineTunedTrainingHours_Raw
     | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'FineTunedTrainingHours'
+    | where tostring(value.name.value) == 'TokenTransaction'
     | mv-expand timeseries = value.timeseries
     | mv-expand metadatavalues = timeseries.metadatavalues
     | where metadatavalues.name.value == 'modeldeploymentname'
@@ -556,7 +556,7 @@ let featurename=Cognitive_Svc_FineTunedTrainingHours_Raw
     | extend name = split(id, '/')[-1]
     | extend region = tostring(values.resourceregion)
     | mv-expand value = values.value
-    | where tostring(value.name.value) == 'FineTunedTrainingHours'
+    | where tostring(value.name.value) == 'TokenTransaction'
     | mv-expand timeseries = value.timeseries
     | mv-expand metadatavalues = timeseries.metadatavalues
     | where metadatavalues.name.value == 'featurename'
@@ -565,7 +565,7 @@ let featurename=Cognitive_Svc_FineTunedTrainingHours_Raw
     | project timestamp = todatetime(data.timeStamp), id = tostring(id), finetunedtraininghours = todecimal(data.total), featurename=tostring(featurename),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
      (
-     apiname 
+     apiname
      | join kind = leftouter modeldeploymentname on $left.timestamp == $right.timestamp and $left.id == $right.id
      | join kind = leftouter featurename on $left.timestamp == $right.timestamp and $left.id == $right.id
      )
