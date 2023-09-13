@@ -572,7 +572,7 @@ let featurename=Cognitive_Svc_FineTunedTrainingHours_Raw
     | project timestamp, id, finetunedtraininghours, apiname, modeldeploymentname, featurename, subscriptionId, location, name
  }
 
-.create-or-alter function  Parse_Cognitive_Svc_RateLimit() {
+ .create-or-alter function  Parse_Cognitive_Svc_RateLimit() {
 let ratelimitkey=Cognitive_Svc_RateLimit_Raw
     | mv-expand values = metrics.values
     | extend id = tostring(values.resourceid)
@@ -586,7 +586,7 @@ let ratelimitkey=Cognitive_Svc_RateLimit_Raw
     | where metadatavalues.name.value == 'RatelimitKey'
     | extend ratelimitkey = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), ratelimit = todecimal(data.['count']), ratelimitkey = tostring(ratelimitkey),
+    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), ratelimit = todecimal(data.total), ratelimitkey = tostring(ratelimitkey),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let region=Cognitive_Svc_RateLimit_Raw
     | mv-expand values = metrics.values
@@ -601,7 +601,7 @@ let region=Cognitive_Svc_RateLimit_Raw
     | where metadatavalues.name.value == 'region'
     | extend region = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), ratelimit = todecimal(data.['count']), region=tostring(region),
+    | project timestamp = todatetime(data.timeStamp), id = tostring(id), ratelimit = todecimal(data.total), region=tostring(region),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
      (ratelimitkey | join kind = leftouter region on $left.timestamp == $right.timestamp and $left.id == $right.id)
     | project timestamp, id, ratelimit, ratelimitkey, region, subscriptionId, location, name
