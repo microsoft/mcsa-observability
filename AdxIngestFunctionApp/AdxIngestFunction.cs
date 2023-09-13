@@ -89,7 +89,7 @@ namespace Observability.AdxIngestFunctionApp
             }
             if (message.Type == "microsoft.cognitiveservices/accounts" && message.Metric == "Ratelimit")
             {
-                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames={message.Metric}&filter=Region eq '*' and RatelimitKey eq '*'&aggregation=count&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
+                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT15M&metricnames={message.Metric}&filter=Region eq '*' and RatelimitKey eq '*'&aggregation=total&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
             if (message.Type == "microsoft.eventhub/namespaces")
             {
