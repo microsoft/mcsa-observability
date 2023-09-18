@@ -77,7 +77,7 @@
 
 .create-merge table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create-merge table Cognitive_Svc_Usage (['date']: datetime, ['id']: string, generatedtokens: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
+.create-merge table Cognitive_Svc_Usage (['date']: datetime, ['id']: string, generatedtokens: decimal, processedprompttokens: decimal,inferencetokens: decimal,finetunedtraininghours: decimal,apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
 
 .create-merge table Cognitive_Svc_Latency (['date']: datetime, ['id']: string, latency: decimal, apiname:string, operationname: string, region: string, ratelimitkey: string, subscriptionId: guid, location: string, name: string)
 
@@ -677,7 +677,7 @@ ratelimitkey
 
 .alter table Cognitive_Svc_Availability policy update @'[{"Source": "Cognitive_Svc_Availability_Raw", "Query": "Parse_Cognitive_Svc_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
-.alter table Cognitive_Svc_Usage policy update @'[{"Source": "Cognitive_Svc_Usage_Raw", "Query": "Parse_Cognitive_Svc_GeneratedTokens()", "IsEnabled": "True", "IsTransactional": true}]'
+.alter table Cognitive_Svc_Usage policy update @'[{"Source": "Cognitive_Svc_Usage_Raw", "Query": "Parse_Cognitive_Svc_Usage()", "IsEnabled": "True", "IsTransactional": true}]'
 
 .alter table Cognitive_Svc_RateLimit policy update @'[{"Source": "Cognitive_Svc_RateLimit_Raw", "Query": "Parse_Cognitive_Svc_RateLimit()", "IsEnabled": "True", "IsTransactional": true}]'
 
