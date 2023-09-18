@@ -15,13 +15,7 @@
 
 .create-merge table Cognitive_Svc_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
-.create-merge table Cognitive_Svc_GeneratedTokens_Raw (metrics: dynamic) with (folder = "Raw")
-
-.create-merge table Cognitive_Svc_ProcessedPromptTokens_Raw (metrics: dynamic) with (folder = "Raw")
-
-.create-merge table Cognitive_Svc_InferenceTokens_Raw (metrics: dynamic) with (folder = "Raw")
-
-.create-merge table Cognitive_Svc_FineTunedTrainingHours_Raw (metrics: dynamic) with (folder = "Raw")
+.create-merge table Cognitive_Svc_Usage_Raw (metrics: dynamic) with (folder = "Raw")
 
 .create-merge table Cognitive_Svc_Latency_Raw (metrics: dynamic) with (folder = "Raw")
 
@@ -48,13 +42,7 @@
 
 .create-or-alter table Cognitive_Svc_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
-.create-or-alter table Cognitive_Svc_GeneratedTokens_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
-
-.create-or-alter table Cognitive_Svc_ProcessedPromptTokens_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
-
-.create-or-alter table Cognitive_Svc_InferenceTokens_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
-
-.create-or-alter table Cognitive_Svc_FineTunedTrainingHours_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+.create-or-alter table Cognitive_Svc_Usage_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 .create-or-alter table Cognitive_Svc_Latency_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
@@ -89,13 +77,7 @@
 
 .create-merge table Cognitive_Svc_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
 
-.create-merge table Cognitive_Svc_GeneratedTokens (['date']: datetime, ['id']: string, generatedtokens: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
-
-.create-merge table Cognitive_Svc_ProcessedPromptTokens (['date']: datetime, ['id']: string, processedprompttokens: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
-
-.create-merge table Cognitive_Svc_InferenceTokens (['date']: datetime, ['id']: string, inferencetokens: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
-
-.create-merge table Cognitive_Svc_FineTunedTrainingHours (['date']: datetime, ['id']: string, finetunedtraininghours: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
+.create-merge table Cognitive_Svc_Usage (['date']: datetime, ['id']: string, generatedtokens: decimal, apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
 
 .create-merge table Cognitive_Svc_Latency (['date']: datetime, ['id']: string, latency: decimal, apiname:string, operationname: string, region: string, ratelimitkey: string, subscriptionId: guid, location: string, name: string)
 
@@ -410,168 +392,6 @@ let featurename=Cognitive_Svc_GeneratedTokens_Raw
     | project timestamp, id, generatedtokens, apiname, modeldeploymentname, featurename, subscriptionId, location, name
  }
 
-.create-or-alter function  Parse_Cognitive_Svc_ProcessedPromptTokens() {
-let apiname=Cognitive_Svc_ProcessedPromptTokens_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'ProcessedPromptTokens'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'apiname'
-    | extend apiname = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), apiname = tostring(apiname),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let modeldeploymentname=Cognitive_Svc_ProcessedPromptTokens_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'ProcessedPromptTokens'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'modeldeploymentname'
-    | extend modeldeploymentname = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let featurename=Cognitive_Svc_ProcessedPromptTokens_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'ProcessedPromptTokens'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'featurename'
-    | extend featurename = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), featurename=tostring(featurename),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-     (
-     apiname 
-     | join kind = leftouter modeldeploymentname on $left.timestamp == $right.timestamp and $left.id == $right.id
-     | join kind = leftouter featurename on $left.timestamp == $right.timestamp and $left.id == $right.id
-     )
-    | project timestamp, id, processedprompttokens, apiname, modeldeploymentname, featurename, subscriptionId, location, name
- } 
-   
-.create-or-alter function  Parse_Cognitive_Svc_InferenceTokens() {
-let apiname=Cognitive_Svc_InferenceTokens_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'TokenTransaction'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'apiname'
-    | extend apiname = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), apiname = tostring(apiname),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let modeldeploymentname=Cognitive_Svc_InferenceTokens_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'TokenTransaction'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'modeldeploymentname'
-    | extend modeldeploymentname = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let featurename=Cognitive_Svc_InferenceTokens_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'TokenTransaction'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'featurename'
-    | extend featurename = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), featurename=tostring(featurename),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-     (
-     apiname 
-     | join kind = leftouter modeldeploymentname on $left.timestamp == $right.timestamp and $left.id == $right.id
-     | join kind = leftouter featurename on $left.timestamp == $right.timestamp and $left.id == $right.id
-     )
-    | project timestamp, id, inferencetokens, apiname, modeldeploymentname, featurename, subscriptionId, location, name
- }
-
-.create-or-alter function  Parse_Cognitive_Svc_FineTunedTrainingHours() {
-let apiname=Cognitive_Svc_FineTunedTrainingHours_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'FineTunedTrainingHours'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'apiname'
-    | extend apiname = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), finetunedtraininghours = todecimal(data.total), apiname = tostring(apiname),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let modeldeploymentname=Cognitive_Svc_FineTunedTrainingHours_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'FineTunedTrainingHours'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'modeldeploymentname'
-    | extend modeldeploymentname = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), finetunedtraininghours = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let featurename=Cognitive_Svc_FineTunedTrainingHours_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'FineTunedTrainingHours'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'featurename'
-    | extend featurename = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), finetunedtraininghours = todecimal(data.total), featurename=tostring(featurename),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-     (
-     apiname
-     | join kind = leftouter modeldeploymentname on $left.timestamp == $right.timestamp and $left.id == $right.id
-     | join kind = leftouter featurename on $left.timestamp == $right.timestamp and $left.id == $right.id
-     )
-    | project timestamp, id, finetunedtraininghours, apiname, modeldeploymentname, featurename, subscriptionId, location, name
- }
-
  .create-or-alter function  Parse_Cognitive_Svc_RateLimit() {
 let ratelimitkey=Cognitive_Svc_RateLimit_Raw
     | mv-expand values = metrics.values
@@ -714,13 +534,7 @@ ratelimitkey
 
 .alter table Cognitive_Svc_Availability policy update @'[{"Source": "Cognitive_Svc_Availability_Raw", "Query": "Parse_Cognitive_Svc_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
-.alter table Cognitive_Svc_GeneratedTokens policy update @'[{"Source": "Cognitive_Svc_GeneratedTokens_Raw", "Query": "Parse_Cognitive_Svc_GeneratedTokens()", "IsEnabled": "True", "IsTransactional": true}]'
-
-.alter table Cognitive_Svc_ProcessedPromptTokens policy update @'[{"Source": "Cognitive_Svc_ProcessedPromptTokens_Raw", "Query": "Parse_Cognitive_Svc_ProcessedPromptTokens()", "IsEnabled": "True", "IsTransactional": true}]'
-
-.alter table Cognitive_Svc_InferenceTokens policy update @'[{"Source": "Cognitive_Svc_InferenceTokens_Raw", "Query": "Parse_Cognitive_Svc_InferenceTokens()", "IsEnabled": "True", "IsTransactional": true}]'
-
-.alter table Cognitive_Svc_FineTunedTrainingHours policy update @'[{"Source": "Cognitive_Svc_FineTunedTrainingHours_Raw", "Query": "Parse_Cognitive_Svc_FineTunedTrainingHours()", "IsEnabled": "True", "IsTransactional": true}]'
+.alter table Cognitive_Svc_Usage policy update @'[{"Source": "Cognitive_Svc_Usage_Raw", "Query": "Parse_Cognitive_Svc_GeneratedTokens()", "IsEnabled": "True", "IsTransactional": true}]'
 
 .alter table Cognitive_Svc_RateLimit policy update @'[{"Source": "Cognitive_Svc_RateLimit_Raw", "Query": "Parse_Cognitive_Svc_RateLimit()", "IsEnabled": "True", "IsTransactional": true}]'
 
@@ -748,13 +562,7 @@ ratelimitkey
 
 .alter-merge table Cognitive_Svc_Availability_Raw policy retention softdelete = 0s
 
-.alter-merge table Cognitive_Svc_GeneratedTokens_Raw policy retention softdelete = 1000s
-
-.alter-merge table Cognitive_Svc_ProcessedPromptTokens_Raw policy retention softdelete = 1000s
-
-.alter-merge table Cognitive_Svc_InferenceTokens_Raw policy retention softdelete = 1000s
-
-.alter-merge table Cognitive_Svc_FineTunedTrainingHours_Raw policy retention softdelete = 1000s
+.alter-merge table Cognitive_Svc_Usage_Raw policy retention softdelete = 1000s
 
 .alter-merge table Cognitive_Svc_RateLimit_Raw policy retention softdelete = 1000s
 
