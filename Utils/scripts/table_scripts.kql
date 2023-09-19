@@ -532,7 +532,7 @@ apiname1
 | join kind=leftouter modeldeploymentname4 on $left.id==$right.id and $left.timestamp==$right.timestamp
 | join kind=leftouter featurename4 on $left.id==$right.id and $left.timestamp==$right.timestamp
 | project  timestamp = timestamp, id = tostring(id), generatedtokens=generatedtokens, processedprompttokens = processedprompttokens, inferencetokens =inferencetokens, finetunedtraininghours=finetunedtraininghours,apiname = tostring(apiname), modeldeploymentname = tostring(modeldeploymentname),featurename=tostring(featurename),
- location = location, subscriptionId = subscriptionId, name = tostring(name);
+ subscriptionId = subscriptionId, location = location, name = tostring(name);
 }
 
  .create-or-alter function  Parse_Cognitive_Svc_RateLimit() {
