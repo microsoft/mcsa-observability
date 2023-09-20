@@ -79,9 +79,9 @@
 
 .create-merge table Cognitive_Svc_Usage (['date']: datetime, ['id']: string, generatedtokens: decimal, processedprompttokens: decimal,inferencetokens: decimal,finetunedtraininghours: decimal,apiname: string, modeldeploymentname: string, featurename: string, subscriptionId: guid, location: string, name: string)
 
-.create-merge table Cognitive_Svc_Latency (['date']: datetime, ['id']: string, latency: decimal, apiname:string, operationname: string, region: string, ratelimitkey: string, subscriptionId: guid, location: string, name: string)
+.create-merge table Cognitive_Svc_Latency (['date']: datetime, ['id']: string, latency: decimal, apiname:string, operationname: string,  ratelimitkey: string, subscriptionId: guid, location: string, name: string)
 
-.create-merge table Cognitive_Svc_RateLimit (['date']: datetime, ['id']: string, ratelimit: decimal, region: string, ratelimitkey: string, subscriptionId: guid, location: string, name: string)
+.create-merge table Cognitive_Svc_RateLimit (['date']: datetime, ['id']: string, ratelimit: decimal, ratelimitkey: string, subscriptionId: guid, location: string, name: string)
 
 .create-merge table Container_Registry_Availability (['date']: datetime, ['id']: string, successfulPullCount: decimal, totalPullCount: decimal, successfulPushCount: decimal, totalPushCount: decimal, location: string, subscriptionId: guid, name: string)
 
@@ -567,7 +567,7 @@ let region=Cognitive_Svc_RateLimit_Raw
     | project timestamp = todatetime(data.timeStamp), id = tostring(id), ratelimit = todecimal(data.total), region=tostring(region),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
      (ratelimitkey | join kind = leftouter region on $left.timestamp == $right.timestamp and $left.id == $right.id)
-    | project timestamp, id, ratelimit, ratelimitkey, region, subscriptionId, location, name
+    | project timestamp, id, ratelimit, ratelimitkey, subscriptionId, location, name
  }
 
  .create-or-alter function  Parse_Cognitive_Svc_Latency() {
@@ -636,7 +636,7 @@ ratelimitkey
 | join kind = leftouter region on $left.timestamp == $right.timestamp and $left.id == $right.id
 | join kind = leftouter apiname on $left.timestamp == $right.timestamp and $left.id == $right.id
 | join kind = leftouter operationname on $left.timestamp == $right.timestamp and $left.id == $right.id
-| project timestamp, id, latency, apiname, operationname, region, ratelimitkey, subscriptionId, location, name
+| project timestamp, id, latency, apiname, operationname, ratelimitkey, subscriptionId, location, name
 )
 }
 
