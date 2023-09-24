@@ -352,7 +352,7 @@ let apiname1=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'apiname'
     | extend apiname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), generatedtokens = todecimal(data.total), apiname = tostring(apiname),
+    | distinct  timestamp = todatetime(data.timeStamp), id = tostring(id), generatedtokens = todecimal(data.total), apiname = tostring(apiname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let apiname2=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -367,7 +367,7 @@ let apiname2=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'apiname'
     | extend apiname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), apiname = tostring(apiname),
+    | distinct  timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), apiname = tostring(apiname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let modeldeploymentname1=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -382,7 +382,7 @@ let modeldeploymentname1=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'modeldeploymentname'
     | extend modeldeploymentname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), generatedtokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), generatedtokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let modeldeploymentname2=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -397,7 +397,7 @@ let modeldeploymentname2=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'modeldeploymentname'
     | extend modeldeploymentname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let featurename1=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -412,7 +412,7 @@ let featurename1=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'featurename'
     | extend featurename = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), generatedtokens = todecimal(data.total), featurename=tostring(featurename),
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), generatedtokens = todecimal(data.total), featurename=tostring(featurename),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let featurename2=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -427,7 +427,7 @@ let featurename2=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'featurename'
     | extend featurename = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), featurename=tostring(featurename),
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), processedprompttokens = todecimal(data.total), featurename=tostring(featurename),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let apiname3=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -442,7 +442,7 @@ let apiname3=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'apiname'
     | extend apiname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), apiname = tostring(apiname),
+    | distinct  timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), apiname = tostring(apiname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let modeldeploymentname3=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -457,7 +457,7 @@ let modeldeploymentname3=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'modeldeploymentname'
     | extend modeldeploymentname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let featurename3=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -472,7 +472,7 @@ let featurename3=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'featurename'
     | extend featurename = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), featurename=tostring(featurename),
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), inferencetokens = todecimal(data.total), featurename=tostring(featurename),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let apiname4=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -487,7 +487,7 @@ let apiname4=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'apiname'
     | extend apiname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), finetunedtraininghours = todecimal(data.total), apiname = tostring(apiname),
+    | distinct  timestamp = todatetime(data.timeStamp), id = tostring(id), finetunedtraininghours = todecimal(data.total), apiname = tostring(apiname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let modeldeploymentname4=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -502,7 +502,7 @@ let modeldeploymentname4=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'modeldeploymentname'
     | extend modeldeploymentname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), finetunedtraininghours = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), finetunedtraininghours = todecimal(data.total), modeldeploymentname=tostring(modeldeploymentname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let featurename4=Cognitive_Svc_Usage_Raw
     | mv-expand values = metrics.values
@@ -517,60 +517,29 @@ let featurename4=Cognitive_Svc_Usage_Raw
     | where metadatavalues.name.value == 'featurename'
     | extend featurename = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), finetunedtraininghours = todecimal(data.total), featurename=tostring(featurename),
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), finetunedtraininghours = todecimal(data.total), featurename=tostring(featurename),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-apiname1
+let t1=apiname1
 | join kind=leftouter apiname2 on $left.id==$right.id and $left.timestamp==$right.timestamp
-| join kind=leftouter modeldeploymentname1 on $left.id==$right.id and $left.timestamp==$right.timestamp
-| join kind=leftouter modeldeploymentname2 on $left.id==$right.id and $left.timestamp==$right.timestamp
-| join kind=leftouter featurename1 on $left.id==$right.id and $left.timestamp==$right.timestamp
-| join kind=leftouter featurename2 on $left.id==$right.id and $left.timestamp==$right.timestamp
 | join kind=leftouter apiname3 on $left.id==$right.id and $left.timestamp==$right.timestamp
+| join kind=leftouter apiname4 on $left.id==$right.id and $left.timestamp==$right.timestamp;
+let t2= modeldeploymentname1
+| join kind=leftouter modeldeploymentname2 on $left.id==$right.id and $left.timestamp==$right.timestamp
 | join kind=leftouter modeldeploymentname3 on $left.id==$right.id and $left.timestamp==$right.timestamp
+| join kind=leftouter modeldeploymentname4 on $left.id==$right.id and $left.timestamp==$right.timestamp;
+let t3= featurename1
+| join kind=leftouter featurename2 on $left.id==$right.id and $left.timestamp==$right.timestamp
 | join kind=leftouter featurename3 on $left.id==$right.id and $left.timestamp==$right.timestamp
-| join kind=leftouter apiname4 on $left.id==$right.id and $left.timestamp==$right.timestamp
-| join kind=leftouter modeldeploymentname4 on $left.id==$right.id and $left.timestamp==$right.timestamp
-| join kind=leftouter featurename4 on $left.id==$right.id and $left.timestamp==$right.timestamp
-| project  timestamp = timestamp, id = tostring(id), generatedtokens=generatedtokens, processedprompttokens = processedprompttokens, inferencetokens =inferencetokens, finetunedtraininghours=finetunedtraininghours,apiname = tostring(apiname), modeldeploymentname = tostring(modeldeploymentname),featurename=tostring(featurename),
- subscriptionId = subscriptionId, location = location, name = tostring(name);
+| join kind=leftouter featurename4 on $left.id==$right.id and $left.timestamp==$right.timestamp;
+t1
+| join kind = inner t2 on $left.id==$right.id and $left.timestamp==$right.timestamp
+| join kind = inner t3 on $left.id==$right.id and $left.timestamp==$right.timestamp
+| distinct  timestamp = timestamp, id = tostring(id), generatedtokens=generatedtokens, processedprompttokens = processedprompttokens, inferencetokens =inferencetokens, finetunedtraininghours=finetunedtraininghours,apiname = tostring(apiname), modeldeploymentname = tostring(modeldeploymentname),featurename=tostring(featurename),
+ subscriptionId = subscriptionId, location = location, name = tostring(name)
 }
 
- .create-or-alter function  Parse_Cognitive_Svc_RateLimit() {
-let ratelimitkey=Cognitive_Svc_RateLimit_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'Ratelimit'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'RatelimitKey'
-    | extend ratelimitkey = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), ratelimit = todecimal(data.total), ratelimitkey = tostring(ratelimitkey),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-let region=Cognitive_Svc_RateLimit_Raw
-    | mv-expand values = metrics.values
-    | extend id = tostring(values.resourceid)
-    | extend subscriptionId = split(id, '/')[2]
-    | extend name = split(id, '/')[-1]
-    | extend region = tostring(values.resourceregion)
-    | mv-expand value = values.value
-    | where tostring(value.name.value) == 'RateLimit'
-    | mv-expand timeseries = value.timeseries
-    | mv-expand metadatavalues = timeseries.metadatavalues
-    | where metadatavalues.name.value == 'region'
-    | extend region = metadatavalues.value
-    | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), ratelimit = todecimal(data.total), region=tostring(region),
-     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
-     (ratelimitkey | join kind = leftouter region on $left.timestamp == $right.timestamp and $left.id == $right.id)
-    | project timestamp, id, ratelimit, ratelimitkey, subscriptionId, location, name
- }
-
- let ratelimitkey=Cognitive_Svc_Latency_Raw
+.create-or-alter function  Parse_Cognitive_Svc_Latency() {
+let ratelimitkey=Cognitive_Svc_Latency_Raw
     | mv-expand values = metrics.values
     | extend id = tostring(values.resourceid)
     | extend subscriptionId = split(id, '/')[2]
@@ -638,6 +607,42 @@ ratelimitkey
 | where apiname has "Azure OpenAI API"
 | distinct  timestamp, id, latency, apiname, operationname, ratelimitkey, subscriptionId, location, name
 )
+}
+
+.create-or-alter function  Parse_Cognitive_Svc_RateLimit() {
+let ratelimitkey=Cognitive_Svc_RateLimit_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'Ratelimit'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand metadatavalues = timeseries.metadatavalues
+    | where metadatavalues.name.value == 'RatelimitKey'
+    | extend ratelimitkey = metadatavalues.value
+    | mv-expand data = timeseries.data
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), ratelimit = todecimal(data.total), ratelimitkey = tostring(ratelimitkey),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+let region=Cognitive_Svc_RateLimit_Raw
+    | mv-expand values = metrics.values
+    | extend id = tostring(values.resourceid)
+    | extend subscriptionId = split(id, '/')[2]
+    | extend name = split(id, '/')[-1]
+    | extend region = tostring(values.resourceregion)
+    | mv-expand value = values.value
+    | where tostring(value.name.value) == 'RateLimit'
+    | mv-expand timeseries = value.timeseries
+    | mv-expand metadatavalues = timeseries.metadatavalues
+    | where metadatavalues.name.value == 'region'
+    | extend region = metadatavalues.value
+    | mv-expand data = timeseries.data
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), ratelimit = todecimal(data.total), region=tostring(region),
+     location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
+     (ratelimitkey | join kind = leftouter region on $left.timestamp == $right.timestamp and $left.id == $right.id)
+    | distinct timestamp, id, ratelimit, ratelimitkey, subscriptionId, location, name
+ }
 
 .create-or-alter function  Parse_LogAnalytics_Availability() {
     LogAnalytics_Availability_Raw
