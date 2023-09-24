@@ -536,6 +536,7 @@ t1
 | join kind = inner t3 on $left.id==$right.id and $left.timestamp==$right.timestamp
 | distinct  timestamp = timestamp, id = tostring(id), generatedtokens=generatedtokens, processedprompttokens = processedprompttokens, inferencetokens =inferencetokens, finetunedtraininghours=finetunedtraininghours,apiname = tostring(apiname), modeldeploymentname = tostring(modeldeploymentname),featurename=tostring(featurename),
  subscriptionId = subscriptionId, location = location, name = tostring(name)
+| where processedprompttokens >0
 }
 
 .create-or-alter function  Parse_Cognitive_Svc_Latency() {
