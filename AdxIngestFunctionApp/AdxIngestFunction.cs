@@ -69,7 +69,7 @@ namespace Observability.AdxIngestFunctionApp
             }
             if (message.Type == "microsoft.cognitiveservices/accounts" && message.Metric == "Usage" )
             {
-                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?&metricnames=GeneratedTokens,ProcessedPromptTokens,TokenTransaction,FineTunedTrainingHours&filter=ApiName eq '*' and ModelDeploymentName eq '*' and FeatureName eq '*'&aggregation=total&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
+                batchUrl = $"https://{message.Location}.metrics.monitor.azure.com/subscriptions/{message.SubscriptionID}/metrics:getBatch?timespan={timeSpan}&metricnames=GeneratedTokens,ProcessedPromptTokens,TokenTransaction,FineTunedTrainingHours&filter=ApiName eq '*' and ModelDeploymentName eq '*' and FeatureName eq '*'&aggregation=total&metricNamespace={message.Type}&autoadjusttimegrain=true&api-version=2023-03-01-preview";
             }
             if (message.Type == "microsoft.cognitiveservices/accounts" && message.Metric == "Latency")
             {
