@@ -36,10 +36,20 @@ resource "grafana_folder" "observability" {
   title = "Observability_Dashboard"
 }
 
+resource "grafana_folder" "usage" {
+  title = "Usage_Dashboard"
+}
+
 resource "grafana_dashboard" "resource_observability" {
   folder     = grafana_folder.observability.id
   overwrite = true
   config_json = file("../../dashboard_templates/AzureResourceObservability-1687853750785.json")
+}
+
+resource "grafana_dashboard" "resource_usage" {
+  folder     = grafana_folder.usage.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/AzureResourceUsage.json")
 }
 
 resource "grafana_dashboard" "aks_server_node" {
