@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 39,
+  "id": 41,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -37,8 +37,7 @@
       },
       "id": 4,
       "title": "Deployment by Region",
-      "type": "row",
-      "datasource": null
+      "type": "row"
     },
     {
       "datasource": {
@@ -167,8 +166,7 @@
       "id": 3,
       "panels": [],
       "title": "Token count by Location",
-      "type": "row",
-      "datasource": null
+      "type": "row"
     },
     {
       "datasource": {
@@ -355,8 +353,7 @@
       "id": 2,
       "panels": [],
       "title": "Token Usage Tracker",
-      "type": "row",
-      "datasource": null
+      "type": "row"
     },
     {
       "datasource": {
@@ -579,8 +576,7 @@
       "id": 1,
       "panels": [],
       "title": "Latency Tracker",
-      "type": "row",
-      "datasource": null
+      "type": "row"
     },
     {
       "datasource": {
@@ -626,8 +622,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 7,
+        "h": 6,
+        "w": 9,
         "x": 0,
         "y": 22
       },
@@ -742,9 +738,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 7,
-        "x": 7,
+        "h": 6,
+        "w": 9,
+        "x": 9,
         "y": 22
       },
       "id": 12,
@@ -799,7 +795,7 @@
             }
           },
           "pluginVersion": "4.6.2",
-          "query": "Cognitive_Svc_Usage\r\n| where $__timeFilter(['date'])\r\n and location in ($Region) and subscriptionId in ($Subscriptions)\r\n| join kind=inner Cognitive_Svc_Latency on $left.['date']==$right.['date'] and $left.id==$right.id and $left.name==$right.name\r\n| summarize avg_latency_in_ms=avg(latency) by featurename",
+          "query": "\r\nCognitive_Svc_Latency\r\n| summarize SumValue = sum(latency), CountValue = count() by name\r\n| extend AverageValue = iff(CountValue > 0, SumValue / CountValue, decimal(0))\r\n| join kind=inner Cognitive_Svc_Usage on $left.name==$right.name\r\n| distinct name,AverageValue,featurename",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -820,22 +816,18 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "Solution 1",
-            "Solution 3",
             "Solution 4",
             "Solution 5",
-            "Solution 6",
-            "Solution 7"
+            "Solution 6"
           ],
           "value": [
             "Solution 1",
-            "Solution 3",
             "Solution 4",
             "Solution 5",
-            "Solution 6",
-            "Solution 7"
+            "Solution 6"
           ]
         },
         "datasource": {
@@ -857,16 +849,18 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
+            " AG-CE-CI-TESTSUB-SRHEGDE",
+            " AG-CI-CE-yvishwa",
             " AG-CE-CI-TESTSUB-ONELHIRMEZ",
-            " AG-CE-CI-TESTSUB-DIVYABHU",
-            " AG_CI_CE_BLK_CORE_ANITRA"
+            " AG-CE-CI-TESTSUB-DIVYABHU"
           ],
           "value": [
+            "0e2d2c9d-659f-4e7d-929d-5d7d82ee64c3",
+            "ce907794-c45b-43ac-8096-d2f7cf004ba0",
             "d6a99beb-93da-4c87-8e7a-2ad995aa1c94",
-            "7d528e8d-eb2d-4ebb-9aab-2d9d2f3a466a",
-            "0302e263-20e2-44ea-9d57-91db52a566fe"
+            "7d528e8d-eb2d-4ebb-9aab-2d9d2f3a466a"
           ]
         },
         "datasource": {
@@ -888,24 +882,20 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "eastus",
             "westus",
-            "westus3",
             "westus2",
             "eastus2",
-            "centralus",
             "southcentralus",
             "northcentralus"
           ],
           "value": [
             "eastus",
             "westus",
-            "westus3",
             "westus2",
             "eastus2",
-            "centralus",
             "southcentralus",
             "northcentralus"
           ]
@@ -937,6 +927,6 @@
   "timezone": "utc",
   "title": "Azure Usage Dashboard",
   "uid": "e9b18c98-3274-4706-9771-aa41c182cd6d",
-  "version": 37,
+  "version": 4,
   "weekStart": ""
 }
