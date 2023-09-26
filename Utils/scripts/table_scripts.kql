@@ -607,7 +607,7 @@ let region=Cognitive_Svc_RateLimit_Raw
     | project timestamp, id, ratelimit, ratelimitkey, region, subscriptionId, location, name
  }
 
- .create-or-alter function  Parse_Cognitive_Svc_Latency() {
+.create-or-alter function  Parse_Cognitive_Svc_Latency() {
 let ratelimitkey=Cognitive_Svc_Latency_Raw
     | mv-expand values = metrics.values
     | extend id = tostring(values.resourceid)
@@ -621,7 +621,8 @@ let ratelimitkey=Cognitive_Svc_Latency_Raw
     | where metadatavalues.name.value == 'ratelimitkey'
     | extend ratelimitkey = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project  timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), ratelimitkey = tostring(ratelimitkey),
+    | where isnotempty( data.average)
+    | distinct  timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), ratelimitkey = tostring(ratelimitkey),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let region=Cognitive_Svc_Latency_Raw
     | mv-expand values = metrics.values
@@ -636,7 +637,8 @@ let region=Cognitive_Svc_Latency_Raw
     | where metadatavalues.name.value == 'region'
     | extend region = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), region=tostring(region),
+    | where isnotempty( data.average)
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), region=tostring(region),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let apiname=Cognitive_Svc_Latency_Raw
     | mv-expand values = metrics.values
@@ -651,7 +653,8 @@ let apiname=Cognitive_Svc_Latency_Raw
     | where metadatavalues.name.value == 'apiname'
     | extend apiname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), apiname=tostring(apiname),
+    | where isnotempty( data.average)
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), apiname=tostring(apiname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 let operationname=Cognitive_Svc_Latency_Raw
     | mv-expand values = metrics.values
@@ -666,14 +669,16 @@ let operationname=Cognitive_Svc_Latency_Raw
     | where metadatavalues.name.value == 'operationname'
     | extend operationname = metadatavalues.value
     | mv-expand data = timeseries.data
-    | project timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), operationname=tostring(operationname),
+    | where isnotempty( data.average)
+    | distinct timestamp = todatetime(data.timeStamp), id = tostring(id), latency = todecimal(data.average), operationname=tostring(operationname),
      location = tostring(region), subscriptionId = toguid(subscriptionId), name = tostring(name);
 (
-ratelimitkey 
+ratelimitkey
 | join kind = leftouter region on $left.timestamp == $right.timestamp and $left.id == $right.id
 | join kind = leftouter apiname on $left.timestamp == $right.timestamp and $left.id == $right.id
 | join kind = leftouter operationname on $left.timestamp == $right.timestamp and $left.id == $right.id
-| project timestamp, id, latency, apiname, operationname, region, ratelimitkey, subscriptionId, location, name
+| where apiname has "Azure OpenAI API"
+| distinct  timestamp, id, latency, apiname, operationname, ratelimitkey, subscriptionId, location, name
 )
 }
 
