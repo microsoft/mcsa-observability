@@ -1,0 +1,274 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 53,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "deploymentcount"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 159
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "modelname"
+          }
+        ]
+      },
+      "pluginVersion": "9.5.8",
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "Cognitive_Svc_Usage\r\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| summarize deploymentcount=count_distinct(featurename),modelname=make_set(featurename)  by location",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Models by Region",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "2023-01-12 00:00:00",
+          "value": "2023-01-12 00:00:00"
+        },
+        "hide": 2,
+        "name": "selecteddate",
+        "options": [
+          {
+            "selected": true,
+            "text": "2023-03-16 20:42:00",
+            "value": "2023-03-16 20:42:00"
+          }
+        ],
+        "query": "2023-03-16 20:42:00",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        },
+        "definition": "",
+        "hide": 2,
+        "includeAll": false,
+        "multi": true,
+        "name": "Region",
+        "options": [],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        },
+        "definition": "",
+        "hide": 2,
+        "includeAll": false,
+        "multi": true,
+        "name": "Subscriptions",
+        "options": [],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        },
+        "definition": "",
+        "hide": 2,
+        "includeAll": false,
+        "multi": true,
+        "name": "Solution",
+        "options": [],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "None"
+          ],
+          "value": [
+            ""
+          ]
+        },
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        },
+        "definition": "",
+        "hide": 2,
+        "includeAll": false,
+        "multi": true,
+        "name": "Model",
+        "options": [],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "DeploymentCount-1",
+  "uid": "d5afbce6-0c33-4c4f-8d1c-f65fe67c41d8",
+  "version": 11,
+  "weekStart": ""
+}

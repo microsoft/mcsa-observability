@@ -1,0 +1,1365 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 41,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 3,
+      "panels": [],
+      "title": "Model inventory in selected period",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 0,
+        "y": 1
+      },
+      "id": 13,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.8",
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "Cognitive_Svc_Usage\r\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| summarize dcount(id)",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "#Azure OpenAI Instances",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Drilldown details",
+              "url": "https://uum07-grafana-fkfuf8fkg6fggtd5.eus.grafana.azure.com/d/d5afbce6-0c33-4c4f-8d1c-f65fe67c41d8/deploymentcount-1?orgId=1&${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 3,
+        "y": 1
+      },
+      "id": 5,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.32,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "location",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "Cognitive_Svc_Usage\r\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| summarize deploymentcount=count_distinct(featurename),modelnames=make_set(featurename)  by location",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Model Deployments by Region",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 0,
+        "y": 4
+      },
+      "id": 14,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.8",
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "Cognitive_Svc_Usage\r\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| summarize dcount(modeldeploymentname)",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "#Azure OpenAI Models",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 1,
+      "panels": [],
+      "title": "Latency",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 0,
+        "y": 8
+      },
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.8",
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "Cognitive_Svc_Latency\r\n| where $__timeFilter(['date'])\r\n and location in ($Region) and subscriptionId in ($Subscriptions)\r\n| summarize avg_latency=avg(latency) ",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Avg Latency (ms)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Drilldown details",
+              "url": "https://uum07-grafana-fkfuf8fkg6fggtd5.eus.grafana.azure.com/d/c9506969-ac25-4d57-9448-34f1e7e1e910/latencybyregion-1?orgId=1&${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 3,
+        "y": 8
+      },
+      "id": 11,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.32,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "// Cognitive_Svc_Latency\r\n// | where $__timeFilter(['date'])\r\n//  and location in ($Region) and subscriptionId in ($Subscriptions)\r\n// | summarize avg_latency=avg(latency) by location\r\nCognitive_Svc_Latency\r\n| join kind=inner Cognitive_Svc_Usage on $left.name==$right.name\r\n| summarize SumValue = sum(latency), CountValue = count() by location,name\r\n| extend avg_latency = iff(CountValue > 0, SumValue / CountValue, decimal(0))\r\n| join kind=rightouter Cognitive_Svc_Usage on $left.name==$right.name\r\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| distinct name,avg_latency,featurename, location\r\n| summarize SumValue1 = sum(avg_latency), CountValue1 = count() by location\r\n| extend avg_latency = iff(CountValue1 > 0, SumValue1 / CountValue1, decimal(0))\r\n| distinct location,avg_latency",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Latency by Region",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Drilldown details",
+              "url": "https://uum07-grafana-fkfuf8fkg6fggtd5.eus.grafana.azure.com/d/ac2d0796-00e5-4292-9f75-17e599c48e9f/latencybyregion-2?orgId=1&${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 9,
+        "y": 8
+      },
+      "id": 12,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.32,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "\r\nCognitive_Svc_Latency\r\n| join kind=inner Cognitive_Svc_Usage on $left.name==$right.name\r\n| summarize SumValue = sum(latency), CountValue = count() by name\r\n| extend avg_latency = iff(CountValue > 0, SumValue / CountValue, decimal(0))\r\n| join kind=rightouter Cognitive_Svc_Usage on $left.name==$right.name\r\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| distinct name,avg_latency,featurename\r\n| summarize SumValue1 = sum(avg_latency), CountValue1 = count() by featurename\r\n| extend avg_latency = iff(CountValue1 > 0, SumValue1 / CountValue1, decimal(0))\r\n| distinct featurename,avg_latency\r\n\r\n// Cognitive_Svc_Latency\r\n// | join kind=inner Cognitive_Svc_Usage on $left.name==$right.name\r\n// | where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions)\r\n// | summarize SumValue = sum(latency), CountValue = count() by name\r\n// | extend avg_latency = iff(CountValue > 0, SumValue / CountValue, decimal(0))\r\n// | join kind=inner Cognitive_Svc_Usage on $left.name==$right.name\r\n// | distinct name,avg_latency,featurename\r\n// | summarize SumValue1 = sum(avg_latency), CountValue1 = count() by featurename\r\n// | extend avg_latency = iff(CountValue1 > 0, SumValue1 / CountValue1, decimal(0))\r\n// | distinct featurename,avg_latency",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Latency by Model",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 15,
+        "y": 8
+      },
+      "id": 18,
+      "options": {
+        "displayMode": "lcd",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "color"
+      },
+      "pluginVersion": "9.5.8",
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "\r\nCognitive_Svc_Latency\r\n| join kind = leftouter Cognitive_Svc_Usage on $left.id==$right.id\r\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| join kind=inner Cognitive_Svc_Usage on $left.name==$right.name\r\n| summarize minimum=min(latency), maximum=max(latency)\r\n",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Latency Variance",
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 4,
+      "panels": [],
+      "title": "Usage",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 0,
+        "y": 15
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {
+          "titleSize": 1
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.8",
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "Cognitive_Svc_Usage\r\n| where $__timeFilter(['date'])\r\n and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| summarize sum(processedprompttokens) + sum(generatedtokens)  ",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Total Tokens",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Drilldown details",
+              "url": "https://uum07-grafana-fkfuf8fkg6fggtd5.eus.grafana.azure.com/d/de1a063e-5626-4fac-95d5-735318c20cff/tokencount-1?orgId=1&${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 3,
+        "y": 15
+      },
+      "id": 8,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.43,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "normal",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.5.8",
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "Cognitive_Svc_Usage\r\n| where $__timeFilter(['date'])\r\n and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| summarize sum(processedprompttokens), sum(generatedtokens) by featurename",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Token Usage By Model ",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Drilldown details",
+              "url": "https://uum07-grafana-fkfuf8fkg6fggtd5.eus.grafana.azure.com/d/d6456cc2-20b5-4dbe-97ae-f5c349768225/tokencount-2?orgId=1&${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 9,
+        "y": 15
+      },
+      "id": 6,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.43,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "normal",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.5.8",
+      "targets": [
+        {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          },
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "Cognitive_Svc_Usage\r\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| summarize sum(processedprompttokens), sum(generatedtokens) by location",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "A",
+          "resultFormat": "table"
+        }
+      ],
+      "title": "Token Usage by Region",
+      "type": "barchart"
+    }
+  ],
+  "refresh": "",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "Solution 1",
+            "Solution 4",
+            "Solution 5",
+            "Solution 6"
+          ],
+          "value": [
+            "Solution 1",
+            "Solution 4",
+            "Solution 5",
+            "Solution 6"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        },
+        "definition": "Subscriptions\n| distinct solution",
+        "hide": 0,
+        "includeAll": false,
+        "multi": true,
+        "name": "Solution",
+        "options": [],
+        "query": {
+          "database": "uum07-metricsdb",
+          "expression": {
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "Subscriptions\n| distinct solution",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "adx-Subscriptions\n| distinct solution",
+          "resultFormat": "table"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            " AG-CE-CI-TESTSUB-SRHEGDE",
+            " AG-CI-CE-yvishwa",
+            " AG-CE-CI-TESTSUB-ONELHIRMEZ",
+            " AG-CE-CI-TESTSUB-DIVYABHU"
+          ],
+          "value": [
+            "0e2d2c9d-659f-4e7d-929d-5d7d82ee64c3",
+            "ce907794-c45b-43ac-8096-d2f7cf004ba0",
+            "d6a99beb-93da-4c87-8e7a-2ad995aa1c94",
+            "7d528e8d-eb2d-4ebb-9aab-2d9d2f3a466a"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        },
+        "definition": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
+        "hide": 0,
+        "includeAll": false,
+        "multi": true,
+        "name": "Subscriptions",
+        "options": [],
+        "query": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
+        "refresh": 1,
+        "regex": "(?<value>.*)\\|(?<text>.*)",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "eastus",
+            "westus2",
+            "southcentralus",
+            "northcentralus",
+            "westus",
+            "eastus2"
+          ],
+          "value": [
+            "eastus",
+            "westus2",
+            "southcentralus",
+            "northcentralus",
+            "westus",
+            "eastus2"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        },
+        "definition": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Cognitive_Svc_Availability\n| distinct location;\nlet region_8 = Container_Registry_Availability\n| distinct location;\nlet region_9 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8, region_9 | distinct *",
+        "hide": 0,
+        "includeAll": false,
+        "multi": true,
+        "name": "Region",
+        "options": [],
+        "query": {
+          "database": "uum07-metricsdb",
+          "expression": {
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Cognitive_Svc_Availability\n| distinct location;\nlet region_8 = Container_Registry_Availability\n| distinct location;\nlet region_9 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8, region_9 | distinct *",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "refId": "adx-let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Cognitive_Svc_Availability\n| distinct location;\nlet region_8 = Container_Registry_Availability\n| distinct location;\nlet region_9 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8, region_9 | distinct *",
+          "resultFormat": "table"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "text-davinci-003",
+            "text-similarity-ada-001",
+            "gpt-35-turbo-16k",
+            "gpt-35-turbo"
+          ],
+          "value": [
+            "text-davinci-003",
+            "text-similarity-ada-001",
+            "gpt-35-turbo-16k",
+            "gpt-35-turbo"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        },
+        "definition": "Cognitive_Svc_Usage\r\n| distinct featurename",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Model",
+        "multi": true,
+        "name": "Model",
+        "options": [],
+        "query": {
+          "OpenAI": false,
+          "database": "uum07-metricsdb",
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.6.2",
+          "query": "Cognitive_Svc_Usage\r\n| distinct featurename",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "resultFormat": "table"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "Azure Usage Dashboard",
+  "uid": "e9b18c98-3274-4706-9771-aa41c182cd6d",
+  "version": 66,
+  "weekStart": ""
+}
