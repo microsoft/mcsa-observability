@@ -36,10 +36,20 @@ resource "grafana_folder" "observability" {
   title = "Observability_Dashboard"
 }
 
+resource "grafana_folder" "usage" {
+  title = "Usage_Dashboard"
+}
+
 resource "grafana_dashboard" "resource_observability" {
   folder     = grafana_folder.observability.id
   overwrite = true
   config_json = file("../../dashboard_templates/AzureResourceObservability-1687853750785.json")
+}
+
+resource "grafana_dashboard" "resource_usage" {
+  folder     = grafana_folder.usage.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/AzureResourceUsage.json")
 }
 
 resource "grafana_dashboard" "aks_server_node" {
@@ -110,6 +120,41 @@ resource "grafana_dashboard" "loganalytics" {
   overwrite = true
   config_json = file("../../dashboard_templates/LogAnalytics-1688018903992.json")
   depends_on = [grafana_dashboard.resource_observability]
+}
+
+resource "grafana_dashboard" "deployment_count_1" {
+  folder     = grafana_folder.usage.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/DeploymentCount_1.json")
+  depends_on = [grafana_dashboard.resource_usage]
+}
+
+resource "grafana_dashboard" "latency_by_region_1" {
+  folder     = grafana_folder.usage.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/LatencyByRegion_1.json")
+  depends_on = [grafana_dashboard.resource_usage]
+}
+
+resource "grafana_dashboard" "latency_by_region_2" {
+  folder     = grafana_folder.usage.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/LatencyByRegion_2.json")
+  depends_on = [grafana_dashboard.resource_usage]
+}
+
+resource "grafana_dashboard" "token_count_1" {
+  folder     = grafana_folder.usage.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/TokenCount_1.json")
+  depends_on = [grafana_dashboard.resource_usage]
+}
+
+resource "grafana_dashboard" "token_count_2" {
+  folder     = grafana_folder.usage.id
+  overwrite = true
+  config_json = file("../../dashboard_templates/TokenCount_2.json")
+  depends_on = [grafana_dashboard.resource_usage]
 }
 
 //add permission to execute the file
