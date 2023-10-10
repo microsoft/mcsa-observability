@@ -712,3 +712,7 @@ output "client_config" {
 output "prefix" {
   value =               "${var.prefix}"
 }
+
+output "aoaiusagedashboard" {
+  value =               "${var.aoaiusagedashboard}"
+}
