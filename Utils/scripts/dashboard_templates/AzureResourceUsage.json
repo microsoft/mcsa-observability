@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 41,
+  "id": 234,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -44,7 +44,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "description": "",
       "fieldConfig": {
@@ -94,10 +94,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -135,7 +135,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "description": "",
       "fieldConfig": {
@@ -166,8 +166,8 @@
           "links": [
             {
               "targetBlank": true,
-              "title": "Drilldown details",
-              "url": "https://uum07-grafana-fkfuf8fkg6fggtd5.eus.grafana.azure.com/d/d5afbce6-0c33-4c4f-8d1c-f65fe67c41d8/deploymentcount-1?orgId=1&${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
+              "title": "Model Deployment by Region - drilldown details",
+              "url": "https://uum09-grafana-cwfzeeh8gpdncvax.eus.grafana.azure.com/d/d5afbce6-0c33-4c4f-8d1c-f65fe67c41d8/deploymentcount-1?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -215,10 +215,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -256,7 +256,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "description": "",
       "fieldConfig": {
@@ -306,10 +306,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -360,7 +360,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "description": "",
       "fieldConfig": {
@@ -410,10 +410,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -451,7 +451,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "fieldConfig": {
         "defaults": {
@@ -481,8 +481,8 @@
           "links": [
             {
               "targetBlank": true,
-              "title": "Drilldown details",
-              "url": "https://uum07-grafana-fkfuf8fkg6fggtd5.eus.grafana.azure.com/d/c9506969-ac25-4d57-9448-34f1e7e1e910/latencybyregion-1?orgId=1&${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
+              "title": "Latency by Region - drilldown details",
+              "url": "https://uum09-grafana-cwfzeeh8gpdncvax.eus.grafana.azure.com/d/c9506969-ac25-4d57-9448-34f1e7e1e910/latencybyregion-1?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -529,10 +529,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -570,7 +570,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "fieldConfig": {
         "defaults": {
@@ -600,8 +600,8 @@
           "links": [
             {
               "targetBlank": true,
-              "title": "Drilldown details",
-              "url": "https://uum07-grafana-fkfuf8fkg6fggtd5.eus.grafana.azure.com/d/ac2d0796-00e5-4292-9f75-17e599c48e9f/latencybyregion-2?orgId=1&${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
+              "title": "Latency by Model - drilldown details",
+              "url": "https://uum09-grafana-cwfzeeh8gpdncvax.eus.grafana.azure.com/d/ac2d0796-00e5-4292-9f75-17e599c48e9f/latencybyregion-2?orgId=1${__url_time_range}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
             }
           ],
           "mappings": [],
@@ -652,10 +652,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -693,7 +693,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "fieldConfig": {
         "defaults": {
@@ -743,10 +743,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -770,7 +770,7 @@
             }
           },
           "pluginVersion": "4.6.2",
-          "query": "\r\nCognitive_Svc_Latency\r\n| join kind = leftouter Cognitive_Svc_Usage on $left.id==$right.id\r\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| join kind=inner Cognitive_Svc_Usage on $left.name==$right.name\r\n| summarize minimum=min(latency), maximum=max(latency)\r\n",
+          "query": "\r\nCognitive_Svc_Latency\r\n| join kind = leftouter Cognitive_Svc_Usage on $left.id==$right.id\r\n| where $__timeFilter(['date']) and location in ($Region) and subscriptionId in ($Subscriptions) and featurename in ($Model)\r\n| summarize minimum=min(latency), maximum=max(latency)\r\n",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -797,7 +797,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "description": "",
       "fieldConfig": {
@@ -850,10 +850,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -891,7 +891,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "description": "",
       "fieldConfig": {
@@ -922,8 +922,8 @@
           "links": [
             {
               "targetBlank": true,
-              "title": "Drilldown details",
-              "url": "https://uum07-grafana-fkfuf8fkg6fggtd5.eus.grafana.azure.com/d/de1a063e-5626-4fac-95d5-735318c20cff/tokencount-1?orgId=1&${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
+              "title": "Token Usage by Model - drilldown details",
+              "url": "https://uum09-grafana-cwfzeeh8gpdncvax.eus.grafana.azure.com/d/de1a063e-5626-4fac-95d5-735318c20cff/tokencount-1?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -971,10 +971,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -1012,7 +1012,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "fieldConfig": {
         "defaults": {
@@ -1042,8 +1042,8 @@
           "links": [
             {
               "targetBlank": true,
-              "title": "Drilldown details",
-              "url": "https://uum07-grafana-fkfuf8fkg6fggtd5.eus.grafana.azure.com/d/d6456cc2-20b5-4dbe-97ae-f5c349768225/tokencount-2?orgId=1&${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}&${Model:queryparam}"
+              "title": "Token Usage by Region - drilldown details",
+              "url": "https://uum09-grafana-cwfzeeh8gpdncvax.eus.grafana.azure.com/d/d6456cc2-20b5-4dbe-97ae-f5c349768225/tokencount-2?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -1091,10 +1091,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -1155,7 +1155,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
         },
         "definition": "Subscriptions\n| distinct solution",
         "hide": 0,
@@ -1164,7 +1164,7 @@
         "name": "Solution",
         "options": [],
         "query": {
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "expression": {
             "groupBy": {
               "expressions": [],
@@ -1197,21 +1197,21 @@
         "current": {
           "selected": true,
           "text": [
-            " AG-CE-CI-TESTSUB-SRHEGDE",
             " AG-CI-CE-yvishwa",
+            " AG-CE-CI-TESTSUB-SRHEGDE",
             " AG-CE-CI-TESTSUB-ONELHIRMEZ",
             " AG-CE-CI-TESTSUB-DIVYABHU"
           ],
           "value": [
-            "0e2d2c9d-659f-4e7d-929d-5d7d82ee64c3",
             "ce907794-c45b-43ac-8096-d2f7cf004ba0",
+            "0e2d2c9d-659f-4e7d-929d-5d7d82ee64c3",
             "d6a99beb-93da-4c87-8e7a-2ad995aa1c94",
             "7d528e8d-eb2d-4ebb-9aab-2d9d2f3a466a"
           ]
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
         },
         "definition": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
         "hide": 0,
@@ -1231,24 +1231,24 @@
           "selected": true,
           "text": [
             "eastus",
-            "westus2",
-            "southcentralus",
-            "northcentralus",
             "westus",
-            "eastus2"
+            "westus2",
+            "eastus2",
+            "southcentralus",
+            "northcentralus"
           ],
           "value": [
             "eastus",
-            "westus2",
-            "southcentralus",
-            "northcentralus",
             "westus",
-            "eastus2"
+            "westus2",
+            "eastus2",
+            "southcentralus",
+            "northcentralus"
           ]
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
         },
         "definition": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Cognitive_Svc_Availability\n| distinct location;\nlet region_8 = Container_Registry_Availability\n| distinct location;\nlet region_9 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8, region_9 | distinct *",
         "hide": 0,
@@ -1257,7 +1257,7 @@
         "name": "Region",
         "options": [],
         "query": {
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "expression": {
             "groupBy": {
               "expressions": [],
@@ -1290,21 +1290,21 @@
         "current": {
           "selected": true,
           "text": [
-            "text-davinci-003",
             "text-similarity-ada-001",
-            "gpt-35-turbo-16k",
-            "gpt-35-turbo"
+            "text-davinci-003",
+            "gpt-35-turbo",
+            "gpt-35-turbo-16k"
           ],
           "value": [
-            "text-davinci-003",
             "text-similarity-ada-001",
-            "gpt-35-turbo-16k",
-            "gpt-35-turbo"
+            "text-davinci-003",
+            "gpt-35-turbo",
+            "gpt-35-turbo-16k"
           ]
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
         },
         "definition": "Cognitive_Svc_Usage\r\n| distinct featurename",
         "hide": 0,
@@ -1315,7 +1315,7 @@
         "options": [],
         "query": {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "expression": {
             "from": {
               "property": {
@@ -1353,13 +1353,13 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "utc",
   "title": "Azure Usage Dashboard",
   "uid": "e9b18c98-3274-4706-9771-aa41c182cd6d",
-  "version": 66,
+  "version": 5,
   "weekStart": ""
 }

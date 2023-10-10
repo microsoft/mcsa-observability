@@ -18,14 +18,14 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 59,
+  "id": 248,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+        "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
       },
       "fieldConfig": {
         "defaults": {
@@ -76,10 +76,10 @@
       "targets": [
         {
           "OpenAI": false,
-          "database": "uum07-metricsdb",
+          "database": "uum09-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+            "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
           },
           "expression": {
             "from": {
@@ -149,7 +149,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
         },
         "definition": "",
         "hide": 2,
@@ -173,7 +173,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
         },
         "definition": "",
         "hide": 2,
@@ -197,7 +197,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
         },
         "definition": "",
         "hide": 2,
@@ -224,7 +224,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "c714f67f-61cf-4501-8be6-0a0e264472c6"
+          "uid": "d4d6fb04-63f9-422e-bd1f-dc5f69f787a3"
         },
         "definition": "",
         "hide": 2,
@@ -249,6 +249,6 @@
   "timezone": "",
   "title": "LatencyByRegion-2",
   "uid": "ac2d0796-00e5-4292-9f75-17e599c48e9f",
-  "version": 5,
+  "version": 1,
   "weekStart": ""
 }
