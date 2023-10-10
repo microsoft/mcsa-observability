@@ -207,6 +207,33 @@ resource "azurerm_storage_blob" "this" {
   }
 }
 
+#create blob to store the usage dashboard kql query
+resource "azurerm_storage_blob" "usage_this" {
+  name                   = "table_scripts_usage.kql"
+  storage_account_name   = azurerm_storage_account.this.name
+  storage_container_name = azurerm_storage_container.scripts.name
+  type                   = "Block"
+  source                 = "${path.cwd}/../../table_scripts_usage.kql"
+  depends_on = [azurerm_storage_container.scripts]
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
+}
+
+#create tables using the table creation script inside the database
+resource "azurerm_kusto_script" "usagetable" {
+  count                              = var.aoaiusagedashboard==true ? 1 : 0
+  name                               = "usagemetricsdbtables"
+  database_id                        = azurerm_kusto_database.database.id
+  url                                = azurerm_storage_blob.usage_this.id
+  sas_token                          = data.azurerm_storage_account_sas.this.sas
+  continue_on_errors_enabled         = true
+  force_an_update_when_value_changed = "first"
+  depends_on = [azurerm_kusto_database.database]
+}
+
 #create a kusto cluster
 resource "azurerm_kusto_cluster" "this" {
   name                = "${var.prefix}adx"

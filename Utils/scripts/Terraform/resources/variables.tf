@@ -12,3 +12,8 @@ variable "location" {
   type        = string
   description = "The location where the user wants to deploy the resources"
 }
+
+variable "aoaiusagedashboard" {
+  type        = bool
+  description = "Enter true to deploy aoai usage dashboard, else enter false"
+}
