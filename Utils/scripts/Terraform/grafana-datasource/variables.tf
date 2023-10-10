@@ -60,3 +60,10 @@ variable "prefix" {
   nullable  = false
   sensitive = false
 }
+
+#export TF_VAR_aoaiusagedashboard=$(terraform output -raw aoaiusagedashboard)
+variable "aoaiusagedashboard" {
+  type      = bool
+  nullable  = false
+  sensitive = false
+}
