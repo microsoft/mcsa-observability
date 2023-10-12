@@ -162,9 +162,15 @@ terraform init
 terraform plan -var="prefix=<prefix>" -var="subscriptionId=<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
 eg: terraform plan -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
 
+on prompt, type "true" to deploy usage dashboard, else type "false"
+
 # run apply on the root file
 terraform apply -var="prefix=<prefix>" -var="subscriptionId=<subscriptionId>" -var="location=<preferredLocation>" -parallelism=<count>
 eg: terraform apply -var="prefix=test" -var="subscriptionId=00000000-0000-0000-0000-000000000000" -var="location=eastus" -parallelism=1
+
+on prompt, type "true" to deploy usage dashboard, else type "false"
+
+
 note: make sure to confirm resource creation with a "yes" when the prompt appears on running this command
 
 # add "grafana admin" role to the user as described here - https://learn.microsoft.com/en-us/azure/managed-grafana/how-to-share-grafana-workspace?tabs=azure-portal
@@ -214,7 +220,9 @@ The solution relies on the following data to be present in the "Resource Provide
 
 #### Updating Resource Types
 
-1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
+1. Download the file based on your requirement(i.e if you want to deploy just observability dashboard or all dashboards)
+	a. - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv) to insert the list of all resource providers to be monitored in the Resource_Providers table.
+	b. - [ResourceTypes_Observability.csv](Utils/scripts/csv_import/ResourceTypes_Observability.csv) to insert the list of resource providers to monitor only observability.
 
 ![githubfiledownload](Images/githubfiledownload-1.png)
 > Note: While saving to local ensure that you save the file with csv extension, the default is set to .txt
