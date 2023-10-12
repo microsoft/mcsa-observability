@@ -49,7 +49,7 @@ resource "grafana_dashboard" "resource_observability" {
 
 resource "grafana_dashboard" "resource_usage" {
   count = var.aoaiusagedashboard==true ? 1 : 0
-  folder     = grafana_folder.usage.id
+  folder     = grafana_folder.usage.*.id[count.index]
   overwrite = true
   config_json = file("../../dashboard_templates/AzureResourceUsage.json")
 }
@@ -126,7 +126,7 @@ resource "grafana_dashboard" "loganalytics" {
 
 resource "grafana_dashboard" "deployment_count_1" {
   count = var.aoaiusagedashboard==true ? 1 : 0
-  folder     = grafana_folder.usage.id
+  folder     = grafana_folder.usage.*.id[count.index]
   overwrite = true
   config_json = file("../../dashboard_templates/DeploymentCount_1.json")
   depends_on = [grafana_dashboard.resource_usage]
@@ -134,7 +134,7 @@ resource "grafana_dashboard" "deployment_count_1" {
 
 resource "grafana_dashboard" "latency_by_region_1" {
   count = var.aoaiusagedashboard==true ? 1 : 0
-  folder     = grafana_folder.usage.id
+  folder     = grafana_folder.usage.*.id[count.index]
   overwrite = true
   config_json = file("../../dashboard_templates/LatencyByRegion_1.json")
   depends_on = [grafana_dashboard.resource_usage]
@@ -142,7 +142,7 @@ resource "grafana_dashboard" "latency_by_region_1" {
 
 resource "grafana_dashboard" "latency_by_region_2" {
   count = var.aoaiusagedashboard==true ? 1 : 0
-  folder     = grafana_folder.usage.id
+  folder     = grafana_folder.usage.*.id[count.index]
   overwrite = true
   config_json = file("../../dashboard_templates/LatencyByRegion_2.json")
   depends_on = [grafana_dashboard.resource_usage]
@@ -150,7 +150,7 @@ resource "grafana_dashboard" "latency_by_region_2" {
 
 resource "grafana_dashboard" "token_count_1" {
   count = var.aoaiusagedashboard==true ? 1 : 0
-  folder     = grafana_folder.usage.id
+  folder     = grafana_folder.usage.*.id[count.index]
   overwrite = true
   config_json = file("../../dashboard_templates/TokenCount_1.json")
   depends_on = [grafana_dashboard.resource_usage]
@@ -158,7 +158,7 @@ resource "grafana_dashboard" "token_count_1" {
 
 resource "grafana_dashboard" "token_count_2" {
   count = var.aoaiusagedashboard==true ? 1 : 0
-  folder     = grafana_folder.usage.id
+  folder     = grafana_folder.usage.*.id[count.index]
   overwrite = true
   config_json = file("../../dashboard_templates/TokenCount_2.json")
   depends_on = [grafana_dashboard.resource_usage]
