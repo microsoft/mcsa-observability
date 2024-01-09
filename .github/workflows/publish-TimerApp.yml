@@ -1,4 +1,4 @@
-name: Deploy DotNet project to TimerStartPipelineFunction Function App
+name: Deploy DotNet project to TimerStartPipelineFunction App
 
 on:
   [push]
