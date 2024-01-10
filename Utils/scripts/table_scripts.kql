@@ -45,7 +45,7 @@
 
 .create-merge table Subscription_Names (subscriptionId: guid, name: string)
 
-.create-merge table Subscriptions (solution: string, tenancy: string, component: string, tenantId:guid, subscriptionId: guid, createdAt: datetime)
+.create-merge table Subscriptions (solution: string, tenancy: string, component: string, tenantDomain:guid, tenantId:String, subscriptionId: guid, createdAt: datetime)
 
 .create-merge table Subscriptions_Processed (subscriptionId: guid, dateProcessed: datetime)
 
