@@ -44,7 +44,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "gridPos": {
         "h": 2,
@@ -65,10 +65,10 @@
       "pluginVersion": "9.5.13",
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -105,7 +105,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "fieldConfig": {
         "defaults": {
@@ -153,10 +153,10 @@
       "pluginVersion": "9.5.13",
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -193,7 +193,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "fieldConfig": {
         "defaults": {
@@ -241,10 +241,10 @@
       "pluginVersion": "9.5.13",
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -282,7 +282,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "fieldConfig": {
         "defaults": {
@@ -330,10 +330,10 @@
       "pluginVersion": "9.5.13",
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -371,7 +371,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "fieldConfig": {
         "defaults": {
@@ -419,10 +419,10 @@
       "pluginVersion": "9.5.13",
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -459,7 +459,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "fieldConfig": {
         "defaults": {
@@ -507,10 +507,10 @@
       "pluginVersion": "9.5.13",
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -547,7 +547,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "fieldConfig": {
         "defaults": {
@@ -595,10 +595,10 @@
       "pluginVersion": "9.5.13",
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -635,7 +635,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "fieldConfig": {
         "defaults": {
@@ -683,10 +683,10 @@
       "pluginVersion": "9.5.13",
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -724,7 +724,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "fieldConfig": {
         "defaults": {
@@ -772,10 +772,10 @@
       "pluginVersion": "9.5.13",
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -813,7 +813,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "fieldConfig": {
         "defaults": {
@@ -861,10 +861,10 @@
       "pluginVersion": "9.5.13",
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -915,7 +915,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters",
       "fieldConfig": {
@@ -961,7 +961,7 @@
             {
               "targetBlank": true,
               "title": "aksservernode drill down details",
-              "url": "https://hotfix01-grafana-cqfdh4fwfcedadhd.eus.grafana.azure.com/d/OD9S0za4z/aksservernode?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              "url": "https://filter03-grafana-c4azfcgsabb2hggv.eus.grafana.azure.com/d/OD9S0za4z/aksservernode?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -1003,10 +1003,10 @@
       },
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -1044,7 +1044,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftcontainerservicemanagedclusters",
       "fieldConfig": {
@@ -1087,7 +1087,7 @@
             {
               "targetBlank": true,
               "title": "acr drill down details",
-              "url": "https://hotfix01-grafana-cqfdh4fwfcedadhd.eus.grafana.azure.com/d/mBHFSeX4z/containerregistry?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              "url": "https://filter03-grafana-c4azfcgsabb2hggv.eus.grafana.azure.com/d/mBHFSeX4z/containerregistry?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -1129,10 +1129,10 @@
       },
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -1183,7 +1183,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftstoragestorageaccounts",
       "fieldConfig": {
@@ -1226,7 +1226,7 @@
             {
               "targetBlank": true,
               "title": "storage drill down details",
-              "url": "https://hotfix01-grafana-cqfdh4fwfcedadhd.eus.grafana.azure.com/d/c4aae789-35a7-4358-ae39-f70da56dea29/storage?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              "url": "https://filter03-grafana-c4azfcgsabb2hggv.eus.grafana.azure.com/d/c85ae3d4-ca04-4162-8432-88678c9ee680/storage?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -1268,10 +1268,10 @@
       },
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -1322,7 +1322,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkazurefirewalls",
       "fieldConfig": {
@@ -1365,7 +1365,7 @@
             {
               "targetBlank": true,
               "title": "loadbalancer drill down details",
-              "url": "https://hotfix01-grafana-cqfdh4fwfcedadhd.eus.grafana.azure.com/d/d56dacc1-5219-463f-9b2d-8fa7a3b6522e/loadbalancer?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              "url": "https://filter03-grafana-c4azfcgsabb2hggv.eus.grafana.azure.com/d/bb316dd4-75f5-4045-bbd6-7ee3a496fe4f/loadbalancer?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -1374,7 +1374,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1406,10 +1407,10 @@
       },
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -1447,7 +1448,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "description": "Availability metric -https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftnetworkazurefirewalls",
       "fieldConfig": {
@@ -1490,7 +1491,7 @@
             {
               "targetBlank": true,
               "title": "firewall drill down details",
-              "url": "https://hotfix01-grafana-cqfdh4fwfcedadhd.eus.grafana.azure.com/d/8HDuNUC4z/firewalls?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              "url": "https://filter03-grafana-c4azfcgsabb2hggv.eus.grafana.azure.com/d/8HDuNUC4z/firewalls?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -1499,7 +1500,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1531,10 +1533,10 @@
       },
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -1585,7 +1587,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "description": "availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts",
       "fieldConfig": {
@@ -1628,7 +1630,7 @@
             {
               "targetBlank": true,
               "title": "cosmosdb drill down details",
-              "url": "https://hotfix01-grafana-cqfdh4fwfcedadhd.eus.grafana.azure.com/d/c2cfc388-2df4-4381-bb36-d953fd5b1467/cosmosdb-details?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              "url": "https://filter03-grafana-c4azfcgsabb2hggv.eus.grafana.azure.com/d/dbeda2a1-0a87-4b06-9ba6-ac040886a7fc/cosmosdb-details?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -1670,10 +1672,10 @@
       },
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -1724,7 +1726,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "description": "availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdocumentdbdatabaseaccounts",
       "fieldConfig": {
@@ -1767,7 +1769,7 @@
             {
               "targetBlank": true,
               "title": "keyvault drill down details",
-              "url": "https://hotfix01-grafana-cqfdh4fwfcedadhd.eus.grafana.azure.com/d/d3e30846-704e-4a38-9b4f-b87d649c6929/keyvault?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              "url": "https://filter03-grafana-c4azfcgsabb2hggv.eus.grafana.azure.com/d/a9fec312-b137-45d5-b146-493bc994c07a/keyvault?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -1808,10 +1810,10 @@
       },
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -1875,7 +1877,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsofteventhubnamespaces",
       "fieldConfig": {
@@ -1918,7 +1920,7 @@
             {
               "targetBlank": true,
               "title": "eventhubs drill down details",
-              "url": "https://hotfix01-grafana-cqfdh4fwfcedadhd.eus.grafana.azure.com/d/K9cdIeu4z/eventhubs?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              "url": "https://filter03-grafana-c4azfcgsabb2hggv.eus.grafana.azure.com/d/K9cdIeu4z/eventhubs?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -1959,10 +1961,10 @@
       },
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -2000,7 +2002,7 @@
     {
       "datasource": {
         "type": "grafana-azure-data-explorer-datasource",
-        "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
       },
       "description": "Availability metric - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftoperationalinsightsworkspaces",
       "fieldConfig": {
@@ -2043,7 +2045,7 @@
             {
               "targetBlank": true,
               "title": "loganalytics drill down details",
-              "url": "https://hotfix01-grafana-cqfdh4fwfcedadhd.eus.grafana.azure.com/d/mpNZfMr4k/loganalytics?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
+              "url": "https://filter03-grafana-c4azfcgsabb2hggv.eus.grafana.azure.com/d/mpNZfMr4k/loganalytics?orgId=1${__url_time_range}&var-selecteddate=${__data.fields.date}&${Region:queryparam}&${Subscriptions:queryparam}&${Solution:queryparam}"
             }
           ],
           "mappings": [],
@@ -2084,10 +2086,10 @@
       },
       "targets": [
         {
-          "database": "hotfix01-metricsdb",
+          "database": "filter03-metricsdb",
           "datasource": {
             "type": "grafana-azure-data-explorer-datasource",
-            "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+            "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
           },
           "expression": {
             "from": {
@@ -2144,7 +2146,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+          "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
         },
         "definition": "Subscriptions\n| distinct solution",
         "hide": 0,
@@ -2167,7 +2169,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+          "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
         },
         "definition": "Subscriptions\r\n| distinct tenantDomain",
         "hide": 0,
@@ -2175,37 +2177,7 @@
         "multi": true,
         "name": "Tenant",
         "options": [],
-        "query": {
-          "OpenAI": false,
-          "database": "hotfix01-metricsdb",
-          "expression": {
-            "from": {
-              "property": {
-                "name": "Aksservernode_Availability_Raw",
-                "type": "string"
-              },
-              "type": "property"
-            },
-            "groupBy": {
-              "expressions": [],
-              "type": "and"
-            },
-            "reduce": {
-              "expressions": [],
-              "type": "and"
-            },
-            "where": {
-              "expressions": [],
-              "type": "and"
-            }
-          },
-          "pluginVersion": "4.7.0",
-          "query": "Subscriptions\r\n| distinct tenantDomain",
-          "querySource": "raw",
-          "queryType": "KQL",
-          "rawMode": true,
-          "resultFormat": "table"
-        },
+        "query": "Subscriptions\r\n| distinct tenantDomain",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2220,7 +2192,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+          "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
         },
         "definition": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| where tenantDomain in ($Tenant)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
         "hide": 0,
@@ -2228,30 +2200,7 @@
         "multi": true,
         "name": "Subscriptions",
         "options": [],
-        "query": {
-          "database": "hotfix01-metricsdb",
-          "expression": {
-            "groupBy": {
-              "expressions": [],
-              "type": "and"
-            },
-            "reduce": {
-              "expressions": [],
-              "type": "and"
-            },
-            "where": {
-              "expressions": [],
-              "type": "and"
-            }
-          },
-          "pluginVersion": "4.7.0",
-          "query": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| where tenantDomain in ($Tenant)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
-          "querySource": "raw",
-          "queryType": "KQL",
-          "rawMode": true,
-          "refId": "adx-Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
-          "resultFormat": "table"
-        },
+        "query": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| where tenantDomain in ($Tenant)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
         "refresh": 1,
         "regex": "(?<value>.*)\\|(?<text>.*)",
         "skipUrlSync": false,
@@ -2266,7 +2215,7 @@
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
-          "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+          "uid": "bf3170c6-bf35-4c11-9153-9fe57a86e0d0"
         },
         "definition": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Container_Registry_Availability\n| distinct location;\nlet region_8 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8| distinct *",
         "hide": 0,
@@ -2274,30 +2223,7 @@
         "multi": true,
         "name": "Region",
         "options": [],
-        "query": {
-          "database": "hotfix01-metricsdb",
-          "expression": {
-            "groupBy": {
-              "expressions": [],
-              "type": "and"
-            },
-            "reduce": {
-              "expressions": [],
-              "type": "and"
-            },
-            "where": {
-              "expressions": [],
-              "type": "and"
-            }
-          },
-          "pluginVersion": "4.7.0",
-          "query": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Container_Registry_Availability\n| distinct location;\nlet region_8 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8| distinct *",
-          "querySource": "raw",
-          "queryType": "KQL",
-          "rawMode": true,
-          "refId": "adx-let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Cognitive_Svc_Availability\n| distinct location;\nlet region_8 = Container_Registry_Availability\n| distinct location;\nlet region_9 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8, region_9 | distinct *",
-          "resultFormat": "table"
-        },
+        "query": "let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Container_Registry_Availability\n| distinct location;\nlet region_8 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8| distinct *",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2314,6 +2240,6 @@
   "timezone": "utc",
   "title": "Azure Observability Dashboard",
   "uid": "VVUlnjx4z",
-  "version": 32,
+  "version": 5,
   "weekStart": ""
 }
