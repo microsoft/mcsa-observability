@@ -1030,7 +1030,7 @@
             }
           },
           "pluginVersion": "4.7.0",
-          "query": "Subscriptions\n|join Aksservernode_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId,tenancy,tenantDomain, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize aksservernode = (avg(availability)) by ['date']",
+          "query": "Subscriptions\n|join Aksservernode_Availability on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId,tenancy,tenantDomain, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and tenantDomain in ($Tenant)\n| summarize aksservernode = (avg(availability)) by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -1156,7 +1156,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Subscriptions\n|join Container_Registry_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(successfulPullCount) and isnotnull(totalPullCount) and isnotnull(successfulPushCount) and isnotnull(totalPushCount)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize acr = avg(((successfulPullCount+successfulPushCount)/(totalPullCount+totalPushCount))*100) by ['date']",
+          "query": "Subscriptions\n|join Container_Registry_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(successfulPullCount) and isnotnull(totalPullCount) and isnotnull(successfulPushCount) and isnotnull(totalPushCount)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and tenantDomain in ($Tenant)\n| summarize acr = avg(((successfulPullCount+successfulPushCount)/(totalPullCount+totalPushCount))*100) by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -1295,7 +1295,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Subscriptions\n|join Storage_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize storage = (avg(availability)) by ['date']",
+          "query": "Subscriptions\n|join Storage_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and tenantDomain in ($Tenant)\n| summarize storage = (avg(availability)) by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -1374,8 +1374,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1434,7 +1433,7 @@
             }
           },
           "pluginVersion": "4.5.0",
-          "query": "Subscriptions\n|join Loadbalancer_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize loadbalancer = (avg(availability)) by ['date']",
+          "query": "Subscriptions\n|join Loadbalancer_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and tenantDomain in ($Tenant)\n| summarize loadbalancer = (avg(availability)) by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -1500,8 +1499,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1560,7 +1558,7 @@
             }
           },
           "pluginVersion": "4.5.0",
-          "query": "Subscriptions\n|join Firewall_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) \n| summarize firewall = (avg(availability)) by ['date']",
+          "query": "Subscriptions\n|join Firewall_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and tenantDomain in ($Tenant)\n| summarize firewall = (avg(availability)) by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -1639,8 +1637,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1700,7 +1697,7 @@
             }
           },
           "pluginVersion": "4.5.0",
-          "query": "Subscriptions\n|join Cosmosdb_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize cosmosdb = (avg(availability)) by ['date']",
+          "query": "Subscriptions\n|join Cosmosdb_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and tenantDomain in ($Tenant)\n| summarize cosmosdb = (avg(availability)) by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -1779,8 +1776,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1839,7 +1835,7 @@
             }
           },
           "pluginVersion": "4.5.0",
-          "query": "Subscriptions\n|join Keyvault_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution)\n| summarize keyvault = (avg(availability)) by ['date']",
+          "query": "Subscriptions\n|join Keyvault_Availability on subscriptionId\n| where $__timeFilter(['date']) and isnotnull(availability)\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and tenantDomain in ($Tenant)\n| summarize keyvault = (avg(availability)) by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -1931,8 +1927,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1991,7 +1986,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Subscriptions\r\n|join Eventhubs_Availability on subscriptionId\r\n| where $__timeFilter(['date']) and isnotnull(incomingRequests) and isnotnull(serverErrors)\r\n and location in ($Region) and subscriptionId in ($Subscriptions)\r\n and solution in ($Solution) \r\n| summarize eventhubs = avg((incomingRequests-serverErrors)/incomingRequests)*100 by ['date']",
+          "query": "Subscriptions\r\n|join Eventhubs_Availability on subscriptionId\r\n| where $__timeFilter(['date']) and isnotnull(incomingRequests) and isnotnull(serverErrors)\r\n and location in ($Region) and subscriptionId in ($Subscriptions)\r\n and solution in ($Solution) and tenantDomain in ($Tenant)\r\n| summarize eventhubs = avg((incomingRequests-serverErrors)/incomingRequests)*100 by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -2057,8 +2052,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2117,7 +2111,7 @@
             }
           },
           "pluginVersion": "4.4.1",
-          "query": "Subscriptions\r\n|join LogAnalytics_Availability on subscriptionId\r\n| where $__timeFilter(['date']) and isnotnull(availability)\r\n and location in ($Region) and subscriptionId in ($Subscriptions)\r\n and solution in ($Solution)\r\n| summarize loganalytics = avg(availability) by ['date']",
+          "query": "Subscriptions\r\n|join LogAnalytics_Availability on subscriptionId\r\n| where $__timeFilter(['date']) and isnotnull(availability)\r\n and location in ($Region) and subscriptionId in ($Subscriptions)\r\n and solution in ($Solution) and tenantDomain in ($Tenant)\r\n| summarize loganalytics = avg(availability) by ['date']",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -2167,21 +2161,68 @@
       },
       {
         "current": {
-          "selected": true,
-          "text": [
-            " AG-CE-CI-TESTSUB-ONELHIRMEZ",
-            " MCIGET-ISV-SRUTHIKILARI"
-          ],
-          "value": [
-            "d6a99beb-93da-4c87-8e7a-2ad995aa1c94",
-            "da67c6b0-d237-4a25-ab56-5267fad2b319"
-          ]
+          "selected": false,
+          "text": "#@microsoft.onmicrosoft.com",
+          "value": "#@microsoft.onmicrosoft.com"
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
           "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
         },
-        "definition": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
+        "definition": "Subscriptions\r\n| distinct tenantDomain",
+        "hide": 0,
+        "includeAll": false,
+        "multi": true,
+        "name": "Tenant",
+        "options": [],
+        "query": {
+          "OpenAI": false,
+          "database": "filter01-metricsdb",
+          "expression": {
+            "from": {
+              "property": {
+                "name": "Aksservernode_Availability_Raw",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "groupBy": {
+              "expressions": [],
+              "type": "and"
+            },
+            "reduce": {
+              "expressions": [],
+              "type": "and"
+            },
+            "where": {
+              "expressions": [],
+              "type": "and"
+            }
+          },
+          "pluginVersion": "4.7.0",
+          "query": "Subscriptions\r\n| distinct tenantDomain",
+          "querySource": "raw",
+          "queryType": "KQL",
+          "rawMode": true,
+          "resultFormat": "table"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": " AG-CE-CI-TESTSUB-ONELHIRMEZ",
+          "value": "d6a99beb-93da-4c87-8e7a-2ad995aa1c94"
+        },
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "cb37ddeb-1feb-41f6-943d-effb63bfc094"
+        },
+        "definition": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| where tenantDomain in ($Tenant)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
         "hide": 0,
         "includeAll": false,
         "multi": true,
@@ -2204,7 +2245,7 @@
             }
           },
           "pluginVersion": "4.7.0",
-          "query": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
+          "query": "Subscriptions\n| join Subscription_Names on subscriptionId\n| where solution in ($Solution)\n| where tenantDomain in ($Tenant)\n| extend valueAndText = strcat(subscriptionId, \"|\", name)\n| project valueAndText",
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
@@ -2219,19 +2260,9 @@
       },
       {
         "current": {
-          "selected": true,
-          "text": [
-            "eastus",
-            "westus",
-            "westus2",
-            "eastus2"
-          ],
-          "value": [
-            "eastus",
-            "westus",
-            "westus2",
-            "eastus2"
-          ]
+          "selected": false,
+          "text": "eastus",
+          "value": "eastus"
         },
         "datasource": {
           "type": "grafana-azure-data-explorer-datasource",
@@ -2264,7 +2295,7 @@
           "querySource": "raw",
           "queryType": "KQL",
           "rawMode": true,
-          "refId": "adx-let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Container_Registry_Availability\n| distinct location;\nlet region_8 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8| distinct *",
+          "refId": "adx-let region_1 = Aksservernode_Availability\n| distinct location;\nlet region_2 = Cosmosdb_Availability\n| distinct location;\nlet region_3 = Firewall_Availability\n| distinct location;\nlet region_4 = Keyvault_Availability\n| distinct location;\nlet region_5 = Loadbalancer_Availability\n| distinct location;\nlet region_6 = Storage_Availability\n| distinct location;\nlet region_7 = Cognitive_Svc_Availability\n| distinct location;\nlet region_8 = Container_Registry_Availability\n| distinct location;\nlet region_9 = Eventhubs_Availability\n| distinct location;\nunion region_1, region_2, region_3, region_4, region_5, region_6, region_7, region_8, region_9 | distinct *",
           "resultFormat": "table"
         },
         "refresh": 1,
@@ -2283,6 +2314,6 @@
   "timezone": "utc",
   "title": "Azure Observability Dashboard",
   "uid": "VVUlnjx4z",
-  "version": 22,
+  "version": 32,
   "weekStart": ""
 }
