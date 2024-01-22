@@ -12,16 +12,19 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace Observability.AdxIngestFunctionApp
 {
     public class AdxIngestFunction
     {
         private static HttpClient _httpClient = new HttpClient();
+        private static readonly IConfiguration _config = new ConfigurationBuilder().AddEnvironmentVariables().Build();
 
         static AdxIngestFunction()
         {
-            _httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("observabilitydashboard");
+            string DefaultRequestHeaders = _config.GetValue<string>("DefaultRequestHeaders");
+            _httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd(DefaultRequestHeaders);
         }
 
         [FunctionName("AdxIngestFunction")]
