@@ -16,9 +16,9 @@ namespace Observability.SchedulePipelineFunctionApp
     public class TimerStartPipelineFunction
     {
         [FunctionName("TimerStartPipelineFunction")]
-        public static async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer, ILogger log)
+        public static async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log)
         {
-            log.LogInformation($"TimerStartPipelineFunction started: {DateTime.Now}");
+            log.LogInformation($"TimerStartPipelineFunction started Neerja: {DateTime.Now}");
 
             var config = new ConfigurationBuilder().AddEnvironmentVariables().Build();
 
@@ -44,28 +44,45 @@ namespace Observability.SchedulePipelineFunctionApp
             var subscriptionsUpdateQuery = @"Subscriptions
                                             | join kind=leftouter Subscriptions_Processed on $left.subscriptionId == $right.subscriptionId
                                             | extend dp = iff(isempty(dateProcessed),ago(1d),dateProcessed)
-                                            | summarize dateProcessedThrough = max(dp) by subscriptionId
-                                            | order by dateProcessedThrough asc, subscriptionId";
+                                            | summarize dateProcessedThrough = max(dp) by tenantId, subscriptionId
+                                            | order by dateProcessedThrough asc, tenantId, subscriptionId";
 
             var resourceTypeQuery = @"Resource_Providers";
 
             using var reader = kustoClient.ExecuteQuery(subscriptionsUpdateQuery);
 
-            var resourceClient = new ResourceGraphHelper(config);
+            log.LogInformation($"Neerja Creating ResourceGraphHelper client ");
+
+            // var resourceClient = new ResourceGraphHelper(config, log); // TODO I will comment this later.
+
+            log.LogInformation($"Neerja Creating ResourceGraph client created successfully");
+            string prevTenantId = "";
+            ResourceGraphHelper resourceClient = null;
 
             while (reader.Read())
             {
                 using var resourceTypes = kustoClient.ExecuteQuery(resourceTypeQuery); //TODO: I moved here so that you don't need to create again after "while (resourceTypes.Read())" loop. Does that work?
+            
+                var tenantId = reader.GetGuid(0).ToString();
 
-                var subscriptionId = reader.GetGuid(0);
+                log.LogInformation($"This is the current Tenant ID: {tenantId}");
+
+                var subscriptionId = reader.GetGuid(1);
                 log.LogInformation($"This is the current Subscription ID: {subscriptionId}");
-
-                var fromDate = reader.GetDateTime(1);
+                
+                var fromDate = reader.GetDateTime(2);
                 var toDate = DateTime.UtcNow;
 
                 var subscriptionNameQuery = $"Subscription_Names | where subscriptionId == '{subscriptionId}'";
 
                 var subscriptionNameResponse = kustoClient.ExecuteQuery(subscriptionNameQuery);
+
+                if(tenantId != prevTenantId) {
+                    log.LogInformation($"Create new resource client for {tenantId}");
+                    prevTenantId = tenantId;
+                    resourceClient = new ResourceGraphHelper(config, log, tenantId); 
+                }
+
 
                 var subscriptionName = "";
                 if (subscriptionNameResponse.Read())
@@ -89,7 +106,7 @@ namespace Observability.SchedulePipelineFunctionApp
 
                     var result = resourceClient.QueryGraph(subscriptionId.ToString(), type);
 
-                    log.LogInformation($"This is the graph result: {result.Data}");
+                    log.LogInformation($"This is the graph result : {result.Data}");
 
                     var resultArray = result.Data.ToArray();
                     string str = Encoding.ASCII.GetString(resultArray);
