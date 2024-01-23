@@ -1,2 +1,2 @@
-﻿solution,tenancy,component,subscriptionId,createdAt
-Solution 1,multi,Solution 1 - Comp 1,<Subscription Guid>,2020-04-16T13:45:34.953Z
+﻿solution,tenancy,component,tenantId,tenantDomain,subscriptionId,createdAt
+Solution 1,multi,Solution 1 - Comp 1,<Tenant Guid>,#@microsoft.onmicrosoft.com,<Subscription Guid>,2020-04-16T13:45:34.953Z
