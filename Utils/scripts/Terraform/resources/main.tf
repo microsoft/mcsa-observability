@@ -332,6 +332,7 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     storagesas=data.azurerm_storage_account_sas.this.sas
     blobConnectionString=azurerm_storage_account.this.primary_connection_string
     MyTimeTrigger="0 */1 * * * *"
+    WEBSITE_RUN_FROM_PACKAGE=0
 	}
 }
 
@@ -458,6 +459,7 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     storagesas=data.azurerm_storage_account_sas.this.sas
     blobConnectionString=azurerm_storage_account.this.primary_connection_string
     DefaultRequestHeaders="observabilitydashboard"
+    WEBSITE_RUN_FROM_PACKAGE=0
 	}
 
 }
