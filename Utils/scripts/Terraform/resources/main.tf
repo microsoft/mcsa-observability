@@ -49,6 +49,7 @@ data azuread_client_config "current" {}
 data "azurerm_subscription" "primary" {
 }
 
+
 locals{
     startdate_formatted=formatdate("YYYY-MM-DD", timeadd(timestamp(), "-72h"))
     expirydate_formatted=formatdate("YYYY-MM-DD", timeadd(timestamp(), "8568h"))
@@ -117,6 +118,51 @@ resource "azurerm_user_assigned_identity" "terraform" {
 
 output "terraform_identity_object_id" {
   value = azurerm_user_assigned_identity.terraform.principal_id
+}
+
+
+
+#create key vault
+resource "azurerm_key_vault" "kv" {
+  name                        = "${var.prefix}-vault"
+  location                    = azurerm_resource_group.rg.location
+  resource_group_name         = azurerm_resource_group.rg.name
+  enabled_for_disk_encryption = true
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  soft_delete_retention_days  = 7
+  purge_protection_enabled    = false
+  depends_on = [azurerm_resource_group.rg]
+
+  sku_name = "standard"
+
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id #user
+
+    key_permissions = [
+      "Get",
+      "List"
+    ]
+
+    secret_permissions = [
+      "Get",
+      "Set",
+      "List"
+    ]
+
+    certificate_permissions = [
+      "Get",
+      "List"
+    ]
+  }
+}
+
+
+resource "azurerm_key_vault_secret" "client_secret_secret" {
+  name         = "tenant-${data.azurerm_client_config.current.tenant_id}"//azuread_service_principal.this.application_id//"ServicePrincipalClientSecret"
+  value        = "{\"ClientId\":\"${azuread_service_principal.this.application_id}\",\"ClientSecret\":\"${azuread_service_principal_password.this.value}\"}"//"${azuread_service_principal.this.application_id}-${azuread_service_principal_password.this.value}"//service_principal_id
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [azuread_service_principal_password.this]
 }
 
 
@@ -279,41 +325,6 @@ resource "time_sleep" "wait_servicebus_creation" {
   create_duration = "10s"
 }
 
-#create key vault
-resource "azurerm_key_vault" "kv" {
-  name                        = "${var.prefix}-vault"
-  location                    = azurerm_resource_group.rg.location
-  resource_group_name         = azurerm_resource_group.rg.name
-  enabled_for_disk_encryption = true
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  soft_delete_retention_days  = 7
-  purge_protection_enabled    = false
-  depends_on = [azurerm_resource_group.rg]
-
-  sku_name = "standard"
-
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id #user
-
-    key_permissions = [
-      "Get",
-      "List"
-    ]
-
-    secret_permissions = [
-      "Get",
-      "Set",
-      "List"
-    ]
-
-    certificate_permissions = [
-      "Get",
-      "List"
-    ]
-  }
-}
-
 #add key vault access policy to msi
 resource "azurerm_key_vault_access_policy" "msiaccess" {
   key_vault_id = azurerm_key_vault.kv.id
@@ -390,7 +401,6 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
     storagesas=data.azurerm_storage_account_sas.this.sas
     blobConnectionString=azurerm_storage_account.this.primary_connection_string
-    keyVaultName=azurerm_key_vault.kv.name
 	}
 }
 
@@ -516,7 +526,6 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
     storagesas=data.azurerm_storage_account_sas.this.sas
     blobConnectionString=azurerm_storage_account.this.primary_connection_string
-    keyVaultName=azurerm_key_vault.kv.name
 	}
 
 }
