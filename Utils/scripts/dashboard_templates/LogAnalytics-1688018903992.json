@@ -104,41 +104,41 @@
             },
             "pluginVersion": "9.5.8",
             "targets": [
-                {
-                    "database": "sk006-metricsdb",
-                    "datasource": {
-                        "type": "grafana-azure-data-explorer-datasource",
-                        "uid": "eb7781b4-943e-4a09-a5f3-f18ada704085"
+              {
+                "database": "sk006-metricsdb",
+                "datasource": {
+                  "type": "grafana-azure-data-explorer-datasource",
+                  "uid": "eb7781b4-943e-4a09-a5f3-f18ada704085"
+                },
+                "expression": {
+                  "from": {
+                    "property": {
+                      "name": "Vm_Availability",
+                      "type": "string"
                     },
-                    "expression": {
-                        "from": {
-                            "property": {
-                                "name": "Vm_Availability",
-                                "type": "string"
-                            },
-                            "type": "property"
-                        },
-                        "groupBy": {
-                            "expressions": [],
-                            "type": "and"
-                        },
-                        "reduce": {
-                            "expressions": [],
-                            "type": "and"
-                        },
-                        "where": {
-                            "expressions": [],
-                            "type": "and"
-                        }
-                    },
-                    "pluginVersion": "4.4.1",
-                    "query": "LogAnalytics_Availability\n| join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability)\nand location in ($Region) and subscriptionId in ($Subscriptions) and availability < 100\n| distinct ['date'] , subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
-                    "querySource": "raw",
-                    "queryType": "KQL",
-                    "rawMode": true,
-                    "refId": "A",
-                    "resultFormat": "table"
-                }
+                    "type": "property"
+                  },
+                  "groupBy": {
+                    "expressions": [],
+                    "type": "and"
+                  },
+                  "reduce": {
+                    "expressions": [],
+                    "type": "and"
+                  },
+                  "where": {
+                    "expressions": [],
+                    "type": "and"
+                  }
+                },
+                "pluginVersion": "4.4.1",
+                "query": "let v2 = LogAnalytics_Availability\n| where  ['date']  == datetime($selecteddate) and location in ($Region) and isnotnull(availability) and availability < 100 and subscriptionId in ($Subscriptions)\n| project ['date'], subscriptionId, resourceId, location, resourceName, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v1 = LogAnalytics_Availability\n| where  ['date']  == datetime($selecteddate) and location in ($Region) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, resourceId, location, resourceName, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v4 = LogAnalytics_Availability\n| where  ['date']  == datetime($selecteddate) and subscriptionId in ($Subscriptions) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, resourceId, location, resourceName, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v3 = LogAnalytics_Availability\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, resourceId, location, resourceName, availability\n| order by availability asc \n| order by ['date'] asc;\nunion kind=outer (v3 | where \"All\" in ($Subscriptions) and \"All\" in ($Region)),\n(v1 | where \"All\" in ($Subscriptions) and \"All\" !in ($Region)),\n(v4 | where \"All\" !in ($Subscriptions) and \"All\" in ($Region)),\n(v2 | where \"All\" !in ($Subscriptions) and \"All\" !in ($Region))//(v1 | where \"All\" in ($Subscriptions)),(v2 | where \"All\" !in ($Subscriptions));\n",
+                "querySource": "raw",
+                "queryType": "KQL",
+                "rawMode": true,
+                "refId": "A",
+                "resultFormat": "table"
+              }
             ],
             "title": "# of LogAnalytics with Availability < 100",
             "type": "table"
