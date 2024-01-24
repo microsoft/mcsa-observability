@@ -120,7 +120,13 @@ output "terraform_identity_object_id" {
   value = azurerm_user_assigned_identity.terraform.principal_id
 }
 
-
+#assign contributor access to the sp for the resource group
+resource "azurerm_role_assignment" "usersub_sp" {
+  scope                = "/subscriptions/${data.azurerm_client_config.current.subscription_id}"
+  role_definition_name = "Monitoring Reader"
+  principal_id         = azuread_service_principal.this.object_id
+  depends_on = [azurerm_resource_group.rg]
+}
 
 #create key vault
 resource "azurerm_key_vault" "kv" {
