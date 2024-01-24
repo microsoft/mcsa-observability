@@ -407,6 +407,7 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
     storagesas=data.azurerm_storage_account_sas.this.sas
     blobConnectionString=azurerm_storage_account.this.primary_connection_string
+    keyVaultName=azurerm_key_vault.kv.name
 	}
 }
 
@@ -532,6 +533,7 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
     storagesas=data.azurerm_storage_account_sas.this.sas
     blobConnectionString=azurerm_storage_account.this.primary_connection_string
+    keyVaultName=azurerm_key_vault.kv.name
 	}
 
 }
