@@ -104,41 +104,41 @@
             },
             "pluginVersion": "9.5.8",
             "targets": [
-                {
-                    "database": "sk006-metricsdb",
-                    "datasource": {
-                        "type": "grafana-azure-data-explorer-datasource",
-                        "uid": "eb7781b4-943e-4a09-a5f3-f18ada704085"
+              {
+                "database": "sk006-metricsdb",
+                "datasource": {
+                  "type": "grafana-azure-data-explorer-datasource",
+                  "uid": "eb7781b4-943e-4a09-a5f3-f18ada704085"
+                },
+                "expression": {
+                  "from": {
+                    "property": {
+                      "name": "Vm_Availability",
+                      "type": "string"
                     },
-                    "expression": {
-                        "from": {
-                            "property": {
-                                "name": "Vm_Availability",
-                                "type": "string"
-                            },
-                            "type": "property"
-                        },
-                        "groupBy": {
-                            "expressions": [],
-                            "type": "and"
-                        },
-                        "reduce": {
-                            "expressions": [],
-                            "type": "and"
-                        },
-                        "where": {
-                            "expressions": [],
-                            "type": "and"
-                        }
-                    },
-                    "pluginVersion": "4.5.0",
-                    "query": "Aksservernode_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId, tenantDomain, tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
-                    "querySource": "raw",
-                    "queryType": "KQL",
-                    "rawMode": true,
-                    "refId": "A",
-                    "resultFormat": "table"
-                }
+                    "type": "property"
+                  },
+                  "groupBy": {
+                    "expressions": [],
+                    "type": "and"
+                  },
+                  "reduce": {
+                    "expressions": [],
+                    "type": "and"
+                  },
+                  "where": {
+                    "expressions": [],
+                    "type": "and"
+                  }
+                },
+                "pluginVersion": "4.5.0",
+                "query": "let v2=Aksservernode_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId, tenantDomain, tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where $__timeFilter(['date'])\n and location in ($Region) and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v1=Aksservernode_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId, tenantDomain, tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where $__timeFilter(['date'])\nand location in ($Region)\nand solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v4=Aksservernode_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId, tenantDomain, tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where $__timeFilter(['date'])\n and subscriptionId in ($Subscriptions)\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v3=Aksservernode_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| project component, createdAt, ['date'], id, location, name, nodeNotReady,\n nodeReady, nodeUnknown,solution, subscriptionId, tenantDomain, tenancy, availability = ((nodeReady )/(nodeNotReady +nodeReady))*100\n| where $__timeFilter(['date'])\n and solution in ($Solution) and availability < 100\n| project ['date'] , subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nunion kind=outer (v3 | where \"All\" in ($Subscriptions) and \"All\" in ($Region)),\n(v1 | where \"All\" in ($Subscriptions) and \"All\" !in ($Region)),\n(v4 | where \"All\" !in ($Subscriptions) and \"All\" in ($Region)),\n(v2 | where \"All\" !in ($Subscriptions) and \"All\" !in ($Region))",
+                "querySource": "raw",
+                "queryType": "KQL",
+                "rawMode": true,
+                "refId": "A",
+                "resultFormat": "table"
+              }
             ],
             "title": "# of AksServerNode with Availability < 100",
             "type": "table"
