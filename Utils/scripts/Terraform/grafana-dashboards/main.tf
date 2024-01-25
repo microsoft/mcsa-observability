@@ -98,13 +98,6 @@ resource "grafana_dashboard" "containerregistry" {
   depends_on = [grafana_dashboard.resource_observability]
 }
 
-resource "grafana_dashboard" "cognitiveservices" {
-  folder     = grafana_folder.observability.id
-  overwrite = true
-  config_json = file("../../dashboard_templates/CognitiveServices-1687851601199.json")
-  depends_on = [grafana_dashboard.resource_observability]
-}
-
 resource "grafana_dashboard" "loganalytics" {
   folder     = grafana_folder.observability.id
   overwrite = true
@@ -120,7 +113,7 @@ resource "null_resource" "add_perm_2" {
   triggers = {
     addperm2 = local.addperm_2
   }
-  depends_on = [grafana_dashboard.storage,grafana_dashboard.loadbalancer,grafana_dashboard.keyvault,grafana_dashboard.firewalls,grafana_dashboard.cosmos_db,grafana_dashboard.aks_server_node,grafana_dashboard.resource_observability,grafana_dashboard.eventhubs,grafana_dashboard.cognitiveservices,grafana_dashboard.containerregistry]
+  depends_on = [grafana_dashboard.storage,grafana_dashboard.loadbalancer,grafana_dashboard.keyvault,grafana_dashboard.firewalls,grafana_dashboard.cosmos_db,grafana_dashboard.aks_server_node,grafana_dashboard.resource_observability,grafana_dashboard.eventhubs,grafana_dashboard.containerregistry]
 }
 
 //update uid of datasource on the dashboards
