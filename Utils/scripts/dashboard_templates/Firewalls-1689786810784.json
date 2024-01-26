@@ -1,164 +1,164 @@
 {
     "annotations": {
-        "list": [
-            {
-                "builtIn": 1,
-                "datasource": {
-                    "type": "grafana",
-                    "uid": "-- Grafana --"
-                },
-                "enable": true,
-                "hide": true,
-                "iconColor": "rgba(0, 211, 255, 1)",
-                "name": "Annotations & Alerts",
-                "target": {
-                    "limit": 100,
-                    "matchAny": false,
-                    "tags": [],
-                    "type": "dashboard"
-                },
-                "type": "dashboard"
-            }
-        ]
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
     },
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 30,
+    "id": 88,
     "links": [],
     "liveNow": false,
     "panels": [
-        {
-            "datasource": {
-                "type": "grafana-azure-data-explorer-datasource",
-                "uid": "eb7781b4-943e-4a09-a5f3-f18ada704085"
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "cdb740a1-7d66-43ba-a012-2ce6e1ee5ea0"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
             },
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "palette-classic"
-                    },
-                    "custom": {
-                        "align": "auto",
-                        "cellOptions": {
-                            "type": "color-text"
-                        },
-                        "filterable": true,
-                        "inspect": true
-                    },
-                    "decimals": 3,
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "dark-red",
-                                "value": null
-                            },
-                            {
-                                "color": "dark-green",
-                                "value": 100
-                            }
-                        ]
-                    }
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "color-text"
+              },
+              "filterable": true,
+              "inspect": true
+            },
+            "decimals": 3,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
                 },
-                "overrides": [
+                {
+                  "color": "dark-green",
+                  "value": 100
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "id"
+              },
+              "properties": [
+                {
+                  "id": "custom.width"
+                },
+                {
+                  "id": "links",
+                  "value": [
                     {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "id"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width"
-                            },
-                            {
-                                "id": "links",
-                                "value": [
-                                    {
-                                        "targetBlank": true,
-                                        "title": "",
-                                        "url": "https://portal.azure.com/${__data.fields.tenantDomain}/resource${__value.raw}/overview"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "location"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 189
-                            }
-                        ]
+                      "targetBlank": true,
+                      "title": "",
+                      "url": "https://portal.azure.com/${__data.fields.tenantDomain}/resource${__value.raw}/overview"
                     }
-                ]
+                  ]
+                }
+              ]
             },
-            "gridPos": {
-                "h": 10,
-                "w": 24,
-                "x": 0,
-                "y": 0
-            },
-            "id": 2,
-            "options": {
-                "cellHeight": "sm",
-                "footer": {
-                    "countRows": false,
-                    "fields": "",
-                    "reducer": [
-                        "sum"
-                    ],
-                    "show": false
-                },
-                "showHeader": true,
-                "sortBy": []
-            },
-            "pluginVersion": "9.5.8",
-            "targets": [
-              {
-                "database": "sk006-metricsdb",
-                "datasource": {
-                  "type": "grafana-azure-data-explorer-datasource",
-                  "uid": "eb7781b4-943e-4a09-a5f3-f18ada704085"
-                },
-                "expression": {
-                  "from": {
-                    "property": {
-                      "name": "Vm_Availability",
-                      "type": "string"
-                    },
-                    "type": "property"
-                  },
-                  "groupBy": {
-                    "expressions": [],
-                    "type": "and"
-                  },
-                  "reduce": {
-                    "expressions": [],
-                    "type": "and"
-                  },
-                  "where": {
-                    "expressions": [],
-                    "type": "and"
-                  }
-                },
-                "pluginVersion": "4.5.0",
-                "query": "let v2 = Firewall_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and location in ($Region) and isnotnull(availability) and availability < 100 and subscriptionId in ($Subscriptions)\n| project ['date'], subscriptionId, tenantDomain, tenancy, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v1 = Firewall_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and location in ($Region) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, tenantDomain, tenancy, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v4 = Firewall_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and subscriptionId in ($Subscriptions) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, tenantDomain, tenancy, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v3 = Firewall_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, tenantDomain, tenancy, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nunion kind=outer (v3 | where \"All\" in ($Subscriptions) and \"All\" in ($Region)),\n(v1 | where \"All\" in ($Subscriptions) and \"All\" !in ($Region)),\n(v4 | where \"All\" !in ($Subscriptions) and \"All\" in ($Region)),\n(v2 | where \"All\" !in ($Subscriptions) and \"All\" !in ($Region))\n",
-                "querySource": "raw",
-                "queryType": "KQL",
-                "rawMode": true,
-                "refId": "A",
-                "resultFormat": "table"
-              }
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "location"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 189
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
+              "sum"
             ],
-            "title": "# of Firewall with Availability < 100",
-            "type": "table"
-        }
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "9.5.13",
+        "targets": [
+          {
+            "database": "multi002-metricsdb",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "cdb740a1-7d66-43ba-a012-2ce6e1ee5ea0"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "Vm_Availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.5.0",
+            "query": "let v2 = Firewall_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and location in ($Region) and isnotnull(availability) and availability < 100 and subscriptionId in ($Subscriptions)\n| project ['date'], subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v1 = Firewall_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and location in ($Region) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v4 = Firewall_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and subscriptionId in ($Subscriptions) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v3 = Firewall_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nunion kind=outer (v3 | where \"All\" in ($Subscriptions) and \"All\" in ($Region)),\n(v1 | where \"All\" in ($Subscriptions) and \"All\" !in ($Region)),\n(v4 | where \"All\" !in ($Subscriptions) and \"All\" in ($Region)),\n(v2 | where \"All\" !in ($Subscriptions) and \"All\" !in ($Region))\n",
+            "querySource": "raw",
+            "queryType": "KQL",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "# of Firewall with Availability < 100",
+        "type": "table"
+      }
     ],
     "refresh": "",
     "revision": 1,
@@ -166,108 +166,108 @@
     "style": "dark",
     "tags": [],
     "templating": {
-        "list": [
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "2023-01-12 00:00:00",
+            "value": "2023-01-12 00:00:00"
+          },
+          "hide": 2,
+          "name": "selecteddate",
+          "options": [
             {
-                "current": {
-                    "selected": false,
-                    "text": "2023-01-12 00:00:00",
-                    "value": "2023-01-12 00:00:00"
-                },
-                "hide": 2,
-                "name": "selecteddate",
-                "options": [
-                    {
-                        "selected": true,
-                        "text": "2023-01-12 00:00:00",
-                        "value": "2023-01-12 00:00:00"
-                    }
-                ],
-                "query": "2023-01-12 00:00:00",
-                "skipUrlSync": false,
-                "type": "textbox"
-            },
-            {
-                "current": {
-                    "isNone": true,
-                    "selected": false,
-                    "text": "None",
-                    "value": ""
-                },
-                "datasource": {
-                    "type": "grafana-azure-data-explorer-datasource",
-                    "uid": "eb7781b4-943e-4a09-a5f3-f18ada704085"
-                },
-                "definition": "",
-                "hide": 2,
-                "includeAll": false,
-                "multi": true,
-                "name": "Region",
-                "options": [],
-                "query": "",
-                "refresh": 1,
-                "regex": "",
-                "skipUrlSync": false,
-                "sort": 0,
-                "type": "query"
-            },
-            {
-                "current": {
-                    "isNone": true,
-                    "selected": false,
-                    "text": "None",
-                    "value": ""
-                },
-                "datasource": {
-                    "type": "grafana-azure-data-explorer-datasource",
-                    "uid": "eb7781b4-943e-4a09-a5f3-f18ada704085"
-                },
-                "definition": "",
-                "hide": 2,
-                "includeAll": false,
-                "multi": true,
-                "name": "Subscriptions",
-                "options": [],
-                "query": "",
-                "refresh": 1,
-                "regex": "",
-                "skipUrlSync": false,
-                "sort": 0,
-                "type": "query"
-            },
-            {
-                "current": {
-                    "isNone": true,
-                    "selected": false,
-                    "text": "None",
-                    "value": ""
-                },
-                "datasource": {
-                    "type": "grafana-azure-data-explorer-datasource",
-                    "uid": "eb7781b4-943e-4a09-a5f3-f18ada704085"
-                },
-                "definition": "",
-                "hide": 2,
-                "includeAll": false,
-                "multi": true,
-                "name": "Solution",
-                "options": [],
-                "query": "",
-                "refresh": 1,
-                "regex": "",
-                "skipUrlSync": false,
-                "sort": 0,
-                "type": "query"
+              "selected": true,
+              "text": "2023-01-12 00:00:00",
+              "value": "2023-01-12 00:00:00"
             }
-        ]
+          ],
+          "query": "2023-01-12 00:00:00",
+          "skipUrlSync": false,
+          "type": "textbox"
+        },
+        {
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "cdb740a1-7d66-43ba-a012-2ce6e1ee5ea0"
+          },
+          "definition": "",
+          "hide": 2,
+          "includeAll": false,
+          "multi": true,
+          "name": "Region",
+          "options": [],
+          "query": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "cdb740a1-7d66-43ba-a012-2ce6e1ee5ea0"
+          },
+          "definition": "",
+          "hide": 2,
+          "includeAll": false,
+          "multi": true,
+          "name": "Subscriptions",
+          "options": [],
+          "query": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "cdb740a1-7d66-43ba-a012-2ce6e1ee5ea0"
+          },
+          "definition": "",
+          "hide": 2,
+          "includeAll": false,
+          "multi": true,
+          "name": "Solution",
+          "options": [],
+          "query": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
     },
     "time": {
-        "from": "now-6h",
-        "to": "now"
+      "from": "now-6h",
+      "to": "now"
     },
     "timepicker": {},
     "timezone": "utc",
     "title": "Firewalls",
     "uid": "8HDuNUC4z",
-    "version": 3,
+    "version": 2,
     "weekStart": ""
-}
+  }
