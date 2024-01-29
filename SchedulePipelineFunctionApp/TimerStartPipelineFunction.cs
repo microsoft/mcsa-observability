@@ -16,9 +16,9 @@ namespace Observability.SchedulePipelineFunctionApp
     public class TimerStartPipelineFunction
     {
         [FunctionName("TimerStartPipelineFunction")]
-        public static async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log)
+        public static async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer, ILogger log)
         {
-            log.LogInformation($"TimerStartPipelineFunction started Neerja: {DateTime.Now}");
+            log.LogInformation($"TimerStartPipelineFunction started {DateTime.Now}");
 
             var config = new ConfigurationBuilder().AddEnvironmentVariables().Build();
 
@@ -51,11 +51,8 @@ namespace Observability.SchedulePipelineFunctionApp
 
             using var reader = kustoClient.ExecuteQuery(subscriptionsUpdateQuery);
 
-            log.LogInformation($"Neerja Creating ResourceGraphHelper client ");
+            // var resourceClient = new ResourceGraphHelper(config, log); // Commented for multi tenant changes.
 
-            // var resourceClient = new ResourceGraphHelper(config, log); // TODO I will comment this later.
-
-            log.LogInformation($"Neerja Creating ResourceGraph client created successfully");
             string prevTenantId = "";
             ResourceGraphHelper resourceClient = null;
 
@@ -78,11 +75,10 @@ namespace Observability.SchedulePipelineFunctionApp
                 var subscriptionNameResponse = kustoClient.ExecuteQuery(subscriptionNameQuery);
 
                 if(tenantId != prevTenantId) {
-                    log.LogInformation($"Create new resource client for {tenantId}");
+                    log.LogInformation($"Creating new resource client for {tenantId}");
                     prevTenantId = tenantId;
                     resourceClient = new ResourceGraphHelper(config, log, tenantId); 
                 }
-
 
                 var subscriptionName = "";
                 if (subscriptionNameResponse.Read())
@@ -129,6 +125,7 @@ namespace Observability.SchedulePipelineFunctionApp
                         queueMessage.From = fromDate;
                         queueMessage.To = toDate;
                         queueMessage.ResultTable = resultTable;
+                        queueMessage.TenantId = tenantId ;
 
                         var curResource = resources[i];
                         var curLocation = curResource.Location;
