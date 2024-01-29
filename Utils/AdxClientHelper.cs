@@ -23,6 +23,8 @@ namespace Observability.Utils
         private readonly string storageAccountName;
         private readonly string storageSasToken;
         private readonly string blobConnectionString;
+        private readonly string keyVaultName;
+
 
         public AdxClientHelper(IConfiguration config, ILogger log)
         {
@@ -35,6 +37,7 @@ namespace Observability.Utils
             this.containerName = _config.GetValue<string>("rawDataContainerName");
             this.storageSasToken = _config.GetValue<string>("storagesas");
             this.blobConnectionString = _config.GetValue<string>("blobConnectionString");
+            this.keyVaultName = _config.GetValue<string>("keyVaultName");
         }
 
         public KustoConnectionStringBuilder GetClient()
