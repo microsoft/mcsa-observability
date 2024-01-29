@@ -28,14 +28,18 @@ namespace Observability.Utils
             try{
                 log.LogInformation($"Creating Arm Client for {tenantId}");
                 string keyVaultName = config.GetValue<string>("keyVaultName");
-
-                
+                if(keyVaultName == null)
+                {
+                    log.LogInformation($"Error Something went wrong keyVaultName is null");
+                    throw new Exception($"Message failed to get the keyVaultName");
+                }
+                                
                 string clientId = "";
                 string clientSecret = "";
 
-                client = new ArmClient(
-                     new ManagedIdentityCredential(config.GetValue<string>("msiclientId")));
-                // Added for keyvault client
+                //client = new ArmClient(
+                     // new ManagedIdentityCredential(config.GetValue<string>("msiclientId")));
+                // Commentted for MultiTenant changes
 
                 //var tenant = client.GetTenants().FirstOrDefault();
 
@@ -59,9 +63,6 @@ namespace Observability.Utils
 
                 var secret = keyVaultClient.GetSecret(keyName).Value;
                 KeyVaultSecret keyValueSecret =  keyVaultClient.GetSecret(keyName);
-                
-                log.LogInformation("Below is the keyvault value");
-                log.LogInformation(keyValueSecret.Value);
 
                 string keyValueSecretStr = keyValueSecret.Value;
                 if (keyValueSecretStr == null)
@@ -88,11 +89,9 @@ namespace Observability.Utils
                 var credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
                 client = new ArmClient(
                     credential);
-
-                
                
                 log.LogInformation("Created new Arm Client successfully");
-                // throw new Exception($"dummy exception failed to get the keyVault");
+                
 
             }
             catch(Exception e)
