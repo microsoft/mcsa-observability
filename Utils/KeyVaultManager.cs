@@ -2,6 +2,7 @@
 using Azure.Identity;
 using Observability.Utils.Data;
 using Azure.Security.KeyVault.Secrets;
+using Newtonsoft.Json;
 
 
 namespace Observability.Utils
@@ -48,7 +49,7 @@ namespace Observability.Utils
 
         public Tenant GetServicePrincipalCredential(string tenantId)
         {
-            Tenant tenant = new Tenant();
+            Tenant tenantObj = new Tenant();
             var keyName = TENANT_SECRET_PREFIX + tenantId;
 
             var secret = keyVaultClient.GetSecret(keyName).Value;
@@ -63,8 +64,9 @@ namespace Observability.Utils
                 log.LogInformation("Please Add service principal values for tenantId");
                 throw new ArgumentNullException($"Secret not found in the keyvault");
             }
+            tenantObj = System.Text.Json.JsonSerializer.Deserialize<Tenant>(keyValueSecretStr);
 
-            return tenant;
+            return tenantObj;
         }
 
 

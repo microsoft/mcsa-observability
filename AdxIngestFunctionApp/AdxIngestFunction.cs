@@ -104,9 +104,13 @@ namespace Observability.AdxIngestFunctionApp
                 Tenant tenant = keyVaultManager.GetServicePrincipalCredential(tenantId);
                 string clientId = tenant.ClientId;
                 string clientSecret = tenant.ClientSecret;
+                log.LogInformation(clientId);
+                log.LogInformation(clientSecret);
                 spCredential =  new ClientSecretCredential(tenantId, clientId, clientSecret);
                 log.LogInformation("Done ClientSecretCredential");
+                
                 accessToken = spCredential.GetToken(new TokenRequestContext(new[] { "https://metrics.monitor.azure.com/.default" }));     
+                log.LogInformation("Got accessToken");
 
             }
             else
