@@ -702,6 +702,11 @@ resource "azurerm_role_assignment" "grafana" {
   role_definition_name = "Grafana Admin"
   principal_id         = data.azurerm_client_config.current.object_id
   depends_on = [azurerm_dashboard_grafana.this]
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
+  }
 }
 
 output "sp_object_id" {
