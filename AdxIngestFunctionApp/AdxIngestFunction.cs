@@ -120,7 +120,7 @@ namespace Observability.AdxIngestFunctionApp
                 var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId });
                 accessToken = credential.GetToken(new TokenRequestContext(new[] { "https://metrics.monitor.azure.com/" }));
             }
-            log.LogInformation("Done Creating ClientSecretCredential");
+            
             
             httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Token);
 
