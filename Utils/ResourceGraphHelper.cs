@@ -16,24 +16,16 @@ namespace Observability.Utils
     public class ResourceGraphHelper
     {
         ArmClient client;
-       
-        string KEY_VAULT_NAME = "ngobservone-kv";
-        string TENANT_SECRET_PREFIX = "tenant-";
-        SecretClient keyVaultClient;
 
         Tenant tenantObj;
+
+        private static KeyVaultManager keyVaultManager = null;
 
         public ResourceGraphHelper(IConfiguration config, ILogger log, string tenantId)
         {
             try{
                 log.LogInformation($"Creating Arm Client for {tenantId}");
-                string keyVaultName = config.GetValue<string>("keyVaultName");
-                if(keyVaultName == null)
-                {
-                    log.LogInformation($"Error Something went wrong keyVaultName is null");
-                    throw new Exception($"Message failed to get the keyVaultName");
-                }
-                                
+                            
                 string clientId = "";
                 string clientSecret = "";
 
@@ -42,57 +34,33 @@ namespace Observability.Utils
                 // Commentted for MultiTenant changes
 
                 //var tenant = client.GetTenants().FirstOrDefault();
-
-                log.LogInformation("Reading the KeyVault");
                 if(tenantId == null)
                 {
                     log.LogInformation($"Error Something went wrong TenantId is null");
                     throw new Exception($"Message failed to get the TenantId");
                 }
                 log.LogInformation($"Reading the KeyVault for tenantId {tenantId}");
-
-                var kvUri = "https://" + keyVaultName + ".vault.azure.net";
-
-
-                var msiCredential = new ManagedIdentityCredential(config.GetValue<string>("msiclientId"));
-
-
-                 keyVaultClient = new SecretClient(new Uri(kvUri), msiCredential);
-
-                var keyName = TENANT_SECRET_PREFIX+tenantId;
-
-                var secret = keyVaultClient.GetSecret(keyName).Value;
-                KeyVaultSecret keyValueSecret =  keyVaultClient.GetSecret(keyName);
-
-                string keyValueSecretStr = keyValueSecret.Value;
-                if (keyValueSecretStr == null)
+                if(keyVaultManager == null)
                 {
-                    log.LogInformation("Please Add service principal values for tenantId");
-                    throw new ArgumentNullException($"Secret not found in the keyvault");
+                      keyVaultManager = new KeyVaultManager(config, log);
                 }
 
+                tenantObj = keyVaultManager.GetServicePrincipalCredential(tenantId);
+                
 
-                //var keyValueSecretStr ="{\"clientId\":\"myId\",\"tenantid\":\"mytenant\",\"ClientSecret\":\"mysecret\"}";
-
-                tenantObj = System.Text.Json.JsonSerializer.Deserialize<Tenant>(keyValueSecretStr);
-
-                if(tenantObj != null) {
-                    log.LogInformation(tenantObj.ToString());
-                    log.LogInformation(tenantObj.ClientId);
-                    log.LogInformation(tenantObj.Tenantid);
-                    
-                    clientId = tenantObj.ClientId;
-                    clientSecret = tenantObj.ClientSecret;
+                if(tenantObj == null) {
+                    log.LogInformation($"SP not defined in keyvault");
+                    throw new Exception($"Message failed to get the SP credential"); 
                 }
                 
-                
+                clientId = tenantObj.ClientId;
+                clientSecret = tenantObj.ClientSecret;
                 var credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
                 client = new ArmClient(
                     credential);
                
                 log.LogInformation("Created new Arm Client successfully");
                 
-
             }
             catch(Exception e)
             {

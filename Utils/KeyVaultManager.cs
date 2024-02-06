@@ -11,11 +11,8 @@ namespace Observability.Utils
     public class KeyVaultManager
     {
 
-        string KEY_VAULT_NAME = "ngobservone-kv";
         string TENANT_SECRET_PREFIX = "tenant-";
         SecretClient keyVaultClient;
-
-        Tenant tenantObj;
         ILogger log;
 
         public KeyVaultManager(IConfiguration config, ILogger log)

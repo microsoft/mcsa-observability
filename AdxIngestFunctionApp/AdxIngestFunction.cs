@@ -105,7 +105,7 @@ namespace Observability.AdxIngestFunctionApp
                 string clientId = tenant.ClientId;
                 string clientSecret = tenant.ClientSecret;
                 log.LogInformation(clientId);
-                log.LogInformation(clientSecret);
+                
                 spCredential =  new ClientSecretCredential(tenantId, clientId, clientSecret);
                 log.LogInformation("Done ClientSecretCredential");
                 
