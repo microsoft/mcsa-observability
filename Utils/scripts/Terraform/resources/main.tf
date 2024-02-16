@@ -239,7 +239,7 @@ resource "azurerm_kusto_database" "database" {
   depends_on = [azurerm_kusto_cluster.this]
 
   hot_cache_period   = "P7D"
-  soft_delete_period = "P31D"
+  soft_delete_period = "P365D"
 }
 
 
