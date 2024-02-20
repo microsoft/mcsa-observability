@@ -1,6 +1,5 @@
 ﻿name,type,resultTableName
 loganalytics,microsoft.operationalinsights/workspaces,LogAnalytics_Availability
-cognitiveservice,microsoft.cognitiveservices/accounts,Cognitive_Svc_Availability
 eventhubs,microsoft.eventhub/namespaces,Eventhubs_Availability
 acr,microsoft.containerregistry/registries,Container_Registry_Availability
 cosmosdb,microsoft.documentdb/databaseaccounts,Cosmosdb_Availability

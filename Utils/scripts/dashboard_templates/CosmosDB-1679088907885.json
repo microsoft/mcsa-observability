@@ -1,246 +1,270 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": {
-          "type": "grafana",
-          "uid": "-- Grafana --"
-        },
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
-        "type": "dashboard"
-      }
-    ]
-  },
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
-  "id": 26,
-  "links": [],
-  "liveNow": false,
-  "panels": [
-    {
-      "datasource": {
-        "type": "grafana-azure-data-explorer-datasource",
-        "uid": "uRhkgPj4k"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "color-text",
-            "filterable": true,
-            "inspect": true
-          },
-          "decimals": 3,
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "semi-dark-red",
-                "value": null
-              },
-              {
-                "color": "dark-green",
-                "value": 100
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "availability"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-text"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "9.3.8",
-      "targets": [
+    "annotations": {
+      "list": [
         {
-          "database": "func04-metricsdb",
+          "builtIn": 1,
           "datasource": {
-            "type": "grafana-azure-data-explorer-datasource",
-            "uid": "uRhkgPj4k"
+            "type": "grafana",
+            "uid": "-- Grafana --"
           },
-          "expression": {
-            "from": {
-              "property": {
-                "name": "vm_availability",
-                "type": "string"
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 90,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "grafana-azure-data-explorer-datasource",
+          "uid": "cdb740a1-7d66-43ba-a012-2ce6e1ee5ea0"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "color-text"
               },
-              "type": "property"
+              "filterable": true,
+              "inspect": true
             },
-            "groupBy": {
-              "expressions": [],
-              "type": "and"
-            },
-            "reduce": {
-              "expressions": [],
-              "type": "and"
-            },
-            "where": {
-              "expressions": [],
-              "type": "and"
+            "decimals": 3,
+            "mappings": [],
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "semi-dark-red",
+                  "value": null
+                },
+                {
+                  "color": "dark-green",
+                  "value": 100
+                }
+              ]
             }
           },
-          "pluginVersion": "4.2.0",
-          "query": "Cosmosdb_Availability\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability)\nand location in ($Region) and subscriptionId in ($Subscriptions) and availability < 100\n| project ['date'] , subscriptionId, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc",
-          "querySource": "raw",
-          "rawMode": true,
-          "refId": "A",
-          "resultFormat": "table"
-        }
-      ],
-      "title": "# of CosmosDB with Availability < 100",
-      "type": "table"
-    }
-  ],
-  "refresh": false,
-  "schemaVersion": 37,
-  "style": "dark",
-  "tags": [],
-  "templating": {
-    "list": [
-      {
-        "current": {
-          "selected": false,
-          "text": "2023-01-12 00:00:00",
-          "value": "2023-01-12 00:00:00"
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "availability"
+              },
+              "properties": [
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "id"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": true,
+                      "title": "",
+                      "url": "https://portal.azure.com/${__data.fields.tenantDomain}/resource${__value.raw}/overview"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
-        "hide": 2,
-        "name": "selecteddate",
-        "options": [
+        "gridPos": {
+          "h": 12,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true
+        },
+        "pluginVersion": "9.5.13",
+        "targets": [
           {
-            "selected": true,
-            "text": "2023-01-12 00:00:00",
-            "value": "2023-01-12 00:00:00"
+            "database": "multi002-metricsdb",
+            "datasource": {
+              "type": "grafana-azure-data-explorer-datasource",
+              "uid": "cdb740a1-7d66-43ba-a012-2ce6e1ee5ea0"
+            },
+            "expression": {
+              "from": {
+                "property": {
+                  "name": "vm_availability",
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "groupBy": {
+                "expressions": [],
+                "type": "and"
+              },
+              "reduce": {
+                "expressions": [],
+                "type": "and"
+              },
+              "where": {
+                "expressions": [],
+                "type": "and"
+              }
+            },
+            "pluginVersion": "4.5.0",
+            "query": "let v2 = Cosmosdb_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and location in ($Region) and isnotnull(availability) and availability < 100 and subscriptionId in ($Subscriptions)\n| project ['date'], subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v1 = Cosmosdb_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and location in ($Region) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v4 = Cosmosdb_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and subscriptionId in ($Subscriptions) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nlet v3 = Cosmosdb_Availability\n|join kind=leftouter Subscriptions on subscriptionId\n| where  ['date']  == datetime($selecteddate) and isnotnull(availability) and availability < 100\n| project ['date'], subscriptionId, tenantDomain, id, location, name, availability\n| order by availability asc \n| order by ['date'] asc;\nunion kind=outer (v3 | where \"All\" in ($Subscriptions) and \"All\" in ($Region)),\n(v1 | where \"All\" in ($Subscriptions) and \"All\" !in ($Region)),\n(v4 | where \"All\" !in ($Subscriptions) and \"All\" in ($Region)),\n(v2 | where \"All\" !in ($Subscriptions) and \"All\" !in ($Region))//(v1 | where \"All\" in ($Subscriptions)),(v2 | where \"All\" !in ($Subscriptions));\n",
+            "querySource": "raw",
+            "queryType": "KQL",
+            "rawMode": true,
+            "refId": "A",
+            "resultFormat": "table"
           }
         ],
-        "query": "2023-01-12 00:00:00",
-        "skipUrlSync": false,
-        "type": "textbox",
-        "datasource": null
-      },
-      {
-        "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
-        },
-        "datasource": {
-          "type": "grafana-azure-data-explorer-datasource",
-          "uid": "uRhkgPj4k"
-        },
-        "definition": "",
-        "hide": 2,
-        "includeAll": false,
-        "multi": true,
-        "name": "Region",
-        "options": [],
-        "query": "",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
-        },
-        "datasource": {
-          "type": "grafana-azure-data-explorer-datasource",
-          "uid": "uRhkgPj4k"
-        },
-        "definition": "",
-        "hide": 2,
-        "includeAll": false,
-        "multi": true,
-        "name": "Subscriptions",
-        "options": [],
-        "query": "",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
-        },
-        "datasource": {
-          "type": "grafana-azure-data-explorer-datasource",
-          "uid": "uRhkgPj4k"
-        },
-        "definition": "",
-        "hide": 2,
-        "includeAll": false,
-        "multi": true,
-        "name": "Solution",
-        "options": [],
-        "query": "",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
+        "title": "# of CosmosDB with Availability < 100",
+        "type": "table"
       }
-    ]
-  },
-  "time": {
-    "from": "now-6h",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "utc",
-  "title": "CosmosDB",
-  "uid": "",
-  "version": 12,
-  "weekStart": ""
-}
+    ],
+    "refresh": "",
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "2023-01-12 00:00:00",
+            "value": "2023-01-12 00:00:00"
+          },
+          "hide": 2,
+          "name": "selecteddate",
+          "options": [
+            {
+              "selected": true,
+              "text": "2023-01-12 00:00:00",
+              "value": "2023-01-12 00:00:00"
+            }
+          ],
+          "query": "2023-01-12 00:00:00",
+          "skipUrlSync": false,
+          "type": "textbox"
+        },
+        {
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "cdb740a1-7d66-43ba-a012-2ce6e1ee5ea0"
+          },
+          "definition": "",
+          "hide": 2,
+          "includeAll": false,
+          "multi": true,
+          "name": "Region",
+          "options": [],
+          "query": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "cdb740a1-7d66-43ba-a012-2ce6e1ee5ea0"
+          },
+          "definition": "",
+          "hide": 2,
+          "includeAll": false,
+          "multi": true,
+          "name": "Subscriptions",
+          "options": [],
+          "query": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "grafana-azure-data-explorer-datasource",
+            "uid": "cdb740a1-7d66-43ba-a012-2ce6e1ee5ea0"
+          },
+          "definition": "",
+          "hide": 2,
+          "includeAll": false,
+          "multi": true,
+          "name": "Solution",
+          "options": [],
+          "query": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "utc",
+    "title": "CosmosDB",
+    "uid": "a05004e1-8d3f-4e62-90e2-293853b8e41e",
+    "version": 2,
+    "weekStart": ""
+  }

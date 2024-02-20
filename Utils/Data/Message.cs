@@ -11,10 +11,12 @@ namespace Observability.Utils.Data
         public DateTime To { get; set; }
         public string ResultTable { get; set; }
         public List<AzureResource> Resources { get; set; }
+        
+        public string TenantId {get; set; }
 
         public Message()
         {
-            SubscriptionID = Location = Type = ResultTable = "";
+            SubscriptionID = Location = Type = ResultTable = TenantId =  "";
             Resources = new List<AzureResource>();
         }
     }
