@@ -86,6 +86,11 @@ namespace Observability.AdxIngestFunctionApp
             }
             log.LogInformation($"Batch url: {batchUrl}");
 
+            string currTime = timeSpan.Split('/')[0];
+            string currResource = message.Type.Substring(message.Type.IndexOf('/') + 1);
+            string filePrefix = $"{message.Location}_{message.SubscriptionID}_{currTime}_{currResource}";
+            log.LogInformation($"Storage Blob File Prefix: {filePrefix}");
+
             using HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Post, batchUrl);
 
             string msftTenantId = config.GetValue<string>("msftTenantId");
@@ -141,7 +146,7 @@ namespace Observability.AdxIngestFunctionApp
             var responseContent = await response.Content.ReadAsStringAsync(); //TODO: Should handle as stream and not bring into memory as a string. // see later converting string back to a stream in IngestToAdx2Async, AppendToBlobAsync
 
             var adx = new AdxClientHelper(config, log); 
-            await adx.IngestToAdx2Async(responseContent, message.ResultTable);
+            await adx.IngestToAdx2Async(responseContent, message.ResultTable, filePrefix);
         }
     }
 }
