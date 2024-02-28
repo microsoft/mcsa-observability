@@ -53,6 +53,10 @@ In this section, you will see how the Grafana dashboard displays availability me
 
 ![Solution Visualization](Images/MultiTenantVisualization.PNG)
 
+You can also drill down to the detail view of the resource, and click on the ID field to navigate to that.
+
+![Drill Down Screen](Images/DrillDown1.PNG)
+
 ## Getting Started
 
 The following section describes the Prerequisites and Installation steps to deploy the solution.
