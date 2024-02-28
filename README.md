@@ -8,7 +8,7 @@ This solution implements  the pillars of the [Microsoft Azure Well-Architected F
 
 The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
 
-![Solution Architecture](Images/architecture.png)
+![Solution Architecture](Images/architecturemulti.png)
 
 Unlike Azure Monitor, which provides the average availability of one resource at a time, this solution provides the average availability of all resources of the same resource type in your subscriptions. For example, instead of providing the availability of one Key Vault, this solution will provide the average availability of all Key Vaults in your subscriptions.
 
