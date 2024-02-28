@@ -51,7 +51,7 @@ The following availability metrics are supported by Azure Monitor. This version 
 
 In this section, you will see how the Grafana dashboard displays availability metrics over a given time frame for each queried resource type.
 
-![Solution Visualization](Images/visualization.png)
+![Solution Visualization](Images/MultiTenantVisualization.png)
 
 ## Getting Started
 
