@@ -12,6 +12,22 @@ The following diagram gives a high-level view of Observability solution. You may
 
 Unlike Azure Monitor, which provides the average availability of one resource at a time, this solution provides the average availability of all resources of the same resource type in your subscriptions. For example, instead of providing the availability of one Key Vault, this solution will provide the average availability of all Key Vaults in your subscriptions.
 
+## Features
+
+#### Multitenant monitoring
+
+This solultion allows you to track and filter resources across different tenants and subscriptions. Follow the steps in the post-installation section to set this up. 
+
+#### Configurable near real time tracking
+
+The frequency of availability data pulled can be adjusted down to one minute, or any other desired interval, by updating the MyTimeTrigger environment variable. Follow the steps in the post installation section to modify this value. 
+
+#### Deep linking to Azure Portal
+
+You can directly navigate to a resource's overview page in the Azure Portal by clicking on the underlined id field in the drill down menu.
+
+![Drill Down Screen 2](Images/drilldown2.png)
+
 ## Components
 
 The above diagram consists of a range of Azure components, which will be further outlined below.
@@ -29,6 +45,33 @@ The above diagram consists of a range of Azure components, which will be further
 [**Azure Blob**](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction) Object storage solution for the cloud. Optimized for storing massive amounts of unstructured data.
 
 [**Key Vault**](https://learn.microsoft.com/en-us/azure/key-vault/general/overview) Cloud-based service that allows you to securely store and manage cryptographic keys, secrets, and certificates used by your applications and services.
+
+## Azure Monitor
+
+This solution calls on the [Azure Monitor Batch API](https://learn.microsoft.com/en-us/rest/api/monitor/metrics-batch/batch?view=rest-monitor-2023-10-01&tabs=HTTP) to pull availability data for multiple resources within a subscription in one call. 
+
+A sample request will look like this
+
+```
+
+POST "https://{region}.metrics.monitor.azure.com/subscriptions/{subscriptionID}/metrics:getBatch?timespan={timeSpan}&interval=PT1M&metricnames=Availability&aggregation=average&metricNamespace={resourceProvider}&autoadjusttimegrain=true&api-version=2023-03-01-preview"
+
+```
+
+With multiple resource IDs passed in the body of the request
+
+```
+
+{
+  "resourceids": [
+    "/subscriptions/12345678-abcd-1234-abcd-123456789abc/resourceGroups/TestGroup/providers/Microsoft.Storage/storageAccounts/TestStorage1",
+    "/subscriptions/12345678-abcd-1234-abcd-123456789abc/resourceGroups/TestGroup/providers/Microsoft.Storage/storageAccounts/TestStorage2"
+  ]
+}
+
+```
+
+
 
 ## Availability Metrics
 
