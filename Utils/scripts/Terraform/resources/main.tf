@@ -132,17 +132,7 @@ resource "azurerm_key_vault" "kv" {
   depends_on = [azurerm_resource_group.rg]
 
   sku_name = "standard"
-
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id #user
-
-    secret_permissions = [
-      "Get",
-      "Set",
-      "List"
-    ]
-  }
+  
 }
 
 
@@ -326,6 +316,21 @@ resource "azurerm_key_vault_access_policy" "msiaccess" {
       "List"
     ]
 }
+
+#add key vault access policy to user
+resource "azurerm_key_vault_access_policy" "useraccess" {
+  key_vault_id = azurerm_key_vault.kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_client_config.current.object_id #user
+  depends_on = [azurerm_resource_group.rg, azurerm_key_vault.kv]
+
+    secret_permissions = [
+      "Get",
+      "Set",
+      "List"
+    ]
+}
+
 
 #create function apps
 resource "azurerm_service_plan" "timerstartpipelineapp" {
