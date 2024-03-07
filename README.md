@@ -6,7 +6,7 @@ This solution implements  the pillars of the [Microsoft Azure Well-Architected F
 
 ## Architecture
 
-The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
+The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-multi-raw.vsdx)
 
 ![Solution Architecture](Images/architecturemulti.png)
 
@@ -25,8 +25,6 @@ The frequency of availability data pulled can be adjusted down to one minute, or
 #### Deep linking to Azure Portal
 
 You can directly navigate to a resource's overview page in the Azure Portal by clicking on the underlined id field in the drill down menu.
-
-![Drill Down Screen 2](Images/drilldown2.png)
 
 ## Components
 
