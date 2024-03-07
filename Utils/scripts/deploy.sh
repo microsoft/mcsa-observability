@@ -159,6 +159,12 @@ az servicebus queue create --resource-group $rg --namespace-name $prefix-sbns --
 sbConnStr=$(az servicebus namespace authorization-rule keys list --resource-group $rg \
 --namespace-name $prefix-sbns --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)  
 
+## Get DefaultRequestHeaders for the Azure Monitor requests
+DefaultRequestHeaders="observabilitydashboard";
+
+## Set the default time trigger for the functionapp
+MyTimeTrigger="0 */1 * * * *"
+
 ## Deploy functions
 echo "Deploying functions"
 functionsVersion="4"
@@ -198,6 +204,7 @@ az functionapp config appsettings set --name AdxIngestFunction-$prefix --resourc
 az functionapp config appsettings set --name AdxIngestFunction-$prefix --resource-group $rg --settings "msiclientId=$msiclientId"
 az functionapp config appsettings set --name AdxIngestFunction-$prefix --resource-group $rg --settings "storagesas=$sas"
 az functionapp config appsettings set --name AdxIngestFunction-$prefix --resource-group $rg --settings "blobConnectionString=$blobConnectionString"
+az functionapp config appsettings set --name AdxIngestFunction-$prefix --resource-group $rg --settings "DefaultRequestHeaders=$DefaultRequestHeaders"
 
 
 az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "ServiceBusConnection=$sbConnStr"
@@ -210,6 +217,7 @@ az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix 
 az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "msiclientId=$msiclientId"
 az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "storagesas=$sas"
 az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "blobConnectionString=$blobConnectionString"
+az functionapp config appsettings set --name TimerStartPipelineFunction-$prefix --resource-group $rg --settings "MyTimeTrigger=$MyTimeTrigger"
 
 
 ## tenantId=$(az account show -o tsv --query "homeTenantId")

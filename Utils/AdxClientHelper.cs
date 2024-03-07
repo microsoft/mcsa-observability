@@ -23,6 +23,9 @@ namespace Observability.Utils
         private readonly string storageAccountName;
         private readonly string storageSasToken;
         private readonly string blobConnectionString;
+        private readonly string keyVaultName;
+        private static HashSet<string> seenFilePrefixes = new HashSet<string>();
+
 
         public AdxClientHelper(IConfiguration config, ILogger log)
         {
@@ -35,6 +38,7 @@ namespace Observability.Utils
             this.containerName = _config.GetValue<string>("rawDataContainerName");
             this.storageSasToken = _config.GetValue<string>("storagesas");
             this.blobConnectionString = _config.GetValue<string>("blobConnectionString");
+            this.keyVaultName = _config.GetValue<string>("keyVaultName");
         }
 
         public KustoConnectionStringBuilder GetClient()
@@ -113,9 +117,18 @@ namespace Observability.Utils
             await blobClient.UploadAsync(stream, false);
         }
 
-        public async Task IngestToAdx2Async(string batchResponse, string tableName)
+        public async Task IngestToAdx2Async(string batchResponse, string tableName, string filePrefix)
         {
-            string fileName = string.Format(@"{0}.json", Guid.NewGuid());
+            if (seenFilePrefixes.Contains(filePrefix))
+            {
+                log.LogInformation($"File prefix {filePrefix} has already been uploaded. Skipping upload to storage container.");
+                return;
+            }
+
+                seenFilePrefixes.Add(filePrefix);
+                log.LogInformation($"Adding file prefix {filePrefix} to seen prefixes");
+
+            string fileName = string.Format(@"{0}.json", filePrefix);
 
             await AppendToBlobAsync(batchResponse, fileName);
 
