@@ -6,7 +6,7 @@ This solution implements  the pillars of the [Microsoft Azure Well-Architected F
 
 ## Architecture
 
-The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-raw.vsdx)
+The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-multi-raw.vsdx)
 
 ![Solution Architecture](Images/architecturemulti.png)
 
@@ -14,19 +14,17 @@ Unlike Azure Monitor, which provides the average availability of one resource at
 
 ## Features
 
-#### Multitenant monitoring
+#### Multi-tenant monitoring
 
 This solultion allows you to track and filter resources across different tenants and subscriptions. Follow the steps in the post-installation section to set this up. 
 
-#### Configurable near real time tracking
+#### Configurable near real time data pull
 
 The frequency of availability data pulled can be adjusted down to one minute, or any other desired interval, by updating the MyTimeTrigger environment variable. Follow the steps in the post installation section to modify this value. 
 
 #### Deep linking to Azure Portal
 
 You can directly navigate to a resource's overview page in the Azure Portal by clicking on the underlined id field in the drill down menu.
-
-![Drill Down Screen 2](Images/drilldown2.png)
 
 ## Components
 
@@ -71,7 +69,11 @@ With multiple resource IDs passed in the body of the request
 
 ```
 
+## Recommended SKU
 
+The recommended SKU for this Kusto cluster is Standard_E8ads_v5. You can monitor this and scale up as needed by checking the application insights for the TimerStartPipelineFunction. You may see some 429 Kusto errors, meaning that your requests are being rate limited. The requests will wait some and be retried, so you should not experience data loss. However, it is best to scale up if you are seeing these errors to avoid further issues. 
+
+Additionally, ensure that your tenant does not have any policies in place that would prevent Terraform from creating a client SP secret, or you will see an error in the deployment. 
 
 ## Availability Metrics
 
@@ -265,7 +267,7 @@ The solution relies on the following data to be present in the "Resource Provide
 
 #### Updating Resource Types
 
-1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
+1. Download the file - [ResourceTypes.csv](Utils/scripts/csv_Import/ResourceTypes.csv) to insert the list of resource providers to be monitored in the Resource_Providers table.
 
 ![githubfiledownload](Images/githubfiledownload-1.png)
 > Note: While saving to local ensure that you save the file with csv extension, the default is set to .txt
@@ -274,7 +276,7 @@ The solution relies on the following data to be present in the "Resource Provide
 
 #### Updating Subscriptions
 
-1. Download the file - [subscriptions.csv](Utils/scripts/csv_import/subscriptions.csv)  to local
+1. Download the file - [subscriptions.csv](Utils/scripts/csv_Import/subscriptions.csv)  to local
 2. Modify the CSV to include details of the subscriptions and tenants for which you want to track resource health.
 3. Follow the data ingestion steps as outlined in the previous instructions for ResourceType.csv file.
 
