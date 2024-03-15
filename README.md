@@ -1,16 +1,8 @@
-# Solution Approach to Observability
+# Observability at Scale
 
 This repository contains reference architecture, code sample and dashboard template for tracking Azure resources availability (uptime/downtime) trends.
 
 This solution implements  the pillars of the [Microsoft Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/), which is a set of guiding tenets that you can use to improve the quality of a workload. One of the key considerations of the solution was the reliability pillar, which ensures that your application can meet the commitments you make to your customers. To support this, this solution helps to ensure that Azure applications are consistently reliable and meet the expectations of customers. In addition, this solution considers the operational excellence pillar, ensuring that processes can keep an application running in production. Together, these pillars come together to ensure that applications remain consistently available and reliable customers. For more information about these framework pillars, see [Overview of the reliability pillar](https://learn.microsoft.com/en-us/azure/well-architected/resiliency/overview) and [Overview of the operational excellence pillar](https://learn.microsoft.com/en-us/azure/well-architected/devops/overview).
-
-## Architecture
-
-The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-multi-raw.vsdx)
-
-![Solution Architecture](Images/architecturemulti.png)
-
-Unlike Azure Monitor, which provides the average availability of one resource at a time, this solution provides the average availability of all resources of the same resource type in your subscriptions. For example, instead of providing the availability of one Key Vault, this solution will provide the average availability of all Key Vaults in your subscriptions.
 
 ## Features
 
@@ -25,6 +17,14 @@ The frequency of availability data pulled can be adjusted down to one minute, or
 #### Deep linking to Azure Portal
 
 You can directly navigate to a resource's overview page in the Azure Portal by clicking on the underlined id field in the drill down menu.
+
+## Architecture
+
+The following diagram gives a high-level view of Observability solution. You may download the Visio file from [here](Images/architecture-multi-raw.vsdx)
+
+![Solution Architecture](Images/architecturemulti.png)
+
+Unlike Azure Monitor, which provides the average availability of one resource at a time, this solution provides the average availability of all resources of the same resource type in your subscriptions. For example, instead of providing the availability of one Key Vault, this solution will provide the average availability of all Key Vaults in your subscriptions.
 
 ## Components
 
