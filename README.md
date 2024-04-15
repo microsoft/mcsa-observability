@@ -121,44 +121,6 @@ The script can be executed in Linux - Ubuntu 20.04 (VM, WSL).
 
 > Note: currently Azure Cloud Shell is not supported since it uses az-cli > 2.46.0
 
-### Installation using shell script
-
-```bash
-
-## Clone git repo into the folder
-## TODO: Update github repo link variable
-
-repolink=""
-codePath=$"./observability"
-git clone $repolink $codePath
-
-## Please setup the following required parameters for the script to run:
-## prefix - prefix string to identify the resources created with this deployment. eg: test
-## subscriptionId - subscriptionId where the solution will be deployed to
-## location - location where the azure resources will be created. eg: eastus
-## currentDir - setup full current directory path to where code is cloned
-
-# change directory to where the repo is cloned
-cd $codePath
-
-# set variables
-prefix=""
-subscriptionId=""
-location=""
-currentDir=$(pwd)
-
-# install pre-requisites
-bash $currentDir/Utils/scripts/pre-requisites.sh
-
-# change directory to where scripts are located
-cd $currentDir/Utils/scripts
-
-# command to run
-/bin/bash ./deploy.sh $prefix $subscriptionId $location $currentDir
-
-eg: /bin/bash ./deploy.sh "test" "subscriptionIdguid" "eastus2" "/full/path/to/code"
-```
-
 ### Install using Terraform
 
 ```bash
