@@ -22,7 +22,6 @@ namespace Observability.Utils
         private readonly string containerName;
         private readonly string storageAccountName;
         private readonly string storageSasToken;
-        private readonly string blobConnectionString;
         private readonly string keyVaultName;
         private static HashSet<string> seenFilePrefixes = new HashSet<string>();
 
@@ -37,7 +36,6 @@ namespace Observability.Utils
             this.storageAccountName = _config.GetValue<string>("storageAccountName");
             this.containerName = _config.GetValue<string>("rawDataContainerName");
             this.storageSasToken = _config.GetValue<string>("storagesas");
-            this.blobConnectionString = _config.GetValue<string>("blobConnectionString");
             this.keyVaultName = _config.GetValue<string>("keyVaultName");
         }
 
@@ -84,8 +82,12 @@ namespace Observability.Utils
 
         private async Task AppendToBlobAsync(string jsonData, string fileName)
         {
+            // Create a ManagedIdentityCredential object
+            var managedIdentityCredential = new ManagedIdentityCredential(_config.GetValue<string>("msiclientId"));
+
             // Create a BlobServiceClient object which is used to create a container client
-            BlobServiceClient blobServiceClient = new BlobServiceClient(blobConnectionString);
+            var blobServiceEndpoint = $"https://{storageAccountName}.blob.core.windows.net/";
+            BlobServiceClient blobServiceClient = new BlobServiceClient(new Uri(blobServiceEndpoint), managedIdentityCredential);
 
             BlobContainerClient containerClient = null;
             bool bContainerExists = false;
