@@ -162,6 +162,7 @@ namespace Observability.Utils
                 };
 
                 await client.IngestFromStorageAsync($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName};managed_identity={msiObjectId}", ingestionProperties: kustoIngestionProperties, sourceOptions);
+                log.LogInformation($"Ingested data from {fileName} to {tableName}_Raw with MSI Object Id {msiObjectId}");
             }
         }
     }
