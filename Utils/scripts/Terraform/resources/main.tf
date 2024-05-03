@@ -93,7 +93,7 @@ resource "azuread_application" "this" {
 
 #create a service principal tagged to ad application
 resource "azuread_service_principal" "this" {
-  application_id               = azuread_application.this.application_id
+  client_id               = azuread_application.this.client_id
   app_role_assignment_required = false
   owners                       = [data.azuread_client_config.current.object_id]
 }
@@ -137,8 +137,8 @@ resource "azurerm_key_vault" "kv" {
 
 
 resource "azurerm_key_vault_secret" "client_secret_secret" {
-  name         = "tenant-${data.azurerm_client_config.current.tenant_id}"//azuread_service_principal.this.application_id//"ServicePrincipalClientSecret"
-  value        = "{\"ClientId\":\"${azuread_service_principal.this.application_id}\",\"ClientSecret\":\"${azuread_service_principal_password.this.value}\"}"//"${azuread_service_principal.this.application_id}-${azuread_service_principal_password.this.value}"//service_principal_id
+  name         = "tenant-${data.azurerm_client_config.current.tenant_id}"//azuread_service_principal.this.client_id//"ServicePrincipalClientSecret"
+  value        = "{\"ClientId\":\"${azuread_service_principal.this.client_id}\",\"ClientSecret\":\"${azuread_service_principal_password.this.value}\"}"//"${azuread_service_principal.this.client_id}-${azuread_service_principal_password.this.value}"//service_principal_id
   key_vault_id = azurerm_key_vault.kv.id
   depends_on = [azuread_service_principal_password.this]
 }
@@ -374,7 +374,7 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
 
   app_settings = {
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.timerstartpipelineapp.instrumentation_key
-	ServiceBusConnection=azurerm_servicebus_namespace.this.default_primary_connection_string
+	  serviceBusNameSpace =azurerm_servicebus_namespace.this.name
     adxConnectionString=azurerm_kusto_cluster.this.uri
     metricsdbName=local.metricdb_name
     adxIngestionURI=azurerm_kusto_cluster.this.data_ingestion_uri
@@ -382,7 +382,6 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     rawDataContainerName=azurerm_storage_container.data.name
     storageAccountName=local.storage_account_name
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
-    storagesas=data.azurerm_storage_account_sas.this.sas
     MyTimeTrigger="0 */15 * * * *"
     keyVaultName=azurerm_key_vault.kv.name
 	}
@@ -508,7 +507,7 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     rawDataContainerName=azurerm_storage_container.data.name
     storageAccountName=local.storage_account_name
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
-    storagesas=data.azurerm_storage_account_sas.this.sas
+    msiObjectId=azurerm_user_assigned_identity.terraform.principal_id
     keyVaultName=azurerm_key_vault.kv.name
     msftTenantId="TenantId"
     DefaultRequestHeaders="observabilitydashboard"
@@ -611,7 +610,7 @@ resource "azurerm_kusto_cluster_principal_assignment" "this" {
   cluster_name        = azurerm_kusto_cluster.this.name
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
-  principal_id   = azuread_service_principal.this.application_id#data.azurerm_client_config.current.client_id
+  principal_id   = azuread_service_principal.this.client_id#data.azurerm_client_config.current.client_id
   principal_type = "App"
   role           = "AllDatabasesAdmin"
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
@@ -636,7 +635,7 @@ resource "azurerm_kusto_database_principal_assignment" "this" {
   database_name       = azurerm_kusto_database.database.name
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
-  principal_id   = azuread_service_principal.this.application_id#data.azurerm_client_config.current.client_id
+  principal_id   = azuread_service_principal.this.client_id#data.azurerm_client_config.current.client_id
   principal_type = "App"
   role           = "Admin"
   depends_on = [azurerm_kusto_database.database]
@@ -666,6 +665,13 @@ resource "azurerm_role_assignment" "adx" {
 resource "azurerm_role_assignment" "storage" {
   scope                = azurerm_storage_account.this.id
   role_definition_name = "Contributor"
+  principal_id         = azurerm_user_assigned_identity.terraform.principal_id
+  depends_on = [azurerm_storage_account.this, azurerm_user_assigned_identity.terraform]
+}
+
+resource "azurerm_role_assignment" "example" {
+  scope                = azurerm_servicebus_namespace.this.id
+  role_definition_name = "Azure Service Bus Data Sender"
   principal_id         = azurerm_user_assigned_identity.terraform.principal_id
   depends_on = [azurerm_storage_account.this, azurerm_user_assigned_identity.terraform]
 }
@@ -718,7 +724,7 @@ output "cluster_url" {
 }
 
 output "sp_client_id" {
-  value                = azuread_service_principal.this.application_id#
+  value                = azuread_service_principal.this.client_id#
 }
 
 output "sp_client_secret" {

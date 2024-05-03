@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using Observability.Utils;
 using Observability.Utils.Data;
@@ -25,14 +26,14 @@ namespace Observability.SchedulePipelineFunctionApp
             var config = new ConfigurationBuilder().AddEnvironmentVariables().Build();
 
             string queueName = config.GetValue<string>("queueName");
-            string connectionString = config.GetValue<string>("ServiceBusConnection");
+            string ServiceBusNamespace = config.GetValue<string>("serviceBusNameSpace");
+            var fullyQualifiedNamespace = $"{ServiceBusNamespace}.servicebus.windows.net";
 
-            var clientOptions = new ServiceBusClientOptions()
-            {
-                TransportType = ServiceBusTransportType.AmqpWebSockets
-            };
+            var managedIdentityCredential = new ManagedIdentityCredential(config.GetValue<string>("msiclientId"));
 
-            await using ServiceBusClient client = new ServiceBusClient(connectionString);
+            log.LogInformation($"Service Bus Namespace: {fullyQualifiedNamespace}");
+            await using ServiceBusClient client = new ServiceBusClient(fullyQualifiedNamespace, managedIdentityCredential);
+            log.LogInformation($"Service Bus Client: {client} created");
             var sender = client.CreateSender(queueName);
 
             //await using var sender = await sbHelper.GetSenderAsync(); // C# 8 feature.            

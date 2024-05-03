@@ -1,8 +1,8 @@
-﻿using Azure.Storage;
+﻿using Azure.Identity;
+using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
-using Azure.Storage.Sas;
 using Kusto.Data;
 using Kusto.Data.Common;
 using Kusto.Data.Net.Client;
@@ -21,8 +21,9 @@ namespace Observability.Utils
         private readonly string databaseName;
         private readonly string containerName;
         private readonly string storageAccountName;
-        private readonly string storageSasToken;
         private readonly string keyVaultName;
+        private readonly string msiClientId;
+        private readonly string msiObjectId;
         private static HashSet<string> seenFilePrefixes = new HashSet<string>();
 
 
@@ -35,14 +36,15 @@ namespace Observability.Utils
             this.databaseName = _config.GetValue<string>("metricsdbName");
             this.storageAccountName = _config.GetValue<string>("storageAccountName");
             this.containerName = _config.GetValue<string>("rawDataContainerName");
-            this.storageSasToken = _config.GetValue<string>("storagesas");
+            this.msiClientId = _config.GetValue<string>("msiclientId");
+            this.msiObjectId = _config.GetValue<string>("msiObjectId");
             this.keyVaultName = _config.GetValue<string>("keyVaultName");
         }
 
         public KustoConnectionStringBuilder GetClient()
         {
             //var kcsb = new KustoConnectionStringBuilder(this.clusterUri, this.databaseName).WithAadSystemManagedIdentity();
-            var kcsb = new KustoConnectionStringBuilder(clusterUri, databaseName).WithAadUserManagedIdentity(_config.GetValue<string>("msiclientId"));
+            var kcsb = new KustoConnectionStringBuilder(clusterUri, databaseName).WithAadUserManagedIdentity(msiClientId);
             return kcsb;
         }
 
@@ -83,7 +85,7 @@ namespace Observability.Utils
         private async Task AppendToBlobAsync(string jsonData, string fileName)
         {
             // Create a ManagedIdentityCredential object
-            var managedIdentityCredential = new ManagedIdentityCredential(_config.GetValue<string>("msiclientId"));
+            var managedIdentityCredential = new ManagedIdentityCredential(msiClientId);
 
             // Create a BlobServiceClient object which is used to create a container client
             var blobServiceEndpoint = $"https://{storageAccountName}.blob.core.windows.net/";
@@ -135,7 +137,7 @@ namespace Observability.Utils
             await AppendToBlobAsync(batchResponse, fileName);
 
             log.LogInformation($"IngestionUri: {ingestionUri}");
-            var ingestConnectionStringBuilder = new KustoConnectionStringBuilder(ingestionUri, databaseName).WithAadUserManagedIdentity(_config.GetValue<string>("msiclientId"));
+            var ingestConnectionStringBuilder = new KustoConnectionStringBuilder(ingestionUri, databaseName).WithAadUserManagedIdentity(msiClientId);
 
             // Client should be static
             // Create a disposable client that will execute the ingestion
@@ -159,7 +161,7 @@ namespace Observability.Utils
                     DeleteSourceOnSuccess = false
                 };
 
-                await client.IngestFromStorageAsync($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName}{storageSasToken}", ingestionProperties: kustoIngestionProperties, sourceOptions);
+                await client.IngestFromStorageAsync($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName};managed_identity={msiObjectId}", ingestionProperties: kustoIngestionProperties, sourceOptions);
             }
         }
     }
