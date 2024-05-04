@@ -122,48 +122,74 @@ namespace Observability.Utils
         }
 
         public async Task IngestToAdx2Async(string batchResponse, string tableName, string filePrefix)
+    {
+    if (seenFilePrefixes.Contains(filePrefix))
+    {
+        log.LogInformation($"File prefix {filePrefix} has already been uploaded. Skipping upload to storage container.");
+        return;
+    }
+
+    seenFilePrefixes.Add(filePrefix);
+    log.LogInformation($"Adding file prefix {filePrefix} to seen prefixes");
+
+    string fileName = string.Format(@"{0}.json", filePrefix);
+    await AppendToBlobAsync(batchResponse, fileName);
+
+    log.LogInformation($"IngestionUri: {ingestionUri}");
+    var ingestConnectionStringBuilder = new KustoConnectionStringBuilder(ingestionUri, databaseName).WithAadUserManagedIdentity(msiClientId);
+
+    // Create a ManagedIdentityCredential object
+    var managedIdentityCredential = new ManagedIdentityCredential(msiClientId);
+
+    // Create a BlobServiceClient object which is used to create a container client
+    var blobServiceEndpoint = $"https://{storageAccountName}.blob.core.windows.net/";
+    BlobServiceClient blobServiceClient = new BlobServiceClient(new Uri(blobServiceEndpoint), managedIdentityCredential);
+
+    string lockBlobName = filePrefix + "_lock";
+    BlobClient lockBlobClient = blobServiceClient.GetBlobContainerClient(containerName).GetBlobClient(lockBlobName);
+
+    // Ensure the lock blob exists
+    await lockBlobClient.UploadAsync(new MemoryStream(Encoding.UTF8.GetBytes("lock")), new BlobUploadOptions { Conditions = new BlobRequestConditions { IfNoneMatch = Azure.ETag.All } });
+
+    // Try to acquire a lease on the lock blob
+    BlobLeaseClient leaseClient = lockBlobClient.GetBlobLeaseClient();
+    try
+    {
+        await leaseClient.AcquireAsync(TimeSpan.FromSeconds(15)); // lease time can be between 15 to 60 seconds
+
+        using (IKustoQueuedIngestClient client = KustoIngestFactory.CreateQueuedIngestClient(ingestConnectionStringBuilder))
         {
-            if (seenFilePrefixes.Contains(filePrefix))
+            log.LogInformation($"IngestClient: {client}");
+            //Ingest from blobs according to the required properties
+            var kustoIngestionProperties = new KustoQueuedIngestionProperties(databaseName: databaseName, tableName: $"{tableName}_Raw")
             {
-                log.LogInformation($"File prefix {filePrefix} has already been uploaded. Skipping upload to storage container.");
-                return;
-            }
+                Format = DataSourceFormat.multijson,
+                IngestionMapping = new IngestionMapping()
+                {
+                    IngestionMappingReference = "RawMetricsMapping"
+                },
+                FlushImmediately = false
+            };
 
-                seenFilePrefixes.Add(filePrefix);
-                log.LogInformation($"Adding file prefix {filePrefix} to seen prefixes");
-
-            string fileName = string.Format(@"{0}.json", filePrefix);
-
-            await AppendToBlobAsync(batchResponse, fileName);
-
-            log.LogInformation($"IngestionUri: {ingestionUri}");
-            var ingestConnectionStringBuilder = new KustoConnectionStringBuilder(ingestionUri, databaseName).WithAadUserManagedIdentity(msiClientId);
-
-            // Client should be static
-            // Create a disposable client that will execute the ingestion
-            //TODO: Is above something that needs to be done?
-            using (IKustoQueuedIngestClient client = KustoIngestFactory.CreateQueuedIngestClient(ingestConnectionStringBuilder))
+            var sourceOptions = new StorageSourceOptions()
             {
-                log.LogInformation($"IngestClient: {client}");
-                //Ingest from blobs according to the required properties
-                var kustoIngestionProperties = new KustoQueuedIngestionProperties(databaseName: databaseName, tableName: $"{tableName}_Raw")
-                {
-                    Format = DataSourceFormat.multijson,
-                    IngestionMapping = new IngestionMapping()
-                    {
-                        IngestionMappingReference = "RawMetricsMapping"
-                    },
-                    FlushImmediately = false
-                };
+                DeleteSourceOnSuccess = false
+            };
 
-                var sourceOptions = new StorageSourceOptions()
-                {
-                    DeleteSourceOnSuccess = false
-                };
-
-                await client.IngestFromStorageAsync($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName};managed_identity={msiObjectId}", ingestionProperties: kustoIngestionProperties, sourceOptions);
-                log.LogInformation($"Ingested data from {fileName} to {tableName}_Raw with MSI Object Id {msiObjectId}");
-            }
+            await client.IngestFromStorageAsync($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName};managed_identity={msiObjectId}", ingestionProperties: kustoIngestionProperties, sourceOptions);
+            log.LogInformation($"Ingested data from {fileName} to {tableName}_Raw with MSI Object Id {msiObjectId}");
         }
+    }
+    catch (Azure.RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.LeaseAlreadyPresent)
+    {
+        // Another function has the lease, so this function should skip processing the blob
+        log.LogInformation($"Blob {filePrefix} is currently being processed by another function. Skipping.");
+    }
+    finally
+    {
+        // Always release the lease whether the ingestion was successful or not
+        await leaseClient.ReleaseAsync();
+    }
+    }
     }
 }
