@@ -635,7 +635,7 @@ resource "azurerm_kusto_cluster_principal_assignment" "user" {
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
   principal_id   = data.azurerm_client_config.current.object_id #user
-  principal_type = "App"
+  principal_type = "User"
   role           = "AllDatabasesAdmin"
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
 }
