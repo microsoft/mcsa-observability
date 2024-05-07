@@ -156,6 +156,9 @@ namespace Observability.Utils
                 string fileName = string.Format(@"{0}.json", filePrefix);
                 await AppendToBlobAsync(batchResponse, fileName);
 
+                log.LogInformation($"IngestionUri: {ingestionUri}");
+                var ingestConnectionStringBuilder = new KustoConnectionStringBuilder(ingestionUri, databaseName).WithAadUserManagedIdentity(msiClientId);
+
                 using (IKustoQueuedIngestClient client = KustoIngestFactory.CreateQueuedIngestClient(ingestConnectionStringBuilder))
                 {
                     log.LogInformation($"IngestClient: {client}");
