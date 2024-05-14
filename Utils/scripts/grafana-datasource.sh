@@ -2,11 +2,8 @@
 
 prefix=$1
 cluster_Url=$2
-tenantId=$3
-clientId=$4
-clientSecret=$5
-dbName=$6
-METRICS_FOLDER_PATH=$7
+dbName=$3
+METRICS_FOLDER_PATH=$4
 
 echo $prefix
 echo $cluster_Url

@@ -98,10 +98,10 @@ resource "azuread_service_principal" "this" {
   owners                       = [data.azuread_client_config.current.object_id]
 }
 
-#create the secret for the service principal
+/* #create the secret for the service principal
 resource "azuread_service_principal_password" "this" {
   service_principal_id = azuread_service_principal.this.object_id
-}
+} */
 
 #create resource group to house resources
 resource "azurerm_resource_group" "rg" {
@@ -136,12 +136,12 @@ resource "azurerm_key_vault" "kv" {
 }
 
 
-resource "azurerm_key_vault_secret" "client_secret_secret" {
+/* resource "azurerm_key_vault_secret" "client_secret_secret" {
   name         = "tenant-${data.azurerm_client_config.current.tenant_id}"//azuread_service_principal.this.application_id//"ServicePrincipalClientSecret"
   value        = "{\"ClientId\":\"${azuread_service_principal.this.application_id}\",\"ClientSecret\":\"${azuread_service_principal_password.this.value}\"}"//"${azuread_service_principal.this.application_id}-${azuread_service_principal_password.this.value}"//service_principal_id
   key_vault_id = azurerm_key_vault.kv.id
   depends_on = [azuread_service_principal_password.this]
-}
+} */
 
 
 #create a storage account
@@ -717,19 +717,6 @@ output "sp_object_id" {
 
 output "cluster_url" {
   value                = azurerm_kusto_cluster.this.uri
-}
-
-output "sp_client_id" {
-  value                = azuread_service_principal.this.application_id#
-}
-
-output "sp_client_secret" {
-  value                = azuread_service_principal_password.this.value
-  sensitive            = true
-}
-
-output "tenant_id" {
-  value                = data.azuread_client_config.current.tenant_id
 }
 
 output "database_name" {
