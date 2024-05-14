@@ -31,15 +31,15 @@ az grafana data-source create -n $prefix-grafana --definition '{
   "basicAuth": false,
   "isDefault": false,
   "jsonData": {
-    "clientId": "'"$clientId"'",
     "clusterUrl": "'"$cluster_Url"'",
     "dataConsistency": "strongconsistency",
     "defaultDatabase": "'"$dbName"'",
     "defaultEditorMode": "visual",
     "schemaMappings": [],
-    "tenantId": "'"$tenantId"'"
-    },
-  "secureJsonData": {"clientSecret": "'"$clientSecret"'"},
+    "azureCredentials": {
+      "authType": "msi"
+    }
+  },
   "readOnly": false
 }'
 
