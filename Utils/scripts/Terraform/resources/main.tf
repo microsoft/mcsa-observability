@@ -137,8 +137,8 @@ resource "azurerm_key_vault" "kv" {
 
 
 /* resource "azurerm_key_vault_secret" "client_secret_secret" {
-  name         = "tenant-${data.azurerm_client_config.current.tenant_id}"//azuread_service_principal.this.application_id//"ServicePrincipalClientSecret"
-  value        = "{\"ClientId\":\"${azuread_service_principal.this.application_id}\",\"ClientSecret\":\"${azuread_service_principal_password.this.value}\"}"//"${azuread_service_principal.this.application_id}-${azuread_service_principal_password.this.value}"//service_principal_id
+  name         = "tenant-${data.azurerm_client_config.current.tenant_id}"//azuread_service_principal.this.client_id//"ServicePrincipalClientSecret"
+  value        = "{\"ClientId\":\"${azuread_service_principal.this.client_id}\",\"ClientSecret\":\"${azuread_service_principal_password.this.value}\"}"//"${azuread_service_principal.this.client_id}-${azuread_service_principal_password.this.value}"//service_principal_id
   key_vault_id = azurerm_key_vault.kv.id
   depends_on = [azuread_service_principal_password.this]
 } */
@@ -597,8 +597,7 @@ resource "azurerm_dashboard_grafana" "this" {
   deterministic_outbound_ip_enabled = true
   public_network_access_enabled     = true
   identity {
-    type = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.terraform.id]
+    type = "SystemAssigned"
   }
   depends_on = [azurerm_resource_group.rg, azurerm_storage_account.this, azurerm_kusto_cluster.this, azurerm_user_assigned_identity.terraform]
 }
@@ -635,6 +634,18 @@ resource "azurerm_kusto_cluster_principal_assignment" "msi" {
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
 }
 
+resource "azurerm_kusto_cluster_principal_assignment" "grafanamsi" {
+  name                = "KustoGrafanaMsiAssignment"
+  resource_group_name = azurerm_resource_group.rg.name
+  cluster_name        = azurerm_kusto_cluster.this.name
+
+  tenant_id      = data.azurerm_client_config.current.tenant_id
+  principal_id   = azurerm_dashboard_grafana.this.identity.0.principal_id
+  principal_type = "App"
+  role           = "AllDatabasesAdmin"
+  depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
+}
+
 resource "azurerm_kusto_database_principal_assignment" "this" {
   name                = "DatabaseSpAssignment"
   resource_group_name = azurerm_resource_group.rg.name
@@ -642,7 +653,7 @@ resource "azurerm_kusto_database_principal_assignment" "this" {
   database_name       = azurerm_kusto_database.database.name
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
-  principal_id   = azuread_service_principal.this.application_id#data.azurerm_client_config.current.client_id
+  principal_id   = azuread_service_principal.this.client_id#data.azurerm_client_config.current.client_id
   principal_type = "App"
   role           = "Admin"
   depends_on = [azurerm_kusto_database.database]
@@ -719,7 +730,7 @@ resource "azurerm_role_assignment" "grafanauser" {
 resource "azurerm_role_assignment" "grafanamsi" {
   scope                = azurerm_dashboard_grafana.this.id
   role_definition_name = "Grafana Admin"
-  principal_id         = azurerm_user_assigned_identity.terraform.principal_id
+  principal_id         = azurerm_dashboard_grafana.this.identity.0.principal_id
   depends_on = [azurerm_dashboard_grafana.this]
 }
 
