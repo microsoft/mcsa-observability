@@ -7,9 +7,6 @@ METRICS_FOLDER_PATH=$4
 
 echo $prefix
 echo $cluster_Url
-echo $tenantId
-echo $clientId
-echo $clientSecret
 echo $dbName
 echo $METRICS_FOLDER_PATH
 

@@ -93,7 +93,7 @@ resource "azuread_application" "this" {
 
 #create a service principal tagged to ad application
 resource "azuread_service_principal" "this" {
-  application_id               = azuread_application.this.application_id
+  client_id               = azuread_application.this.client_id
   app_role_assignment_required = false
   owners                       = [data.azuread_client_config.current.object_id]
 }
@@ -596,7 +596,11 @@ resource "azurerm_dashboard_grafana" "this" {
   api_key_enabled                   = true
   deterministic_outbound_ip_enabled = true
   public_network_access_enabled     = true
-  depends_on = [azurerm_resource_group.rg, azurerm_storage_account.this, azurerm_kusto_cluster.this]
+  identity {
+    type = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.terraform.id]
+  }
+  depends_on = [azurerm_resource_group.rg, azurerm_storage_account.this, azurerm_kusto_cluster.this, azurerm_user_assigned_identity.terraform]
 }
 
 #assign contributor access to the sp for the resource group
@@ -708,6 +712,14 @@ resource "azurerm_role_assignment" "grafana" {
   scope                = azurerm_dashboard_grafana.this.id
   role_definition_name = "Grafana Admin"
   principal_id         = data.azurerm_client_config.current.object_id
+  depends_on = [azurerm_dashboard_grafana.this]
+}
+
+#assign grafana admin access to msi
+resource "azurerm_role_assignment" "grafana" {
+  scope                = azurerm_dashboard_grafana.this.id
+  role_definition_name = "Grafana Admin"
+  principal_id         = azurerm_user_assigned_identity.terraform.principal_id
   depends_on = [azurerm_dashboard_grafana.this]
 }
 
