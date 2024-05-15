@@ -617,7 +617,7 @@ resource "azurerm_kusto_cluster_principal_assignment" "this" {
   cluster_name        = azurerm_kusto_cluster.this.name
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
-  principal_id   = azuread_service_principal.this.application_id#data.azurerm_client_config.current.client_id
+  principal_id   = azuread_service_principal.this.client_id#data.azurerm_client_config.current.client_id
   principal_type = "App"
   role           = "AllDatabasesAdmin"
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
