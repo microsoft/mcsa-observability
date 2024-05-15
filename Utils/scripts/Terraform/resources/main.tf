@@ -708,7 +708,7 @@ resource "azurerm_role_assignment" "msi_adxingestionapp_role" {
 }
 
 #assign grafana admin access to user
-resource "azurerm_role_assignment" "grafana" {
+resource "azurerm_role_assignment" "grafanauser" {
   scope                = azurerm_dashboard_grafana.this.id
   role_definition_name = "Grafana Admin"
   principal_id         = data.azurerm_client_config.current.object_id
@@ -716,7 +716,7 @@ resource "azurerm_role_assignment" "grafana" {
 }
 
 #assign grafana admin access to msi
-resource "azurerm_role_assignment" "grafana" {
+resource "azurerm_role_assignment" "grafanamsi" {
   scope                = azurerm_dashboard_grafana.this.id
   role_definition_name = "Grafana Admin"
   principal_id         = azurerm_user_assigned_identity.terraform.principal_id
