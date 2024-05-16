@@ -33,27 +33,6 @@ variable "database_name" {
   sensitive = false
 }
 
-#export TF_VAR_sp_client_id=$(terraform output -raw sp_client_id)
-variable "sp_client_id" {
-  type      = string
-  nullable  = false
-  sensitive = false
-}
-
-#export TF_VAR_tenant_id=$(terraform output -raw tenant_id)
-variable "tenant_id" {
-  type      = string
-  nullable  = false
-  sensitive = false
-}
-
-#export TF_VAR_sp_client_secret=$(terraform output -raw sp_client_secret)
-variable "sp_client_secret" {
-  type      = string
-  nullable  = false
-  sensitive = true
-}
-
 #export TF_VAR_prefix=$(terraform output -raw prefix)
 variable "prefix" {
   type      = string

@@ -93,15 +93,15 @@ resource "azuread_application" "this" {
 
 #create a service principal tagged to ad application
 resource "azuread_service_principal" "this" {
-  application_id               = azuread_application.this.application_id
+  client_id               = azuread_application.this.client_id
   app_role_assignment_required = false
   owners                       = [data.azuread_client_config.current.object_id]
 }
 
-#create the secret for the service principal
+/* #create the secret for the service principal
 resource "azuread_service_principal_password" "this" {
   service_principal_id = azuread_service_principal.this.object_id
-}
+} */
 
 #create resource group to house resources
 resource "azurerm_resource_group" "rg" {
@@ -136,12 +136,12 @@ resource "azurerm_key_vault" "kv" {
 }
 
 
-resource "azurerm_key_vault_secret" "client_secret_secret" {
-  name         = "tenant-${data.azurerm_client_config.current.tenant_id}"//azuread_service_principal.this.application_id//"ServicePrincipalClientSecret"
-  value        = "{\"ClientId\":\"${azuread_service_principal.this.application_id}\",\"ClientSecret\":\"${azuread_service_principal_password.this.value}\"}"//"${azuread_service_principal.this.application_id}-${azuread_service_principal_password.this.value}"//service_principal_id
+/* resource "azurerm_key_vault_secret" "client_secret_secret" {
+  name         = "tenant-${data.azurerm_client_config.current.tenant_id}"//azuread_service_principal.this.client_id//"ServicePrincipalClientSecret"
+  value        = "{\"ClientId\":\"${azuread_service_principal.this.client_id}\",\"ClientSecret\":\"${azuread_service_principal_password.this.value}\"}"//"${azuread_service_principal.this.client_id}-${azuread_service_principal_password.this.value}"//service_principal_id
   key_vault_id = azurerm_key_vault.kv.id
   depends_on = [azuread_service_principal_password.this]
-}
+} */
 
 
 #create a storage account
@@ -385,6 +385,7 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     storagesas=data.azurerm_storage_account_sas.this.sas
     blobConnectionString=azurerm_storage_account.this.primary_connection_string
     MyTimeTrigger="0 */15 * * * *"
+    msftTenantId="TenantId"
     keyVaultName=azurerm_key_vault.kv.name
 	}
 }
@@ -596,7 +597,10 @@ resource "azurerm_dashboard_grafana" "this" {
   api_key_enabled                   = true
   deterministic_outbound_ip_enabled = true
   public_network_access_enabled     = true
-  depends_on = [azurerm_resource_group.rg, azurerm_storage_account.this, azurerm_kusto_cluster.this]
+  identity {
+    type = "SystemAssigned"
+  }
+  depends_on = [azurerm_resource_group.rg, azurerm_storage_account.this, azurerm_kusto_cluster.this, azurerm_user_assigned_identity.terraform]
 }
 
 #assign contributor access to the sp for the resource group
@@ -613,7 +617,7 @@ resource "azurerm_kusto_cluster_principal_assignment" "this" {
   cluster_name        = azurerm_kusto_cluster.this.name
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
-  principal_id   = azuread_service_principal.this.application_id#data.azurerm_client_config.current.client_id
+  principal_id   = azuread_service_principal.this.client_id#data.azurerm_client_config.current.client_id
   principal_type = "App"
   role           = "AllDatabasesAdmin"
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
@@ -631,6 +635,18 @@ resource "azurerm_kusto_cluster_principal_assignment" "msi" {
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
 }
 
+resource "azurerm_kusto_cluster_principal_assignment" "grafanamsi" {
+  name                = "KustoGrafanaMsiAssignment"
+  resource_group_name = azurerm_resource_group.rg.name
+  cluster_name        = azurerm_kusto_cluster.this.name
+
+  tenant_id      = data.azurerm_client_config.current.tenant_id
+  principal_id   = azurerm_dashboard_grafana.this.identity.0.principal_id
+  principal_type = "App"
+  role           = "AllDatabasesAdmin"
+  depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
+}
+
 resource "azurerm_kusto_database_principal_assignment" "this" {
   name                = "DatabaseSpAssignment"
   resource_group_name = azurerm_resource_group.rg.name
@@ -638,7 +654,7 @@ resource "azurerm_kusto_database_principal_assignment" "this" {
   database_name       = azurerm_kusto_database.database.name
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
-  principal_id   = azuread_service_principal.this.application_id#data.azurerm_client_config.current.client_id
+  principal_id   = azuread_service_principal.this.client_id#data.azurerm_client_config.current.client_id
   principal_type = "App"
   role           = "Admin"
   depends_on = [azurerm_kusto_database.database]
@@ -704,10 +720,18 @@ resource "azurerm_role_assignment" "msi_adxingestionapp_role" {
 }
 
 #assign grafana admin access to user
-resource "azurerm_role_assignment" "grafana" {
+resource "azurerm_role_assignment" "grafanauser" {
   scope                = azurerm_dashboard_grafana.this.id
   role_definition_name = "Grafana Admin"
   principal_id         = data.azurerm_client_config.current.object_id
+  depends_on = [azurerm_dashboard_grafana.this]
+}
+
+#assign grafana admin access to msi
+resource "azurerm_role_assignment" "grafanamsi" {
+  scope                = azurerm_dashboard_grafana.this.id
+  role_definition_name = "Grafana Admin"
+  principal_id         = azurerm_dashboard_grafana.this.identity.0.principal_id
   depends_on = [azurerm_dashboard_grafana.this]
 }
 
@@ -717,19 +741,6 @@ output "sp_object_id" {
 
 output "cluster_url" {
   value                = azurerm_kusto_cluster.this.uri
-}
-
-output "sp_client_id" {
-  value                = azuread_service_principal.this.application_id#
-}
-
-output "sp_client_secret" {
-  value                = azuread_service_principal_password.this.value
-  sensitive            = true
-}
-
-output "tenant_id" {
-  value                = data.azuread_client_config.current.tenant_id
 }
 
 output "database_name" {

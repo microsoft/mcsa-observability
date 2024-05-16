@@ -23,6 +23,15 @@ namespace Observability.Utils
 
         public ResourceGraphHelper(IConfiguration config, ILogger log, string tenantId)
         {
+
+            string msftTenantId = config.GetValue<string>("msftTenantId");
+            
+            if (tenantId != null && tenantId == msftTenantId) {
+                client = new ArmClient(
+                new ManagedIdentityCredential(config.GetValue<string>("msiclientId")));
+                return;
+            }
+
             try{
                 log.LogInformation($"Creating Arm Client for {tenantId}");
                             
