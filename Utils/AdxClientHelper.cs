@@ -1,8 +1,8 @@
 ﻿using Azure.Storage;
+using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
-using Azure.Storage.Sas;
 using Kusto.Data;
 using Kusto.Data.Common;
 using Kusto.Data.Net.Client;
@@ -21,8 +21,8 @@ namespace Observability.Utils
         private readonly string databaseName;
         private readonly string containerName;
         private readonly string storageAccountName;
-        private readonly string storageSasToken;
-        private readonly string blobConnectionString;
+        private readonly string msiClientId;
+        private readonly string msiObjectId;
         private readonly string keyVaultName;
         private static HashSet<string> seenFilePrefixes = new HashSet<string>();
 
@@ -36,15 +36,15 @@ namespace Observability.Utils
             this.databaseName = _config.GetValue<string>("metricsdbName");
             this.storageAccountName = _config.GetValue<string>("storageAccountName");
             this.containerName = _config.GetValue<string>("rawDataContainerName");
-            this.storageSasToken = _config.GetValue<string>("storagesas");
-            this.blobConnectionString = _config.GetValue<string>("blobConnectionString");
+            this.msiClientId = _config.GetValue<string>("msiclientId");
+            this.msiObjectId = _config.GetValue<string>("msiObjectId");
             this.keyVaultName = _config.GetValue<string>("keyVaultName");
         }
 
         public KustoConnectionStringBuilder GetClient()
         {
             //var kcsb = new KustoConnectionStringBuilder(this.clusterUri, this.databaseName).WithAadSystemManagedIdentity();
-            var kcsb = new KustoConnectionStringBuilder(clusterUri, databaseName).WithAadUserManagedIdentity(_config.GetValue<string>("msiclientId"));
+            var kcsb = new KustoConnectionStringBuilder(clusterUri, databaseName).WithAadUserManagedIdentity(msiClientId);
             return kcsb;
         }
 
@@ -82,16 +82,31 @@ namespace Observability.Utils
             await kustoClient.ExecuteControlCommandAsync(databaseName, ingestCommand);
         }
 
-        private async Task AppendToBlobAsync(string jsonData, string fileName)
+        private async Task AppendToBlobAsync(string jsonData, string filePrefix)
         {
+
+            if (seenFilePrefixes.Contains(filePrefix))
+            {
+                log.LogInformation($"File prefix {filePrefix} has already been uploaded. Skipping upload to storage container.");
+                return;
+            }
+
+            seenFilePrefixes.Add(filePrefix);
+            log.LogInformation($"Adding file prefix {filePrefix} to seen prefixes");
+
+            string fileName = string.Format(@"{0}.json", filePrefix);
+
+            // Create a ManagedIdentityCredential object
+            var managedIdentityCredential = new ManagedIdentityCredential(msiClientId);
             // Create a BlobServiceClient object which is used to create a container client
-            BlobServiceClient blobServiceClient = new BlobServiceClient(blobConnectionString);
+            var blobServiceEndpoint = $"https://{storageAccountName}.blob.core.windows.net/";
+            BlobServiceClient blobServiceClient = new BlobServiceClient(new Uri(blobServiceEndpoint), managedIdentityCredential);
 
             BlobContainerClient containerClient = null;
             bool bContainerExists = false;
 
             // Create the container and return a container client object
-            foreach (Azure.Storage.Blobs.Models.BlobContainerItem blobContainerItem in blobServiceClient.GetBlobContainers())
+            foreach (BlobContainerItem blobContainerItem in blobServiceClient.GetBlobContainers())
             {
                 if (blobContainerItem.Name == containerName)
                 {
@@ -110,30 +125,27 @@ namespace Observability.Utils
 
             BlobClient blobClient = containerClient.GetBlobClient(fileName);
 
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes(jsonData));
-
-            stream.Position = 0;
-
-            await blobClient.UploadAsync(stream, false);
+           try
+            {
+                // Try to upload the blob only if it doesn't already exist
+                var stream = new MemoryStream(Encoding.UTF8.GetBytes(jsonData));
+                stream.Position = 0;
+                await blobClient.UploadAsync(stream, new BlobUploadOptions { Conditions = new BlobRequestConditions { IfNoneMatch = Azure.ETag.All } });
+            }
+            catch (Azure.RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.BlobAlreadyExists)
+            {
+                log.LogInformation($"Blob {fileName} already exists in the container {containerName}. Skipping upload.");
+            }
         }
 
         public async Task IngestToAdx2Async(string batchResponse, string tableName, string filePrefix)
         {
-            if (seenFilePrefixes.Contains(filePrefix))
-            {
-                log.LogInformation($"File prefix {filePrefix} has already been uploaded. Skipping upload to storage container.");
-                return;
-            }
-
-                seenFilePrefixes.Add(filePrefix);
-                log.LogInformation($"Adding file prefix {filePrefix} to seen prefixes");
-
             string fileName = string.Format(@"{0}.json", filePrefix);
 
-            await AppendToBlobAsync(batchResponse, fileName);
+            await AppendToBlobAsync(batchResponse, filePrefix);
 
             log.LogInformation($"IngestionUri: {ingestionUri}");
-            var ingestConnectionStringBuilder = new KustoConnectionStringBuilder(ingestionUri, databaseName).WithAadUserManagedIdentity(_config.GetValue<string>("msiclientId"));
+            var ingestConnectionStringBuilder = new KustoConnectionStringBuilder(ingestionUri, databaseName).WithAadUserManagedIdentity(msiClientId);
 
             // Client should be static
             // Create a disposable client that will execute the ingestion
@@ -157,7 +169,8 @@ namespace Observability.Utils
                     DeleteSourceOnSuccess = false
                 };
 
-                await client.IngestFromStorageAsync($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName}{storageSasToken}", ingestionProperties: kustoIngestionProperties, sourceOptions);
+                await client.IngestFromStorageAsync($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName};managed_identity={msiObjectId}", ingestionProperties: kustoIngestionProperties, sourceOptions);
+                log.LogInformation($"Ingested data from {fileName} to {tableName}_Raw with MSI Object Id {msiObjectId}");
             }
         }
     }

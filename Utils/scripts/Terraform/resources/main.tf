@@ -382,8 +382,6 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     rawDataContainerName=azurerm_storage_container.data.name
     storageAccountName=local.storage_account_name
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
-    storagesas=data.azurerm_storage_account_sas.this.sas
-    blobConnectionString=azurerm_storage_account.this.primary_connection_string
     MyTimeTrigger="0 */15 * * * *"
     msftTenantId="TenantId"
     keyVaultName=azurerm_key_vault.kv.name
@@ -510,8 +508,7 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     rawDataContainerName=azurerm_storage_container.data.name
     storageAccountName=local.storage_account_name
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
-    storagesas=data.azurerm_storage_account_sas.this.sas
-    blobConnectionString=azurerm_storage_account.this.primary_connection_string
+    msiObjectId=azurerm_user_assigned_identity.terraform.principal_id
     keyVaultName=azurerm_key_vault.kv.name
     msftTenantId="TenantId"
     DefaultRequestHeaders="observabilitydashboard"
