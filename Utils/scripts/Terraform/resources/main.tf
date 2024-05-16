@@ -385,6 +385,7 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     storagesas=data.azurerm_storage_account_sas.this.sas
     blobConnectionString=azurerm_storage_account.this.primary_connection_string
     MyTimeTrigger="0 */15 * * * *"
+    msftTenantId="TenantId"
     keyVaultName=azurerm_key_vault.kv.name
 	}
 }
