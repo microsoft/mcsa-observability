@@ -186,9 +186,6 @@ note: make sure to confirm resource creation with a "yes" when the prompt appear
 # add "grafana admin" role to the user as described here - https://learn.microsoft.com/en-us/azure/managed-grafana/how-to-share-grafana-workspace?tabs=azure-portal
 
 # create api key and export all variables
-export TF_VAR_sp_client_secret=$(terraform output -raw sp_client_secret)
-export TF_VAR_tenant_id=$(terraform output -raw tenant_id)
-export TF_VAR_sp_client_id=$(terraform output -raw sp_client_id)
 export TF_VAR_database_name=$(terraform output -raw database_name)
 export TF_VAR_cluster_url=$(terraform output -raw cluster_url)
 export TF_VAR_sp_object_id=$(terraform output -raw sp_object_id)
