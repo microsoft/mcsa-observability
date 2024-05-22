@@ -231,6 +231,18 @@ resource "azurerm_storage_blob" "this" {
   }
 }
 
+resource "azurerm_kusto_script" "altertestpolicydb" {
+  name                               = "altertestpolicydb"
+  database_id                        = azurerm_kusto_database.database.id
+  continue_on_errors_enabled         = true
+  force_an_update_when_value_changed = "first"
+  depends_on = [azurerm_kusto_cluster_principal_assignment.user, azurerm_user_assigned_identity.terraform, azurerm_kusto_cluster_principal_assignment.this, azurerm_kusto_cluster_principal_assignment.msi]
+
+  script_content = <<SCRIPT
+    .alter cluster policy managed_identity "[{ 'ObjectId' : '${azurerm_user_assigned_identity.terraform.principal_id}', 'AllowedUsages' : 'NativeIngestion' }]"
+SCRIPT
+}
+
 #create a kusto cluster
 resource "azurerm_kusto_cluster" "this" {
   name                = "${var.prefix}adx"
@@ -639,6 +651,18 @@ resource "azurerm_kusto_cluster_principal_assignment" "grafanamsi" {
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
   principal_id   = azurerm_dashboard_grafana.this.identity.0.principal_id
+  principal_type = "App"
+  role           = "AllDatabasesAdmin"
+  depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
+}
+
+resource "azurerm_kusto_cluster_principal_assignment" "user" {
+  name                = "KustoUserAssignment"
+  resource_group_name = azurerm_resource_group.rg.name
+  cluster_name        = azurerm_kusto_cluster.this.name
+
+  tenant_id      = data.azurerm_client_config.current.tenant_id
+  principal_id   = data.azurerm_client_config.current.object_id
   principal_type = "App"
   role           = "AllDatabasesAdmin"
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
