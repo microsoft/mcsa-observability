@@ -231,15 +231,15 @@ resource "azurerm_storage_blob" "this" {
   }
 }
 
-resource "azurerm_kusto_script" "altertestpolicydb" {
-  name                               = "altertestpolicydb"
+resource "azurerm_kusto_script" "ingestionpolicy" {
+  name                               = "metricsdbingestionpolicy"
   database_id                        = azurerm_kusto_database.database.id
   continue_on_errors_enabled         = true
   force_an_update_when_value_changed = "first"
   depends_on = [azurerm_kusto_cluster_principal_assignment.user, azurerm_user_assigned_identity.terraform, azurerm_kusto_cluster_principal_assignment.this, azurerm_kusto_cluster_principal_assignment.msi]
 
   script_content = <<SCRIPT
-    .alter cluster policy managed_identity "[{ 'ObjectId' : '${azurerm_user_assigned_identity.terraform.principal_id}', 'AllowedUsages' : 'NativeIngestion' }]"
+    .alter-merge cluster policy managed_identity "[{ 'ObjectId' : '${azurerm_user_assigned_identity.terraform.principal_id}', 'AllowedUsages' : 'NativeIngestion' }]"
 SCRIPT
 }
 
@@ -663,7 +663,7 @@ resource "azurerm_kusto_cluster_principal_assignment" "user" {
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
   principal_id   = data.azurerm_client_config.current.object_id
-  principal_type = "App"
+  principal_type = "User"
   role           = "AllDatabasesAdmin"
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
 }
