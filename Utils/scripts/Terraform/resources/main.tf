@@ -386,7 +386,7 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
 
   app_settings = {
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.timerstartpipelineapp.instrumentation_key
-	ServiceBusConnection=azurerm_servicebus_namespace.this.default_primary_connection_string
+    serviceBusNameSpace=azurerm_servicebus_namespace.this.name
     adxConnectionString=azurerm_kusto_cluster.this.uri
     metricsdbName=local.metricdb_name
     adxIngestionURI=azurerm_kusto_cluster.this.data_ingestion_uri
@@ -618,6 +618,13 @@ resource "azurerm_role_assignment" "grafana_sp" {
   role_definition_name = "Contributor"
   principal_id         = azuread_service_principal.this.object_id
   depends_on = [azurerm_resource_group.rg]
+}
+
+resource "azurerm_role_assignment" "example" {
+  scope                = azurerm_servicebus_namespace.this.id
+  role_definition_name = "Azure Service Bus Data Sender"
+  principal_id         = azurerm_user_assigned_identity.terraform.principal_id
+  depends_on = [azurerm_storage_account.this, azurerm_user_assigned_identity.terraform]
 }
 
 resource "azurerm_kusto_cluster_principal_assignment" "this" {
