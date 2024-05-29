@@ -22,7 +22,7 @@ namespace Observability.Utils
         private readonly string containerName;
         private readonly string storageAccountName;
         private readonly string msiClientId;
-        private readonly string msiObjectId;
+        private readonly string kustoMSIObjectId;
         private readonly string keyVaultName;
         private static HashSet<string> seenFilePrefixes = new HashSet<string>();
 
@@ -37,7 +37,7 @@ namespace Observability.Utils
             this.storageAccountName = _config.GetValue<string>("storageAccountName");
             this.containerName = _config.GetValue<string>("rawDataContainerName");
             this.msiClientId = _config.GetValue<string>("msiclientId");
-            this.msiObjectId = _config.GetValue<string>("msiObjectId");
+            this.kustoMSIObjectId = _config.GetValue<string>("kustoMSIObjectId");
             this.keyVaultName = _config.GetValue<string>("keyVaultName");
         }
 
@@ -169,8 +169,8 @@ namespace Observability.Utils
                     DeleteSourceOnSuccess = false
                 };
 
-                await client.IngestFromStorageAsync($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName};managed_identity={msiObjectId}", ingestionProperties: kustoIngestionProperties, sourceOptions);
-                log.LogInformation($"Ingested data from {fileName} to {tableName}_Raw with MSI Object Id {msiObjectId}");
+                await client.IngestFromStorageAsync($"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName};managed_identity=system", ingestionProperties: kustoIngestionProperties, sourceOptions);
+                log.LogInformation($"Ingested data from {fileName} to {tableName}_Raw with MSI Object Id {kustoMSIObjectId}");
             }
         }
     }

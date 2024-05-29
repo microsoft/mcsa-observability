@@ -56,6 +56,7 @@ locals{
     startdate=timeadd(timestamp(), "-72h")
     expirydate=timeadd(timestamp(), "8568h")
     metricdb_name = "${var.prefix}-metricsdb"
+    serviceBusMSIString="Endpoint=sb://${azurerm_servicebus_namespace.this.name}.servicebus.windows.net/;Authentication=ManagedIdentity"
     queue_name = "${var.prefix}-sbq"
     storage_account_name = "${var.prefix}stor"
     dotnet_build_timerpipelineapp         = "dotnet build ${path.cwd}/../../../../SchedulePipelineFunctionApp/SchedulePipelineFunctionApp.csproj -c Release"
@@ -239,7 +240,7 @@ resource "azurerm_kusto_script" "ingestionpolicy" {
   depends_on = [azurerm_kusto_cluster_principal_assignment.user, azurerm_user_assigned_identity.terraform, azurerm_kusto_cluster_principal_assignment.this, azurerm_kusto_cluster_principal_assignment.msi]
 
   script_content = <<SCRIPT
-    .alter-merge cluster policy managed_identity "[{ 'ObjectId' : '${azurerm_user_assigned_identity.terraform.principal_id}', 'AllowedUsages' : 'NativeIngestion' }]"
+    .alter-merge cluster policy managed_identity "[{ 'ObjectId' : '${azurerm_kusto_cluster.this.identity.0.principal_id}', 'AllowedUsages' : 'NativeIngestion' }]"
 SCRIPT
 }
 
@@ -255,8 +256,7 @@ resource "azurerm_kusto_cluster" "this" {
   }
 
   identity {
-    type = "UserAssigned"
-    identity_ids = ["/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.prefix}-RG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${var.prefix}-msi"]
+    type = "SystemAssigned"
   }
 
   depends_on = [azurerm_storage_account.this, azurerm_resource_group.rg]
@@ -512,7 +512,7 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
   
   app_settings = {
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.adxingestionapp.instrumentation_key
-	ServiceBusConnection=azurerm_servicebus_namespace.this.default_primary_connection_string
+    ServiceBusMSIConnection=local.serviceBusMSIString
     adxConnectionString=azurerm_kusto_cluster.this.uri
     metricsdbName=local.metricdb_name
     adxIngestionURI=azurerm_kusto_cluster.this.data_ingestion_uri
@@ -520,7 +520,7 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     rawDataContainerName=azurerm_storage_container.data.name
     storageAccountName=local.storage_account_name
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
-    msiObjectId=azurerm_user_assigned_identity.terraform.principal_id
+    kustoMSIObjectId=azurerm_kusto_cluster.this.identity.0.principal_id
     keyVaultName=azurerm_key_vault.kv.name
     msftTenantId="TenantId"
     DefaultRequestHeaders="observabilitydashboard"
@@ -620,9 +620,16 @@ resource "azurerm_role_assignment" "grafana_sp" {
   depends_on = [azurerm_resource_group.rg]
 }
 
-resource "azurerm_role_assignment" "example" {
+resource "azurerm_role_assignment" "sbsender" {
   scope                = azurerm_servicebus_namespace.this.id
   role_definition_name = "Azure Service Bus Data Sender"
+  principal_id         = azurerm_user_assigned_identity.terraform.principal_id
+  depends_on = [azurerm_storage_account.this, azurerm_user_assigned_identity.terraform]
+}
+
+resource "azurerm_role_assignment" "sbreceiver" {
+  scope                = azurerm_servicebus_namespace.this.id
+  role_definition_name = "Azure Service Bus Data Receiver"
   principal_id         = azurerm_user_assigned_identity.terraform.principal_id
   depends_on = [azurerm_storage_account.this, azurerm_user_assigned_identity.terraform]
 }
@@ -729,6 +736,14 @@ resource "azurerm_role_assignment" "msi_storage_role" {
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_user_assigned_identity.terraform.principal_id
   depends_on = [azurerm_storage_account.this, azurerm_user_assigned_identity.terraform]
+}
+
+#add storage_blob_data_contributor to the storage account
+resource "azurerm_role_assignment" "kusto_msi_storage_role" {
+  scope                = azurerm_storage_account.this.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_kusto_cluster.this.identity.0.principal_id
+  depends_on = [azurerm_storage_account.this, azurerm_kusto_cluster.this]
 }
 
 #add reader to the timerstartpipelineapp
