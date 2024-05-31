@@ -232,6 +232,9 @@ resource "azurerm_storage_blob" "this" {
   }
 }
 
+# TODO: deployment will succeed but return 'Command is not allowed' error with this resource
+# Execute this command manually in ADX to enable ingestion with MSI
+/*
 resource "azurerm_kusto_script" "ingestionpolicy" {
   name                               = "metricsdbingestionpolicy"
   database_id                        = azurerm_kusto_database.database.id
@@ -243,6 +246,7 @@ resource "azurerm_kusto_script" "ingestionpolicy" {
     .alter-merge cluster policy managed_identity "[{ 'ObjectId' : '${azurerm_kusto_cluster.this.identity.0.principal_id}', 'AllowedUsages' : 'NativeIngestion' }]"
 SCRIPT
 }
+*/
 
 #create a kusto cluster
 resource "azurerm_kusto_cluster" "this" {
@@ -513,6 +517,7 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
   app_settings = {
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.adxingestionapp.instrumentation_key
     ServiceBusMSIConnection=local.serviceBusMSIString
+    ServiceBusConnection=azurerm_servicebus_namespace.this.default_primary_connection_string
     adxConnectionString=azurerm_kusto_cluster.this.uri
     metricsdbName=local.metricdb_name
     adxIngestionURI=azurerm_kusto_cluster.this.data_ingestion_uri
