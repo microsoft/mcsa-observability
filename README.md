@@ -241,6 +241,14 @@ The solution relies on the following data to be present in the "Resource Provide
 
 Finally, add "Monitoring Reader" role for the Managed Identity and Service Principal created by script to the subscriptions that you want to monitor within the tenant where you have deployed the solution.
 
+#### Enabling ingestion to ADX with MSI (remove this step later)
+
+Currently, the following command needs to be executed manually on the ADX cluster to enable native ingestion from storage with MSI.
+```
+.alter-merge cluster policy managed_identity "[{ 'ObjectId' : '%%%%', 'AllowedUsages' : 'NativeIngestion' }]"
+```
+The ObjectId of the ADX system-assigned identity should be inputted here.
+
 #### Monitoring Additional Tenants
 In order to support monitoring of additional tenants, you will have add the appropriate service principal credentials to Key Vault. Follow the steps below to create and upload the client secrets.
 
