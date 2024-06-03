@@ -241,13 +241,18 @@ The solution relies on the following data to be present in the "Resource Provide
 
 Finally, add "Monitoring Reader" role for the Managed Identity and Service Principal created by script to the subscriptions that you want to monitor within the tenant where you have deployed the solution.
 
-#### Enabling ingestion to ADX with MSI (remove this step later)
+#### Testing in Microsoft tenant (remove this before merging to main)
+In order to test in the Microsoft tenant, navigate to the environment variables section of both Function Apps in Azure Portal. Click on Advanced edit to input the Microsoft tenant id as the value for the variable "msftTenantId"
+
+This is required to use MSI rather than searching for a tenant SP credential in Key Vault and use the appropriate endpoint when calling the Azure Monitor API.
+
+#### Enabling ingestion to ADX with MSI (remove this before merging to main)
 
 Currently, the following command needs to be executed manually on the ADX cluster to enable native ingestion from storage with MSI.
 ```
 .alter-merge cluster policy managed_identity "[{ 'ObjectId' : '%%%%', 'AllowedUsages' : 'NativeIngestion' }]"
 ```
-The ObjectId of the ADX system-assigned identity should be inputted here.
+The ObjectId of the ADX system-assigned identity should be inputted here. This can be found by navigating to the ADX Cluster > Security + Networking > Identity in the Azure portal.
 
 #### Monitoring Additional Tenants
 In order to support monitoring of additional tenants, you will have add the appropriate service principal credentials to Key Vault. Follow the steps below to create and upload the client secrets.
