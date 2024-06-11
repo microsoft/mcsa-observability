@@ -31,7 +31,7 @@ namespace Observability.AdxIngestFunctionApp
         }
 
         [FunctionName("AdxIngestFunction")]
-        public static async Task Run([ServiceBusTrigger("%queueName%", Connection = "ServiceBusConnection", IsSessionsEnabled = false)] String myQueueItem, ILogger log)
+        public static async Task Run([ServiceBusTrigger("%queueName%", IsSessionsEnabled = false)] String myQueueItem, ILogger log)
         {
             ClientSecretCredential spCredential;
 
