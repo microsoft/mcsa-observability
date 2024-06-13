@@ -517,7 +517,8 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
   app_settings = {
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.adxingestionapp.instrumentation_key
     ServiceBusMSIConnection=local.serviceBusMSIString
-    ServiceBusConnection=azurerm_servicebus_namespace.this.default_primary_connection_string
+    ServiceBusConnection__fullyQualifiedNamespace = "${azurerm_servicebus_namespace.this.name}.servicebus.windows.net"
+    ServiceBusConnection__clientId = azurerm_user_assigned_identity.terraform.client_id
     adxConnectionString=azurerm_kusto_cluster.this.uri
     metricsdbName=local.metricdb_name
     adxIngestionURI=azurerm_kusto_cluster.this.data_ingestion_uri
