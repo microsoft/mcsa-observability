@@ -386,8 +386,7 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     ]
   }
 
-  site_config {
-  }
+  site_config {}
 
   app_settings = {
     FUNCTIONS_WORKER_RUNTIME = "dotnet"
