@@ -387,7 +387,6 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
   }
 
   site_config {
-    net_framework_version = "v6.0"
   }
 
   app_settings = {
