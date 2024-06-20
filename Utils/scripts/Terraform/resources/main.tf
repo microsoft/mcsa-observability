@@ -366,7 +366,7 @@ resource "azurerm_application_insights" "timerstartpipelineapp" {
   depends_on = [azurerm_resource_group.rg]
 }
 
-resource "azurerm_linux_function_app" "timerstartpipelineapp" {
+resource "azurerm_windows_function_app" "timerstartpipelineapp" {
   name                = "TimerStartPipelineFunction-${var.prefix}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
