@@ -354,7 +354,7 @@ resource "azurerm_service_plan" "timerstartpipelineapp" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Windows"
-  sku_name            = "Y1"
+  sku_name            = "EP1"
   depends_on = [azurerm_resource_group.rg]
 }
 
@@ -366,7 +366,7 @@ resource "azurerm_application_insights" "timerstartpipelineapp" {
   depends_on = [azurerm_resource_group.rg]
 }
 
-resource "azurerm_windows_function_app" "timerstartpipelineapp" {
+resource "azurerm_linux_function_app" "timerstartpipelineapp" {
   name                = "TimerStartPipelineFunction-${var.prefix}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -386,9 +386,12 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     ]
   }
 
-  site_config {}
+  site_config {
+    net_framework_version = "v6.0"
+  }
 
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME = "dotnet"
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.timerstartpipelineapp.instrumentation_key
     serviceBusNameSpace=azurerm_servicebus_namespace.this.name
     adxConnectionString=azurerm_kusto_cluster.this.uri
