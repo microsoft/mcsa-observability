@@ -481,7 +481,7 @@ resource "azurerm_service_plan" "adxingestionapp" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Windows"
-  sku_name            = "Y1"
+  sku_name            = "EP1"
   depends_on = [azurerm_resource_group.rg]
 }
 
@@ -513,9 +513,12 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     ]
   }
 
-  site_config {}
+  site_config {
+    always_on = true
+  }
   
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME = "dotnet"
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.adxingestionapp.instrumentation_key
     ServiceBusMSIConnection=local.serviceBusMSIString
     ServiceBusConnection__fullyQualifiedNamespace="${azurerm_servicebus_namespace.this.name}.servicebus.windows.net"
