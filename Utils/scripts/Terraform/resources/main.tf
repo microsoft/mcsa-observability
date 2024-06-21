@@ -354,7 +354,7 @@ resource "azurerm_service_plan" "timerstartpipelineapp" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Windows"
-  sku_name            = "EP1"
+  sku_name            = "B1"
   depends_on = [azurerm_resource_group.rg]
 }
 
@@ -481,7 +481,7 @@ resource "azurerm_service_plan" "adxingestionapp" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Windows"
-  sku_name            = "EP1"
+  sku_name            = "B1"
   depends_on = [azurerm_resource_group.rg]
 }
 
