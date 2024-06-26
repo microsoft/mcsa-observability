@@ -395,17 +395,13 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
   site_config {
     always_on = true
     vnet_route_all_enabled = true
-
-    ip_restriction {
-      subnet_id = azurerm_subnet.default_subnet.id
-    }
   }
 
   app_settings = {
     FUNCTIONS_WORKER_RUNTIME="dotnet"
     AzureWebJobsStorage__accountName=local.storage_account_name
     AzureWebJobsStorage__clientId=azurerm_user_assigned_identity.terraform.client_id
-    AzureWebJobsStorage__credential=managedidentity
+    AzureWebJobsStorage__credential="managedidentity"
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.timerstartpipelineapp.instrumentation_key
     serviceBusNameSpace=azurerm_servicebus_namespace.this.name
     adxConnectionString=azurerm_kusto_cluster.this.uri
@@ -419,6 +415,11 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     msftTenantId="TenantId"
     keyVaultName=azurerm_key_vault.kv.name
 	}
+}
+
+resource "azurerm_app_service_virtual_network_swift_connection" "timerstartpipelineapp_vnet_integration" {
+  app_service_id = azurerm_windows_function_app.timerstartpipelineapp.id
+  subnet_id      = azurerm_subnet.default_subnet.id
 }
 
 resource "null_resource" "dotnet_build_timerpipelineapp" {
@@ -532,17 +533,13 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
   site_config {
     always_on = true
     vnet_route_all_enabled = true
-
-    ip_restriction {
-      subnet_id = azurerm_subnet.default_subnet.id
-    }
   }
   
   app_settings = {
     FUNCTIONS_WORKER_RUNTIME = "dotnet"
     AzureWebJobsStorage__accountName=local.storage_account_name
     AzureWebJobsStorage__clientId=azurerm_user_assigned_identity.terraform.client_id
-    AzureWebJobsStorage__credential=managedidentity
+    AzureWebJobsStorage__credential="managedidentity"
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.adxingestionapp.instrumentation_key
     ServiceBusConnection__fullyQualifiedNamespace="${azurerm_servicebus_namespace.this.name}.servicebus.windows.net"
     ServiceBusConnection__clientId=azurerm_user_assigned_identity.terraform.client_id
@@ -559,6 +556,11 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     DefaultRequestHeaders="observabilitydashboard"
 	}
 
+}
+
+resource "azurerm_app_service_virtual_network_swift_connection" "adxingestionapp_vnet_integration" {
+  app_service_id = azurerm_windows_function_app.adxingestionapp.id
+  subnet_id      = azurerm_subnet.main_subnet.id
 }
 
 resource "null_resource" "dotnet_build_adxingestapp" {
