@@ -394,7 +394,6 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
 
   site_config {
     always_on = true
-    vnet_route_all_enabled = true
   }
 
   app_settings = {
@@ -420,6 +419,7 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
 resource "azurerm_app_service_virtual_network_swift_connection" "timerstartpipelineapp_vnet_integration" {
   app_service_id = azurerm_windows_function_app.timerstartpipelineapp.id
   subnet_id      = azurerm_subnet.default_subnet.id
+  depends_on=[azurerm_subnet.default_subnet, azurerm_windows_function_app.timerstartpipelineapp]
 }
 
 resource "null_resource" "dotnet_build_timerpipelineapp" {
@@ -532,7 +532,6 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
 
   site_config {
     always_on = true
-    vnet_route_all_enabled = true
   }
   
   app_settings = {
@@ -560,7 +559,8 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
 
 resource "azurerm_app_service_virtual_network_swift_connection" "adxingestionapp_vnet_integration" {
   app_service_id = azurerm_windows_function_app.adxingestionapp.id
-  subnet_id      = azurerm_subnet.main_subnet.id
+  subnet_id      = azurerm_subnet.default_subnet.id
+  depends_on=[azurerm_subnet.default_subnet, azurerm_windows_function_app.adxingestapp]
 }
 
 resource "null_resource" "dotnet_build_adxingestapp" {
