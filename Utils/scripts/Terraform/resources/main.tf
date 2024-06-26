@@ -155,6 +155,12 @@ resource "azurerm_storage_account" "this" {
   shared_access_key_enabled = true
   depends_on = [azurerm_user_assigned_identity.terraform]
 
+  network_rules {
+    default_action             = "Deny"
+    virtual_network_subnet_ids = [azurerm_subnet.default_subnet.id]
+    bypass                     = ["AzureServices"]
+  }
+
   tags = {
     environment = "development"
   }
@@ -386,10 +392,20 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     ]
   }
 
-  site_config {}
+  site_config {
+    always_on = true
+    vnet_route_all_enabled = true
+
+    ip_restriction {
+      subnet_id = azurerm_subnet.default_subnet.id
+    }
+  }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME = "dotnet"
+    FUNCTIONS_WORKER_RUNTIME="dotnet"
+    AzureWebJobsStorage__accountName=local.storage_account_name
+    AzureWebJobsStorage__clientId=azurerm_user_assigned_identity.terraform.client_id
+    AzureWebJobsStorage__credential=managedidentity
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.timerstartpipelineapp.instrumentation_key
     serviceBusNameSpace=azurerm_servicebus_namespace.this.name
     adxConnectionString=azurerm_kusto_cluster.this.uri
@@ -515,12 +531,19 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
 
   site_config {
     always_on = true
+    vnet_route_all_enabled = true
+
+    ip_restriction {
+      subnet_id = azurerm_subnet.default_subnet.id
+    }
   }
   
   app_settings = {
     FUNCTIONS_WORKER_RUNTIME = "dotnet"
+    AzureWebJobsStorage__accountName=local.storage_account_name
+    AzureWebJobsStorage__clientId=azurerm_user_assigned_identity.terraform.client_id
+    AzureWebJobsStorage__credential=managedidentity
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.adxingestionapp.instrumentation_key
-    ServiceBusMSIConnection=local.serviceBusMSIString
     ServiceBusConnection__fullyQualifiedNamespace="${azurerm_servicebus_namespace.this.name}.servicebus.windows.net"
     ServiceBusConnection__clientId=azurerm_user_assigned_identity.terraform.client_id
     adxConnectionString=azurerm_kusto_cluster.this.uri
@@ -621,6 +644,30 @@ resource "azurerm_dashboard_grafana" "this" {
   }
   depends_on = [azurerm_resource_group.rg, azurerm_storage_account.this, azurerm_kusto_cluster.this, azurerm_user_assigned_identity.terraform]
 }
+
+#create virtual network for azure function to access storage account
+resource "azurerm_virtual_network" "this" {
+  name                = "example-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_subnet" "default_subnet" {
+  name                 = "default_subnet"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.this.name
+  address_prefixes     = ["10.0.1.0/24"]
+
+  delegation {
+    name = "functionapp_delegation"
+    service_delegation {
+      name    = "Microsoft.Web/serverFarms"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    }
+  }
+}
+
 
 #assign contributor access to the sp for the resource group
 resource "azurerm_role_assignment" "grafana_sp" {
