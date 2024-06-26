@@ -560,7 +560,7 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
 resource "azurerm_app_service_virtual_network_swift_connection" "adxingestionapp_vnet_integration" {
   app_service_id = azurerm_windows_function_app.adxingestionapp.id
   subnet_id      = azurerm_subnet.default_subnet.id
-  depends_on=[azurerm_subnet.default_subnet, azurerm_windows_function_app.adxingestapp]
+  depends_on=[azurerm_subnet.default_subnet, azurerm_windows_function_app.adxingestionapp]
 }
 
 resource "null_resource" "dotnet_build_adxingestapp" {
