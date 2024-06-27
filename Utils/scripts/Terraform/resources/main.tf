@@ -146,7 +146,7 @@ resource "azurerm_key_vault" "kv" {
 
 #create virtual network for azure function to access storage account
 resource "azurerm_virtual_network" "this" {
-  name                = "example-vnet"
+  name                = "${var.prefix}-vnet"
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -324,7 +324,7 @@ resource "azurerm_storage_account_network_rules" "this" {
   default_action     = "Deny"
   virtual_network_subnet_ids = [azurerm_subnet.default_subnet.id]
   bypass                     = ["AzureServices"]
-  depends_on = [azurerm_storage_blob.this, azurerm_kusto_script.table]  # Ensure network rules are applied after the blob and kusto table are created
+  depends_on = [azurerm_storage_blob.this, azurerm_kusto_script.table]  # Ensure network rules are applied after the blob and kusto script are created
 }
 
 # Update shared access key setting after applying network rules
@@ -341,6 +341,7 @@ resource "azurerm_servicebus_namespace" "this" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku                 = "Standard"
+  local_auth_enabled  = false
   depends_on = [azurerm_resource_group.rg]
 
   tags = {
@@ -449,6 +450,14 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     msftTenantId="TenantId"
     keyVaultName=azurerm_key_vault.kv.name
 	}
+}
+
+#remove azurewebjobsstorage in enviroment variable for timer ingest function
+resource "null_resource" "remove_azurewebjobsstorage_timerfunction" {
+  provisioner "local-exec" {
+    command = "az functionapp config appsettings delete --name TimerStartPipelineFunction-${var.prefix} --resource-group ${azurerm_resource_group.rg.name} --setting-names AzureWebJobsStorage"
+  }
+  depends_on = [azurerm_windows_function_app.timerstartpipelineapp]
 }
 
 resource "null_resource" "dotnet_build_timerpipelineapp" {
@@ -593,6 +602,13 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
 
 }
 
+#remove azurewebjobsstorage in enviroment variable for adx ingest function
+resource "null_resource" "remove_azurewebjobsstorage_adx" {
+  provisioner "local-exec" {
+    command = "az functionapp config appsettings delete --name AdxIngestFunction-${var.prefix} --resource-group ${azurerm_resource_group.rg.name} --setting-names AzureWebJobsStorage"
+  }
+  depends_on = [azurerm_windows_function_app.adxingestionapp]
+}
 
 resource "null_resource" "dotnet_build_adxingestapp" {
   provisioner "local-exec" {
