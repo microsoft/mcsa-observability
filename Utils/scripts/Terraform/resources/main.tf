@@ -158,6 +158,7 @@ resource "azurerm_subnet" "default_subnet" {
   virtual_network_name = azurerm_virtual_network.this.name
   address_prefixes     = ["10.0.1.0/24"]
   service_endpoints    = ["Microsoft.Storage"]
+  depends_on           = [azurerm_virtual_network.this]
 
   delegation {
     name = "functionapp_delegation"
