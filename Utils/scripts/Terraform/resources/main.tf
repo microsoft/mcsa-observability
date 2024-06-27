@@ -330,7 +330,7 @@ resource "azurerm_storage_account_network_rules" "this" {
 # Update shared access key setting after applying network rules
 resource "null_resource" "update_shared_access_key" {
   provisioner "local-exec" {
-    command = "az storage account update --name ${azurerm_storage_account.this.name} --resource-group ${azurerm_storage_account.this.resource_group_name} --set enableHttpsTrafficOnly=true --set sharedAccessKeyEnabled=false"
+    command = "az storage account update --name ${azurerm_storage_account.this.name} --resource-group ${azurerm_storage_account.this.resource_group_name} --set sharedAccessKeyEnabled=false"
   }
   depends_on = [azurerm_storage_account_network_rules.this]
 }
