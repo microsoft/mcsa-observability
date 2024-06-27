@@ -144,6 +144,30 @@ resource "azurerm_key_vault" "kv" {
   depends_on = [azuread_service_principal_password.this]
 } */
 
+#create virtual network for azure function to access storage account
+resource "azurerm_virtual_network" "this" {
+  name                = "${var.prefix}-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_subnet" "default_subnet" {
+  name                 = "default_subnet"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.this.name
+  address_prefixes     = ["10.0.1.0/24"]
+  service_endpoints    = ["Microsoft.Storage"]
+  depends_on           = [azurerm_virtual_network.this]
+
+  delegation {
+    name = "functionapp_delegation"
+    service_delegation {
+      name    = "Microsoft.Web/serverFarms"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    }
+  }
+}
 
 #create a storage account
 resource "azurerm_storage_account" "this" {
@@ -294,12 +318,30 @@ resource "azurerm_kusto_script" "table" {
   depends_on = [azurerm_kusto_database.database]
 }
 
+#create network rules for storage account
+resource "azurerm_storage_account_network_rules" "this" {
+  storage_account_id = azurerm_storage_account.this.id
+  default_action     = "Deny"
+  virtual_network_subnet_ids = [azurerm_subnet.default_subnet.id]
+  bypass                     = ["AzureServices"]
+  depends_on = [azurerm_storage_blob.this, azurerm_kusto_script.table]  # Ensure network rules are applied after the blob and kusto script are created
+}
+
+# Update shared access key setting after applying network rules
+resource "null_resource" "update_shared_access_key" {
+  provisioner "local-exec" {
+    command = "az storage account update --name ${azurerm_storage_account.this.name} --resource-group ${azurerm_storage_account.this.resource_group_name} --allow-shared-key-access false"
+  }
+  depends_on = [azurerm_storage_account_network_rules.this]
+}
+
 #create service bus 
 resource "azurerm_servicebus_namespace" "this" {
   name                = "${var.prefix}-sbns"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku                 = "Standard"
+  local_auth_enabled  = false
   depends_on = [azurerm_resource_group.rg]
 
   tags = {
@@ -354,7 +396,7 @@ resource "azurerm_service_plan" "timerstartpipelineapp" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Windows"
-  sku_name            = "Y1"
+  sku_name            = "B1"
   depends_on = [azurerm_resource_group.rg]
 }
 
@@ -386,9 +428,15 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     ]
   }
 
-  site_config {}
+  site_config {
+    always_on = true
+  }
 
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME="dotnet"
+    AzureWebJobsStorage__accountName=local.storage_account_name
+    AzureWebJobsStorage__clientId=azurerm_user_assigned_identity.terraform.client_id
+    AzureWebJobsStorage__credential="managedidentity"
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.timerstartpipelineapp.instrumentation_key
     serviceBusNameSpace=azurerm_servicebus_namespace.this.name
     adxConnectionString=azurerm_kusto_cluster.this.uri
@@ -402,6 +450,14 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     msftTenantId="TenantId"
     keyVaultName=azurerm_key_vault.kv.name
 	}
+}
+
+#remove azurewebjobsstorage in enviroment variable for timer ingest function
+resource "null_resource" "remove_azurewebjobsstorage_timerfunction" {
+  provisioner "local-exec" {
+    command = "az functionapp config appsettings delete --name TimerStartPipelineFunction-${var.prefix} --resource-group ${azurerm_resource_group.rg.name} --setting-names AzureWebJobsStorage"
+  }
+  depends_on = [azurerm_windows_function_app.timerstartpipelineapp]
 }
 
 resource "null_resource" "dotnet_build_timerpipelineapp" {
@@ -475,12 +531,19 @@ resource "null_resource" "disable_basic_auth_timerpipelineapp_ftp" {
     disable_basic_auth_timerpipelineapp_ftp_command = local.disable_basic_auth_timerpipelineapp_ftp
   }
 }
+
+resource "azurerm_app_service_virtual_network_swift_connection" "timerstartpipelineapp_vnet_integration" {
+  app_service_id = azurerm_windows_function_app.timerstartpipelineapp.id
+  subnet_id      = azurerm_subnet.default_subnet.id
+  depends_on=[azurerm_subnet.default_subnet, azurerm_windows_function_app.timerstartpipelineapp]
+}
+
 resource "azurerm_service_plan" "adxingestionapp" {
   name                = "adxingestionapp-service-plan"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Windows"
-  sku_name            = "Y1"
+  sku_name            = "B1"
   depends_on = [azurerm_resource_group.rg]
 }
 
@@ -512,11 +575,16 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     ]
   }
 
-  site_config {}
+  site_config {
+    always_on = true
+  }
   
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME = "dotnet"
+    AzureWebJobsStorage__accountName=local.storage_account_name
+    AzureWebJobsStorage__clientId=azurerm_user_assigned_identity.terraform.client_id
+    AzureWebJobsStorage__credential="managedidentity"
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.adxingestionapp.instrumentation_key
-    ServiceBusMSIConnection=local.serviceBusMSIString
     ServiceBusConnection__fullyQualifiedNamespace="${azurerm_servicebus_namespace.this.name}.servicebus.windows.net"
     ServiceBusConnection__clientId=azurerm_user_assigned_identity.terraform.client_id
     adxConnectionString=azurerm_kusto_cluster.this.uri
@@ -532,6 +600,14 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     DefaultRequestHeaders="observabilitydashboard"
 	}
 
+}
+
+#remove azurewebjobsstorage in enviroment variable for adx ingest function
+resource "null_resource" "remove_azurewebjobsstorage_adx" {
+  provisioner "local-exec" {
+    command = "az functionapp config appsettings delete --name AdxIngestFunction-${var.prefix} --resource-group ${azurerm_resource_group.rg.name} --setting-names AzureWebJobsStorage"
+  }
+  depends_on = [azurerm_windows_function_app.adxingestionapp]
 }
 
 resource "null_resource" "dotnet_build_adxingestapp" {
@@ -603,6 +679,12 @@ resource "null_resource" "disable_basic_auth_adxingestapp_ftp" {
   triggers = {
     disable_basic_auth_adxingestapp_ftp_command = local.disable_basic_auth_adxingestapp_ftp
   }
+}
+
+resource "azurerm_app_service_virtual_network_swift_connection" "adxingestionapp_vnet_integration" {
+  app_service_id = azurerm_windows_function_app.adxingestionapp.id
+  subnet_id      = azurerm_subnet.default_subnet.id
+  depends_on=[azurerm_subnet.default_subnet, azurerm_windows_function_app.adxingestionapp]
 }
 
 resource "azurerm_dashboard_grafana" "this" {
