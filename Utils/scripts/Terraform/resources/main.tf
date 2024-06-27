@@ -324,7 +324,7 @@ resource "azurerm_storage_account_network_rules" "this" {
   default_action     = "Deny"
   virtual_network_subnet_ids = [azurerm_subnet.default_subnet.id]
   bypass                     = ["AzureServices"]
-  depends_on = [azurerm_storage_blob.this]  # Ensure network rules are applied after the blob is created
+  depends_on = [azurerm_storage_blob.this, azurerm_kusto_script.table]  # Ensure network rules are applied after the blob and kusto table are created
 }
 
 # Update shared access key setting after applying network rules
