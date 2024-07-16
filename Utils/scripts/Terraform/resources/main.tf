@@ -199,7 +199,7 @@ resource "azurerm_storage_container" "scripts" {
   container_access_type = "private"
   depends_on = [azurerm_storage_account.this]
 }
-
+/*
 #create sas tokens for storage account
 data "azurerm_storage_account_sas" "this" {
   connection_string = azurerm_storage_account.this.primary_connection_string
@@ -240,7 +240,7 @@ output "sas_url_query_string" {
   value = data.azurerm_storage_account_sas.this.sas
 sensitive = true
 }
-
+*/
 #create blob to store the kql query
 resource "azurerm_storage_blob" "this" {
   name                   = "table_scripts.kql"
@@ -258,7 +258,7 @@ resource "azurerm_storage_blob" "this" {
 
 # TODO: deployment will succeed but return 'Command is not allowed' error with this resource
 # Execute this command manually in ADX to enable ingestion with MSI
-/*
+
 resource "azurerm_kusto_script" "ingestionpolicy" {
   name                               = "metricsdbingestionpolicy"
   database_id                        = azurerm_kusto_database.database.id
@@ -267,10 +267,10 @@ resource "azurerm_kusto_script" "ingestionpolicy" {
   depends_on = [azurerm_kusto_cluster_principal_assignment.user, azurerm_user_assigned_identity.terraform, azurerm_kusto_cluster_principal_assignment.this, azurerm_kusto_cluster_principal_assignment.msi]
 
   script_content = <<SCRIPT
-    .alter-merge cluster policy managed_identity "[{ 'ObjectId' : '${azurerm_kusto_cluster.this.identity.0.principal_id}', 'AllowedUsages' : 'NativeIngestion' }]"
+    .alter-merge database ['${azurerm_kusto_database.database.name}'] policy managed_identity "[{ 'ObjectId' : '${azurerm_kusto_cluster.this.identity.0.principal_id}', 'AllowedUsages' : 'NativeIngestion' }]"
 SCRIPT
 }
-*/
+
 
 #create a kusto cluster
 resource "azurerm_kusto_cluster" "this" {
@@ -311,8 +311,7 @@ resource "azurerm_kusto_database" "database" {
 resource "azurerm_kusto_script" "table" {
   name                               = "metricsdbtables"
   database_id                        = azurerm_kusto_database.database.id
-  url                                = azurerm_storage_blob.this.id
-  sas_token                          = data.azurerm_storage_account_sas.this.sas
+  script_content                     = file("${path.cwd}/../../table_scripts.kql")
   continue_on_errors_enabled         = true
   force_an_update_when_value_changed = "first"
   depends_on = [azurerm_kusto_database.database]
