@@ -1,10 +1,9 @@
-# Configure the Azure provider
 terraform {
   required_version = ">= 1.1.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.52.0"
+      version = "~> 3.113.0"
     }
     azuread = {
       source  = "hashicorp/azuread"
@@ -258,7 +257,7 @@ resource "azurerm_storage_blob" "this" {
 
 # TODO: deployment will succeed but return 'Command is not allowed' error with this resource
 # Execute this command manually in ADX to enable ingestion with MSI
-
+/*
 resource "azurerm_kusto_script" "ingestionpolicy" {
   name                               = "metricsdbingestionpolicy"
   database_id                        = azurerm_kusto_database.database.id
@@ -270,6 +269,7 @@ resource "azurerm_kusto_script" "ingestionpolicy" {
     .alter-merge database ['${azurerm_kusto_database.database.name}'] policy managed_identity "[{ 'ObjectId' : '${azurerm_kusto_cluster.this.identity.0.principal_id}', 'AllowedUsages' : 'NativeIngestion' }]"
 SCRIPT
 }
+*/
 
 
 #create a kusto cluster
@@ -370,7 +370,8 @@ resource "azurerm_key_vault_access_policy" "msiaccess" {
     secret_permissions = [
       "Get",
       "Set",
-      "List"
+      "List",
+      "Delete"
     ]
 }
 
@@ -384,7 +385,8 @@ resource "azurerm_key_vault_access_policy" "useraccess" {
     secret_permissions = [
       "Get",
       "Set",
-      "List"
+      "List",
+      "Delete"
     ]
 }
 
@@ -583,7 +585,6 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     AzureWebJobsStorage__accountName=local.storage_account_name
     AzureWebJobsStorage__clientId=azurerm_user_assigned_identity.terraform.client_id
     AzureWebJobsStorage__credential="managedidentity"
-    APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.adxingestionapp.instrumentation_key
     ServiceBusConnection__fullyQualifiedNamespace="${azurerm_servicebus_namespace.this.name}.servicebus.windows.net"
     ServiceBusConnection__clientId=azurerm_user_assigned_identity.terraform.client_id
     adxConnectionString=azurerm_kusto_cluster.this.uri
@@ -593,7 +594,6 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     rawDataContainerName=azurerm_storage_container.data.name
     storageAccountName=local.storage_account_name
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
-    kustoMSIObjectId=azurerm_kusto_cluster.this.identity.0.principal_id
     keyVaultName=azurerm_key_vault.kv.name
     msftTenantId="TenantId"
     DefaultRequestHeaders="observabilitydashboard"
@@ -605,6 +605,13 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
 resource "null_resource" "remove_azurewebjobsstorage_adx" {
   provisioner "local-exec" {
     command = "az functionapp config appsettings delete --name AdxIngestFunction-${var.prefix} --resource-group ${azurerm_resource_group.rg.name} --setting-names AzureWebJobsStorage"
+  }
+  depends_on = [azurerm_windows_function_app.adxingestionapp]
+}
+
+resource "null_resource" "reset_appinsightkey_adx" {
+  provisioner "local-exec" {
+    command = "az functionapp config appsettings set --name AdxIngestFunction-${var.prefix} --resource-group ${azurerm_resource_group.rg.name} --setting APPINSIGHTS_INSTRUMENTATIONKEY=${azurerm_application_insights.adxingestionapp.instrumentation_key}"
   }
   depends_on = [azurerm_windows_function_app.adxingestionapp]
 }
@@ -825,14 +832,6 @@ resource "azurerm_role_assignment" "msi_storage_role" {
   depends_on = [azurerm_storage_account.this, azurerm_user_assigned_identity.terraform]
 }
 
-#add storage_blob_data_contributor to the storage account
-resource "azurerm_role_assignment" "kusto_msi_storage_role" {
-  scope                = azurerm_storage_account.this.id
-  role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = azurerm_kusto_cluster.this.identity.0.principal_id
-  depends_on = [azurerm_storage_account.this, azurerm_kusto_cluster.this]
-}
-
 #add reader to the timerstartpipelineapp
 resource "azurerm_role_assignment" "msi_timerstartpipelineapp_role" {
   scope                = azurerm_windows_function_app.timerstartpipelineapp.id
@@ -883,4 +882,20 @@ output "client_config" {
 
 output "prefix" {
   value =               "${var.prefix}"
+}
+
+output "sp_display_name" {
+  value = azurerm_kusto_cluster.this.name
+}
+
+output "resource_group_name" {
+  value = azurerm_resource_group.rg.name
+}
+
+output "app_name" {
+  value = "AdxIngestFunction-${var.prefix}"
+}
+
+output "storage_account_id" {
+  value = azurerm_storage_account.this.id
 }
