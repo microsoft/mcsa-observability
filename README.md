@@ -185,6 +185,9 @@ note: make sure to confirm resource creation with a "yes" when the prompt appear
 
 # add "grafana admin" role to the user as described here - https://learn.microsoft.com/en-us/azure/managed-grafana/how-to-share-grafana-workspace?tabs=azure-portal
 
+# run post installation script to set up some additional variable
+sh post_install.sh
+
 # create api key and export all variables
 export TF_VAR_database_name=$(terraform output -raw database_name)
 export TF_VAR_cluster_url=$(terraform output -raw cluster_url)
@@ -252,7 +255,7 @@ Currently, the following command needs to be executed manually on the ADX cluste
 ```
 .alter-merge cluster policy managed_identity "[{ 'ObjectId' : '%%%%', 'AllowedUsages' : 'NativeIngestion' }]"
 ```
-The ObjectId of the ADX system-assigned identity should be inputted here. This can be found by navigating to the ADX Cluster > Security + Networking > Identity in the Azure portal.
+The ObjectId of the ADX system-assigned identity should be inputted here. This ObjectId can be found by navigating to the ADX Cluster > Security + Networking > Identity in the Azure portal.
 
 #### Monitoring Additional Tenants
 In order to support monitoring of additional tenants, you will have add the appropriate service principal credentials to Key Vault. Follow the steps below to create and upload the client secrets.
@@ -291,3 +294,11 @@ versions of cli <=2.46 until the issue is resolved.
 please ensure you are storing the tfstate files in the following locations so that they can be used to deploy further improvements in the future
 
 ![terraform-folders](Images/terraform-folders.png)
+
+#### Incremental Deployment on exisiting solution
+
+Note: for MSFT Tenant, remove the secret in key vault in your existing deployment before incremental deployment, and save it(save name and secret value). Add it back to key vault manually after incremental deployment is finished.
+
+1. clone the new branch
+2. go to /mcsa-observability/Utils/scripts/Terraform/resources of the exisitng deployed branch and copy the terraform.tfstate file and paster over to the same directory of the new undeployed branch
+3. follow through all the steps of previous deployment instruction 

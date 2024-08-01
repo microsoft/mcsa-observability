@@ -36,10 +36,3 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Role 'Storage Blob Data Contributor' assigned successfully to the Service Principal."
-
-export TF_VAR_database_name=$(terraform output -raw database_name)
-export TF_VAR_cluster_url=$(terraform output -raw cluster_url)
-export TF_VAR_sp_object_id=$(terraform output -raw sp_object_id)
-export TF_VAR_prefix=$(terraform output -raw prefix)
-export TF_VAR_url=$(az grafana show -g $TF_VAR_prefix-RG -n $TF_VAR_prefix-grafana -o json | jq -r .properties.endpoint)
-export TF_VAR_token=$(az grafana api-key create --key `date +%s` --name $TF_VAR_prefix-grafana -g $TF_VAR_prefix-RG -r editor --time-to-live 60m -o json | jq -r .key)
