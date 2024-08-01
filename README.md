@@ -300,5 +300,5 @@ please ensure you are storing the tfstate files in the following locations so th
 Note: for MSFT Tenant, remove the secret in key vault in your existing deployment before incremental deployment, and save it(save name and secret value). Add it back to key vault manually after incremental deployment is finished.
 
 1. clone the new branch
-2. go to /mcsa-observability/Utils/scripts/Terraform/resources of the exisitng deployed branch and copy the terraform.tfstate file and paster over to the same directory of the new undeployed branch
+2. go to /mcsa-observability/Utils/scripts/Terraform/resources of the exisitng deployed branch and copy the terraform.tfstate file and paste over to the same directory of the new undeployed branch
 3. follow through all the steps of previous deployment instruction 
