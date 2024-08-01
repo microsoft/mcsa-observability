@@ -185,7 +185,7 @@ note: make sure to confirm resource creation with a "yes" when the prompt appear
 
 # add "grafana admin" role to the user as described here - https://learn.microsoft.com/en-us/azure/managed-grafana/how-to-share-grafana-workspace?tabs=azure-portal
 
-# run post installation script to set up some additional variable
+# run post installation script to set up some additional variables
 sh post_install.sh
 
 # create api key and export all variables
