@@ -185,10 +185,10 @@ note: make sure to confirm resource creation with a "yes" when the prompt appear
 
 # add "grafana admin" role to the user as described here - https://learn.microsoft.com/en-us/azure/managed-grafana/how-to-share-grafana-workspace?tabs=azure-portal
 
+# run post installation script to set up some additional variables
+sh post_install.sh
+
 # create api key and export all variables
-export TF_VAR_sp_client_secret=$(terraform output -raw sp_client_secret)
-export TF_VAR_tenant_id=$(terraform output -raw tenant_id)
-export TF_VAR_sp_client_id=$(terraform output -raw sp_client_id)
 export TF_VAR_database_name=$(terraform output -raw database_name)
 export TF_VAR_cluster_url=$(terraform output -raw cluster_url)
 export TF_VAR_sp_object_id=$(terraform output -raw sp_object_id)
@@ -244,6 +244,14 @@ The solution relies on the following data to be present in the "Resource Provide
 
 Finally, add "Monitoring Reader" role for the Managed Identity and Service Principal created by script to the subscriptions that you want to monitor within the tenant where you have deployed the solution.
 
+#### Enabling ingestion to ADX with MSI 
+
+Currently, the following command needs to be executed manually on the ADX cluster to enable native ingestion from storage with MSI.
+```
+.alter-merge cluster policy managed_identity "[{ 'ObjectId' : '%%%%', 'AllowedUsages' : 'NativeIngestion' }]"
+```
+The ObjectId of the ADX system-assigned identity should be inputted here. This ObjectId can be found by navigating to the ADX Cluster > Security + Networking > Identity in the Azure portal.
+
 #### Monitoring Additional Tenants
 In order to support monitoring of additional tenants, you will have add the appropriate service principal credentials to Key Vault. Follow the steps below to create and upload the client secrets.
 
@@ -281,3 +289,11 @@ versions of cli <=2.46 until the issue is resolved.
 please ensure you are storing the tfstate files in the following locations so that they can be used to deploy further improvements in the future
 
 ![terraform-folders](Images/terraform-folders.png)
+
+#### Incremental Deployment on existing solution
+
+Note: for MSFT Tenant, remove the secret in key vault in your existing deployment before incremental deployment, and save it(save name and secret value). Add it back to key vault manually after incremental deployment is finished.
+
+1. clone the new branch
+2. go to /mcsa-observability/Utils/scripts/Terraform/resources of the exisitng deployed branch and copy the terraform.tfstate file and paste over to the same directory of the new undeployed branch
+3. follow through all the steps of previous deployment instruction 

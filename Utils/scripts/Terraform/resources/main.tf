@@ -1,10 +1,9 @@
-# Configure the Azure provider
 terraform {
   required_version = ">= 1.1.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.52.0"
+      version = "~> 3.113.0"
     }
     azuread = {
       source  = "hashicorp/azuread"
@@ -56,6 +55,7 @@ locals{
     startdate=timeadd(timestamp(), "-72h")
     expirydate=timeadd(timestamp(), "8568h")
     metricdb_name = "${var.prefix}-metricsdb"
+    serviceBusMSIString="Endpoint=sb://${azurerm_servicebus_namespace.this.name}.servicebus.windows.net/;Authentication=ManagedIdentity"
     queue_name = "${var.prefix}-sbq"
     storage_account_name = "${var.prefix}stor"
     dotnet_build_timerpipelineapp         = "dotnet build ${path.cwd}/../../../../SchedulePipelineFunctionApp/SchedulePipelineFunctionApp.csproj -c Release"
@@ -93,15 +93,15 @@ resource "azuread_application" "this" {
 
 #create a service principal tagged to ad application
 resource "azuread_service_principal" "this" {
-  application_id               = azuread_application.this.application_id
+  client_id               = azuread_application.this.client_id
   app_role_assignment_required = false
   owners                       = [data.azuread_client_config.current.object_id]
 }
 
-#create the secret for the service principal
+/* #create the secret for the service principal
 resource "azuread_service_principal_password" "this" {
   service_principal_id = azuread_service_principal.this.object_id
-}
+} */
 
 #create resource group to house resources
 resource "azurerm_resource_group" "rg" {
@@ -136,13 +136,37 @@ resource "azurerm_key_vault" "kv" {
 }
 
 
-resource "azurerm_key_vault_secret" "client_secret_secret" {
-  name         = "tenant-${data.azurerm_client_config.current.tenant_id}"//azuread_service_principal.this.application_id//"ServicePrincipalClientSecret"
-  value        = "{\"ClientId\":\"${azuread_service_principal.this.application_id}\",\"ClientSecret\":\"${azuread_service_principal_password.this.value}\"}"//"${azuread_service_principal.this.application_id}-${azuread_service_principal_password.this.value}"//service_principal_id
+/* resource "azurerm_key_vault_secret" "client_secret_secret" {
+  name         = "tenant-${data.azurerm_client_config.current.tenant_id}"//azuread_service_principal.this.client_id//"ServicePrincipalClientSecret"
+  value        = "{\"ClientId\":\"${azuread_service_principal.this.client_id}\",\"ClientSecret\":\"${azuread_service_principal_password.this.value}\"}"//"${azuread_service_principal.this.client_id}-${azuread_service_principal_password.this.value}"//service_principal_id
   key_vault_id = azurerm_key_vault.kv.id
   depends_on = [azuread_service_principal_password.this]
+} */
+
+#create virtual network for azure function to access storage account
+resource "azurerm_virtual_network" "this" {
+  name                = "${var.prefix}-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 }
 
+resource "azurerm_subnet" "default_subnet" {
+  name                 = "default_subnet"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.this.name
+  address_prefixes     = ["10.0.1.0/24"]
+  service_endpoints    = ["Microsoft.Storage"]
+  depends_on           = [azurerm_virtual_network.this]
+
+  delegation {
+    name = "functionapp_delegation"
+    service_delegation {
+      name    = "Microsoft.Web/serverFarms"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    }
+  }
+}
 
 #create a storage account
 resource "azurerm_storage_account" "this" {
@@ -174,7 +198,7 @@ resource "azurerm_storage_container" "scripts" {
   container_access_type = "private"
   depends_on = [azurerm_storage_account.this]
 }
-
+/*
 #create sas tokens for storage account
 data "azurerm_storage_account_sas" "this" {
   connection_string = azurerm_storage_account.this.primary_connection_string
@@ -215,7 +239,7 @@ output "sas_url_query_string" {
   value = data.azurerm_storage_account_sas.this.sas
 sensitive = true
 }
-
+*/
 #create blob to store the kql query
 resource "azurerm_storage_blob" "this" {
   name                   = "table_scripts.kql"
@@ -231,6 +255,23 @@ resource "azurerm_storage_blob" "this" {
   }
 }
 
+# TODO: deployment will succeed but return 'Command is not allowed' error with this resource
+# Execute this command manually in ADX to enable ingestion with MSI
+/*
+resource "azurerm_kusto_script" "ingestionpolicy" {
+  name                               = "metricsdbingestionpolicy"
+  database_id                        = azurerm_kusto_database.database.id
+  continue_on_errors_enabled         = true
+  force_an_update_when_value_changed = "first"
+  depends_on = [azurerm_kusto_cluster_principal_assignment.user, azurerm_user_assigned_identity.terraform, azurerm_kusto_cluster_principal_assignment.this, azurerm_kusto_cluster_principal_assignment.msi]
+
+  script_content = <<SCRIPT
+    .alter-merge database ['${azurerm_kusto_database.database.name}'] policy managed_identity "[{ 'ObjectId' : '${azurerm_kusto_cluster.this.identity.0.principal_id}', 'AllowedUsages' : 'NativeIngestion' }]"
+SCRIPT
+}
+*/
+
+
 #create a kusto cluster
 resource "azurerm_kusto_cluster" "this" {
   name                = "${var.prefix}adx"
@@ -243,8 +284,7 @@ resource "azurerm_kusto_cluster" "this" {
   }
 
   identity {
-    type = "UserAssigned"
-    identity_ids = ["/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.prefix}-RG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${var.prefix}-msi"]
+    type = "SystemAssigned"
   }
 
   depends_on = [azurerm_storage_account.this, azurerm_resource_group.rg]
@@ -271,11 +311,27 @@ resource "azurerm_kusto_database" "database" {
 resource "azurerm_kusto_script" "table" {
   name                               = "metricsdbtables"
   database_id                        = azurerm_kusto_database.database.id
-  url                                = azurerm_storage_blob.this.id
-  sas_token                          = data.azurerm_storage_account_sas.this.sas
+  script_content                     = file("${path.cwd}/../../table_scripts.kql")
   continue_on_errors_enabled         = true
   force_an_update_when_value_changed = "first"
   depends_on = [azurerm_kusto_database.database]
+}
+
+#create network rules for storage account
+resource "azurerm_storage_account_network_rules" "this" {
+  storage_account_id = azurerm_storage_account.this.id
+  default_action     = "Deny"
+  virtual_network_subnet_ids = [azurerm_subnet.default_subnet.id]
+  bypass                     = ["AzureServices"]
+  depends_on = [azurerm_storage_blob.this, azurerm_kusto_script.table]  # Ensure network rules are applied after the blob and kusto script are created
+}
+
+# Update shared access key setting after applying network rules
+resource "null_resource" "update_shared_access_key" {
+  provisioner "local-exec" {
+    command = "az storage account update --name ${azurerm_storage_account.this.name} --resource-group ${azurerm_storage_account.this.resource_group_name} --allow-shared-key-access false"
+  }
+  depends_on = [azurerm_storage_account_network_rules.this]
 }
 
 #create service bus 
@@ -284,6 +340,7 @@ resource "azurerm_servicebus_namespace" "this" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku                 = "Standard"
+  local_auth_enabled  = false
   depends_on = [azurerm_resource_group.rg]
 
   tags = {
@@ -313,7 +370,8 @@ resource "azurerm_key_vault_access_policy" "msiaccess" {
     secret_permissions = [
       "Get",
       "Set",
-      "List"
+      "List",
+      "Delete"
     ]
 }
 
@@ -327,7 +385,8 @@ resource "azurerm_key_vault_access_policy" "useraccess" {
     secret_permissions = [
       "Get",
       "Set",
-      "List"
+      "List",
+      "Delete"
     ]
 }
 
@@ -338,7 +397,7 @@ resource "azurerm_service_plan" "timerstartpipelineapp" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Windows"
-  sku_name            = "Y1"
+  sku_name            = "B1"
   depends_on = [azurerm_resource_group.rg]
 }
 
@@ -370,11 +429,17 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     ]
   }
 
-  site_config {}
+  site_config {
+    always_on = true
+  }
 
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME="dotnet"
+    AzureWebJobsStorage__accountName=local.storage_account_name
+    AzureWebJobsStorage__clientId=azurerm_user_assigned_identity.terraform.client_id
+    AzureWebJobsStorage__credential="managedidentity"
     APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.timerstartpipelineapp.instrumentation_key
-	ServiceBusConnection=azurerm_servicebus_namespace.this.default_primary_connection_string
+    serviceBusNameSpace=azurerm_servicebus_namespace.this.name
     adxConnectionString=azurerm_kusto_cluster.this.uri
     metricsdbName=local.metricdb_name
     adxIngestionURI=azurerm_kusto_cluster.this.data_ingestion_uri
@@ -382,11 +447,18 @@ resource "azurerm_windows_function_app" "timerstartpipelineapp" {
     rawDataContainerName=azurerm_storage_container.data.name
     storageAccountName=local.storage_account_name
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
-    storagesas=data.azurerm_storage_account_sas.this.sas
-    blobConnectionString=azurerm_storage_account.this.primary_connection_string
     MyTimeTrigger="0 */15 * * * *"
+    msftTenantId="TenantId"
     keyVaultName=azurerm_key_vault.kv.name
 	}
+}
+
+#remove azurewebjobsstorage in enviroment variable for timer ingest function
+resource "null_resource" "remove_azurewebjobsstorage_timerfunction" {
+  provisioner "local-exec" {
+    command = "az functionapp config appsettings delete --name TimerStartPipelineFunction-${var.prefix} --resource-group ${azurerm_resource_group.rg.name} --setting-names AzureWebJobsStorage"
+  }
+  depends_on = [azurerm_windows_function_app.timerstartpipelineapp]
 }
 
 resource "null_resource" "dotnet_build_timerpipelineapp" {
@@ -460,12 +532,19 @@ resource "null_resource" "disable_basic_auth_timerpipelineapp_ftp" {
     disable_basic_auth_timerpipelineapp_ftp_command = local.disable_basic_auth_timerpipelineapp_ftp
   }
 }
+
+resource "azurerm_app_service_virtual_network_swift_connection" "timerstartpipelineapp_vnet_integration" {
+  app_service_id = azurerm_windows_function_app.timerstartpipelineapp.id
+  subnet_id      = azurerm_subnet.default_subnet.id
+  depends_on=[azurerm_subnet.default_subnet, azurerm_windows_function_app.timerstartpipelineapp]
+}
+
 resource "azurerm_service_plan" "adxingestionapp" {
   name                = "adxingestionapp-service-plan"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Windows"
-  sku_name            = "Y1"
+  sku_name            = "B1"
   depends_on = [azurerm_resource_group.rg]
 }
 
@@ -497,11 +576,17 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     ]
   }
 
-  site_config {}
+  site_config {
+    always_on = true
+  }
   
   app_settings = {
-    APPINSIGHTS_INSTRUMENTATIONKEY=azurerm_application_insights.adxingestionapp.instrumentation_key
-	ServiceBusConnection=azurerm_servicebus_namespace.this.default_primary_connection_string
+    FUNCTIONS_WORKER_RUNTIME = "dotnet"
+    AzureWebJobsStorage__accountName=local.storage_account_name
+    AzureWebJobsStorage__clientId=azurerm_user_assigned_identity.terraform.client_id
+    AzureWebJobsStorage__credential="managedidentity"
+    ServiceBusConnection__fullyQualifiedNamespace="${azurerm_servicebus_namespace.this.name}.servicebus.windows.net"
+    ServiceBusConnection__clientId=azurerm_user_assigned_identity.terraform.client_id
     adxConnectionString=azurerm_kusto_cluster.this.uri
     metricsdbName=local.metricdb_name
     adxIngestionURI=azurerm_kusto_cluster.this.data_ingestion_uri
@@ -509,13 +594,26 @@ resource "azurerm_windows_function_app" "adxingestionapp" {
     rawDataContainerName=azurerm_storage_container.data.name
     storageAccountName=local.storage_account_name
     msiclientId=azurerm_user_assigned_identity.terraform.client_id
-    storagesas=data.azurerm_storage_account_sas.this.sas
-    blobConnectionString=azurerm_storage_account.this.primary_connection_string
     keyVaultName=azurerm_key_vault.kv.name
     msftTenantId="TenantId"
     DefaultRequestHeaders="observabilitydashboard"
 	}
 
+}
+
+#remove azurewebjobsstorage in enviroment variable for adx ingest function
+resource "null_resource" "remove_azurewebjobsstorage_adx" {
+  provisioner "local-exec" {
+    command = "az functionapp config appsettings delete --name AdxIngestFunction-${var.prefix} --resource-group ${azurerm_resource_group.rg.name} --setting-names AzureWebJobsStorage"
+  }
+  depends_on = [azurerm_windows_function_app.adxingestionapp]
+}
+
+resource "null_resource" "reset_appinsightkey_adx" {
+  provisioner "local-exec" {
+    command = "az functionapp config appsettings set --name AdxIngestFunction-${var.prefix} --resource-group ${azurerm_resource_group.rg.name} --setting APPINSIGHTS_INSTRUMENTATIONKEY=${azurerm_application_insights.adxingestionapp.instrumentation_key}"
+  }
+  depends_on = [azurerm_windows_function_app.adxingestionapp]
 }
 
 resource "null_resource" "dotnet_build_adxingestapp" {
@@ -589,6 +687,12 @@ resource "null_resource" "disable_basic_auth_adxingestapp_ftp" {
   }
 }
 
+resource "azurerm_app_service_virtual_network_swift_connection" "adxingestionapp_vnet_integration" {
+  app_service_id = azurerm_windows_function_app.adxingestionapp.id
+  subnet_id      = azurerm_subnet.default_subnet.id
+  depends_on=[azurerm_subnet.default_subnet, azurerm_windows_function_app.adxingestionapp]
+}
+
 resource "azurerm_dashboard_grafana" "this" {
   name                              = "${var.prefix}-grafana"
   resource_group_name               = azurerm_resource_group.rg.name
@@ -596,7 +700,11 @@ resource "azurerm_dashboard_grafana" "this" {
   api_key_enabled                   = true
   deterministic_outbound_ip_enabled = true
   public_network_access_enabled     = true
-  depends_on = [azurerm_resource_group.rg, azurerm_storage_account.this, azurerm_kusto_cluster.this]
+  grafana_major_version             = "10"
+  identity {
+    type = "SystemAssigned"
+  }
+  depends_on = [azurerm_resource_group.rg, azurerm_storage_account.this, azurerm_kusto_cluster.this, azurerm_user_assigned_identity.terraform]
 }
 
 #assign contributor access to the sp for the resource group
@@ -607,13 +715,27 @@ resource "azurerm_role_assignment" "grafana_sp" {
   depends_on = [azurerm_resource_group.rg]
 }
 
+resource "azurerm_role_assignment" "sbsender" {
+  scope                = azurerm_servicebus_namespace.this.id
+  role_definition_name = "Azure Service Bus Data Sender"
+  principal_id         = azurerm_user_assigned_identity.terraform.principal_id
+  depends_on = [azurerm_storage_account.this, azurerm_user_assigned_identity.terraform]
+}
+
+resource "azurerm_role_assignment" "sbreceiver" {
+  scope                = azurerm_servicebus_namespace.this.id
+  role_definition_name = "Azure Service Bus Data Receiver"
+  principal_id         = azurerm_user_assigned_identity.terraform.principal_id
+  depends_on = [azurerm_storage_account.this, azurerm_user_assigned_identity.terraform]
+}
+
 resource "azurerm_kusto_cluster_principal_assignment" "this" {
   name                = "KustoSpAssignment"
   resource_group_name = azurerm_resource_group.rg.name
   cluster_name        = azurerm_kusto_cluster.this.name
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
-  principal_id   = azuread_service_principal.this.application_id#data.azurerm_client_config.current.client_id
+  principal_id   = azuread_service_principal.this.client_id#data.azurerm_client_config.current.client_id
   principal_type = "App"
   role           = "AllDatabasesAdmin"
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
@@ -631,6 +753,30 @@ resource "azurerm_kusto_cluster_principal_assignment" "msi" {
   depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
 }
 
+resource "azurerm_kusto_cluster_principal_assignment" "grafanamsi" {
+  name                = "KustoGrafanaMsiAssignment"
+  resource_group_name = azurerm_resource_group.rg.name
+  cluster_name        = azurerm_kusto_cluster.this.name
+
+  tenant_id      = data.azurerm_client_config.current.tenant_id
+  principal_id   = azurerm_dashboard_grafana.this.identity.0.principal_id
+  principal_type = "App"
+  role           = "AllDatabasesAdmin"
+  depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
+}
+
+resource "azurerm_kusto_cluster_principal_assignment" "user" {
+  name                = "KustoUserAssignment"
+  resource_group_name = azurerm_resource_group.rg.name
+  cluster_name        = azurerm_kusto_cluster.this.name
+
+  tenant_id      = data.azurerm_client_config.current.tenant_id
+  principal_id   = data.azurerm_client_config.current.object_id
+  principal_type = "User"
+  role           = "AllDatabasesAdmin"
+  depends_on = [azurerm_resource_group.rg,azurerm_kusto_cluster.this]
+}
+
 resource "azurerm_kusto_database_principal_assignment" "this" {
   name                = "DatabaseSpAssignment"
   resource_group_name = azurerm_resource_group.rg.name
@@ -638,7 +784,7 @@ resource "azurerm_kusto_database_principal_assignment" "this" {
   database_name       = azurerm_kusto_database.database.name
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
-  principal_id   = azuread_service_principal.this.application_id#data.azurerm_client_config.current.client_id
+  principal_id   = azuread_service_principal.this.client_id#data.azurerm_client_config.current.client_id
   principal_type = "App"
   role           = "Admin"
   depends_on = [azurerm_kusto_database.database]
@@ -704,10 +850,18 @@ resource "azurerm_role_assignment" "msi_adxingestionapp_role" {
 }
 
 #assign grafana admin access to user
-resource "azurerm_role_assignment" "grafana" {
+resource "azurerm_role_assignment" "grafanauser" {
   scope                = azurerm_dashboard_grafana.this.id
   role_definition_name = "Grafana Admin"
   principal_id         = data.azurerm_client_config.current.object_id
+  depends_on = [azurerm_dashboard_grafana.this]
+}
+
+#assign grafana admin access to msi
+resource "azurerm_role_assignment" "grafanamsi" {
+  scope                = azurerm_dashboard_grafana.this.id
+  role_definition_name = "Grafana Admin"
+  principal_id         = azurerm_dashboard_grafana.this.identity.0.principal_id
   depends_on = [azurerm_dashboard_grafana.this]
 }
 
@@ -717,19 +871,6 @@ output "sp_object_id" {
 
 output "cluster_url" {
   value                = azurerm_kusto_cluster.this.uri
-}
-
-output "sp_client_id" {
-  value                = azuread_service_principal.this.application_id#
-}
-
-output "sp_client_secret" {
-  value                = azuread_service_principal_password.this.value
-  sensitive            = true
-}
-
-output "tenant_id" {
-  value                = data.azuread_client_config.current.tenant_id
 }
 
 output "database_name" {
@@ -742,4 +883,20 @@ output "client_config" {
 
 output "prefix" {
   value =               "${var.prefix}"
+}
+
+output "sp_display_name" {
+  value = azurerm_kusto_cluster.this.name
+}
+
+output "resource_group_name" {
+  value = azurerm_resource_group.rg.name
+}
+
+output "app_name" {
+  value = "AdxIngestFunction-${var.prefix}"
+}
+
+output "storage_account_id" {
+  value = azurerm_storage_account.this.id
 }

@@ -2,17 +2,11 @@
 
 prefix=$1
 cluster_Url=$2
-tenantId=$3
-clientId=$4
-clientSecret=$5
-dbName=$6
-METRICS_FOLDER_PATH=$7
+dbName=$3
+METRICS_FOLDER_PATH=$4
 
 echo $prefix
 echo $cluster_Url
-echo $tenantId
-echo $clientId
-echo $clientSecret
 echo $dbName
 echo $METRICS_FOLDER_PATH
 
@@ -31,15 +25,15 @@ az grafana data-source create -n $prefix-grafana --definition '{
   "basicAuth": false,
   "isDefault": false,
   "jsonData": {
-    "clientId": "'"$clientId"'",
     "clusterUrl": "'"$cluster_Url"'",
     "dataConsistency": "strongconsistency",
     "defaultDatabase": "'"$dbName"'",
     "defaultEditorMode": "visual",
     "schemaMappings": [],
-    "tenantId": "'"$tenantId"'"
-    },
-  "secureJsonData": {"clientSecret": "'"$clientSecret"'"},
+    "azureCredentials": {
+      "authType": "msi"
+    }
+  },
   "readOnly": false
 }'
 
