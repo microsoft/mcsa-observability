@@ -1,6 +1,4 @@
-﻿using Microsoft.Azure.Management.ResourceManager.Fluent.Models;
-
-namespace Observability.Utils.Data
+﻿namespace Observability.Utils.Data
 {
     public class Message
     {
