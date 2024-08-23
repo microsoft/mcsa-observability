@@ -12,10 +12,9 @@
     <PackageReference Include="Azure.Monitor.Query" Version="1.1.0" />
     <PackageReference Include="Azure.ResourceManager.ResourceGraph" Version="1.0.1" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.5.0" />
-    <PackageReference Include="Microsoft.Azure.Kusto.Data" Version="11.2.2" />
-    <PackageReference Include="Microsoft.Azure.Kusto.Ingest" Version="11.2.2" />
+    <PackageReference Include="Microsoft.Azure.Kusto.Data" Version="12.2.5" />
+    <PackageReference Include="Microsoft.Azure.Kusto.Ingest" Version="12.2.5" />
     <PackageReference Include="Microsoft.Azure.Management.ResourceGraph" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Azure.Management.ServiceBus.Fluent" Version="1.38.1" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.6.0" />
   </ItemGroup>
 
