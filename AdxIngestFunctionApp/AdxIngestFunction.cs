@@ -13,6 +13,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Models;
+using Microsoft.Azure.Management.ResourceGraph;
+using Microsoft.Graph;
 
 
 namespace Observability.AdxIngestFunctionApp
@@ -21,6 +23,7 @@ namespace Observability.AdxIngestFunctionApp
     public class AdxIngestFunction
     {
         private static HttpClient _httpClient = new HttpClient();
+        private static GraphServiceClient _graphClient = null;
         private static KeyVaultManager keyVaultManager = null;
         private static readonly IConfiguration _config = new ConfigurationBuilder().AddEnvironmentVariables().Build();
 
@@ -111,10 +114,18 @@ namespace Observability.AdxIngestFunctionApp
                 Tenant tenant = keyVaultManager.GetServicePrincipalCredential(tenantId);
                 string clientId = tenant.ClientId;
                 string clientSecret = tenant.ClientSecret;
+                var options = new ClientSecretCredentialOptions 
+                {
+                    AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
+                };
+                var scopes = new[] { "https://graph.microsoft.com/.default" }; 
                 log.LogInformation(clientId);
                 
                 spCredential =  new ClientSecretCredential(tenantId, clientId, clientSecret);
                 log.LogInformation("Done ClientSecretCredential");
+
+                ClientSecretCredential clientSecretCredential = new ClientSecretCredential(tenantId, clientId, clientSecret, options);
+                _graphClient = new GraphServiceClient(clientSecretCredential, scopes); 
                 
                 accessToken = spCredential.GetToken(new TokenRequestContext(new[] { "https://metrics.monitor.azure.com/.default" }));     
                 log.LogInformation("Got accessToken");
@@ -127,26 +138,27 @@ namespace Observability.AdxIngestFunctionApp
                 var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId });
                 accessToken = credential.GetToken(new TokenRequestContext(new[] { "https://metrics.monitor.azure.com/" }));
             }
-            
-            
-            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Token);
-
-            httpRequest.Content = new StringContent(jsonResouces, Encoding.UTF8, "application/json");
-  
-            using var response = await _httpClient.SendAsync(httpRequest);
-
-            //TODO: Logging and not throwing. Confirm that this is correct approach
-            if (response is { StatusCode: >= HttpStatusCode.BadRequest })
-            {
-                log.LogInformation("Something went wrong with the Monitor API call");
-                log.LogInformation($"Response status code: {response.StatusCode}");
-            }
-            log.LogInformation("Sucess response from Monitor API call");
-
-            var responseContent = await response.Content.ReadAsStringAsync(); //TODO: Should handle as stream and not bring into memory as a string. // see later converting string back to a stream in IngestToAdx2Async, AppendToBlobAsync
-
             var adx = new AdxClientHelper(config, log); 
-            await adx.IngestToAdx2Async(responseContent, message.ResultTable, filePrefix);
+            if (message.Type == "health") {
+                var healthResponse = await _graphClient.Admin.ServiceAnnouncement.HealthOverviews.GetAsync(); 
+                var responseContent = healthResponse.ToString();  
+                await adx.IngestToAdx2Async(responseContent, message.ResultTable, filePrefix);
+            }
+            else {
+                httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Token);
+                httpRequest.Content = new StringContent(jsonResouces, Encoding.UTF8, "application/json");
+                var response = await _httpClient.SendAsync(httpRequest);
+                //TODO: Logging and not throwing. Confirm that this is correct approach
+                if (response is { StatusCode: >= HttpStatusCode.BadRequest })
+                {
+                    log.LogInformation("Something went wrong with the Monitor API call");
+                    log.LogInformation($"Response status code: {response.StatusCode}");
+                }
+                log.LogInformation("Sucess response from Monitor API call");
+
+                var responseContent = await response.Content.ReadAsStringAsync(); //TODO: Should handle as stream and not bring into memory as a string. // see later converting string back to a stream in IngestToAdx2Async, AppendToBlobAsync
+                await adx.IngestToAdx2Async(responseContent, message.ResultTable, filePrefix);
+            }
         }
     }
 }

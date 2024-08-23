@@ -17,6 +17,8 @@
 
 .create-merge table LogAnalytics_Availability_Raw (metrics: dynamic) with (folder = "Raw")
 
+.create-merge table Health_Overviews_Raw (metrics: dynamic) with (folder = "Raw")
+
 // Create ingestion mapping
 .create-or-alter table Aksservernode_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
@@ -35,6 +37,8 @@
 .create-or-alter table Container_Registry_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 .create-or-alter table LogAnalytics_Availability_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
+
+.create-or-alter table Health_Overviews_Raw ingestion json mapping 'RawMetricsMapping' '[{"Column":"metrics","Properties":{"path":"$"}}]'
 
 //create adx tables
 .create-merge table Resource_Providers (name: string, ['type']: string, resultTableName: string)
@@ -62,6 +66,14 @@
 .create-merge table Container_Registry_Availability (['date']: datetime, ['id']: string, successfulPullCount: decimal, totalPullCount: decimal, successfulPushCount: decimal, totalPushCount: decimal, location: string, subscriptionId: guid, name: string)
 
 .create-merge table LogAnalytics_Availability (['date']: datetime, ['id']: string, availability: decimal, subscriptionId: guid, location: string, name: string)
+
+.create-merge table List_Issues (serviceId: string, id: guid, startDateTime: datetime, endDateTime: datetime, lastModifiedDateTime: datetime, title: string, impactDescription: string, classification: string, origin: string, status: string, service: string, feature: string, featureGroup: string, isResolved: bool)
+
+.create-merge table Health_Overviews (id: string, service: string, status: string)
+
+.create-merge table Details (id: guid, name: string, value: string)
+
+.create-merge table Posts (id: guid, createdDateTime: datetime, postType: string, content: string)
 
 //create functions
 
@@ -314,6 +326,54 @@ let totalPush = Container_Registry_Availability_Raw
         name = tostring(name)     
 }
 
+.create-or-alter function Parse_Health_Overviews_Raw() {
+    Health_Overviews_Raw
+    | mv-expand = metrics.value
+    | extend id = value.id
+    | extend service = value.service
+    | extend status = value.status
+}
+
+.create-or-alter function Parse_Health_Overviews_Raw_Issues() {
+    Health_Overviews_Raw
+    | mv-expand value = metrics.value
+    | extend id = value.id
+    | mv-expand issue = value.issues
+    | extend serviceID = issue.id
+    | extend startDateTime = issue.startDateTime
+    | extend lastModifiedDateTime = issue.lastModifiedDateTime
+    | extend title = issue.title
+    | extend impactDescription = issue.impactDescription
+    | extend classification = issue.classification
+    | extend origin = issue.origin
+    | extend status = issue.status
+    | extend service = issue.service
+    | extend feature = issue.feature
+    | extend featureGroup = issue.featureGroup
+    | extend isResolved = issue.isResolved
+}
+
+.create-or-alter function Parse_Health_Overviews_Raw_Details() {
+    Health_Overviews_Raw
+    | mv-expand value = metrics.value
+    | extend id = value.id
+    | mv-expand issue = value.issues
+    | mv-expand detail = issue.details
+    | extend name = issue.name
+    | extend value = issue.value
+}
+
+.create-or-alter function Parse_Health_Overviews_Raw_Posts() {
+    Health_Overviews_Raw
+    | mv-expand value = metrics.value
+    | extend id = value.id
+    | mv-expand issue = value.issues
+    | mv-expand post = issue.posts
+    | extend createdDateTime = post.createdDateTime
+    | extend postType = post.postType
+    | extend content = post.content
+}
+
 // Update results table policies
 .alter table Aksservernode_Availability policy update @'[{"Source": "Aksservernode_Availability_Raw", "Query": "Parse_Aksservernode_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
@@ -333,6 +393,13 @@ let totalPush = Container_Registry_Availability_Raw
 
 .alter table LogAnalytics_Availability policy update @'[{"Source": "LogAnalytics_Availability_Raw", "Query": "Parse_LogAnalytics_Availability()", "IsEnabled": "True", "IsTransactional": true}]'
 
+.alter table List_Issues policy update @'[{"Source": "Health_Overviews_Raw", "Query": "Parse_Health_Overviews_Raw_Issues()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Health_Overviews policy update @'[{"Source": "Health_Overviews_Raw", "Query": "Parse_Health_Overviews_Raw()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Details policy update @'[{"Source": "Health_Overviews_Raw", "Query": "Parse_Health_Overviews_Raw_Details()", "IsEnabled": "True", "IsTransactional": true}]'
+
+.alter table Posts policy update @'[{"Source": "Health_Overviews_Raw", "Query": "Parse_Health_Overviews_Raw_Posts", "IsEnabled": "True", "IsTransactional": true}]'
 
 // Adding zero retention policies on Raw tables
 .alter-merge table Aksservernode_Availability_Raw policy retention softdelete = 0s
@@ -353,6 +420,7 @@ let totalPush = Container_Registry_Availability_Raw
 
 .alter-merge table LogAnalytics_Availability_Raw policy retention softdelete = 0s
 
+.alter-merge table Health_Overviews_Raw policy retention softdelete = 0s
 
 // Adding default (100 years) policy to Subs, RPs, and Sub Names tables
 .alter table Subscriptions policy retention "{}"
